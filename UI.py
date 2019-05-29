@@ -183,8 +183,7 @@ class Application(tk.Frame):
 				#it was a short press
 				self.DISP_short_pressed()
 
-		if 	self.DISP_BTN.held_time and 
-			self.DISP_BTN.held_time > BUTTON_LONGPRESS_TIME:
+		if 	self.DISP_BTN.held_time and self.DISP_BTN.held_time > BUTTON_LONGPRESS_TIME:
 			self.DISP_long_pressed()
 
 
