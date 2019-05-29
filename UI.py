@@ -144,6 +144,7 @@ class Application(tk.Frame):
 		self.showingLiveView = False
 		self.menu_tree = MenuTree(MENUTREE)
 		self.previousImage = 'ocean.jpg'
+		self.previousImages = ['ocean.jpg', 'ocean2.gif','reef.jpg']
 		self.settingWidgets = {}
 		self.menuFrame = None
 		self.MENU_BTN = gpio.Button(21, pull_up=True)
@@ -157,6 +158,8 @@ class Application(tk.Frame):
 		self.dispHeldStart = 0
 		self.expoHeldStart = 0
 		self.actnHeldStart = 0
+		self.viewingPreviousImages = False
+		self.currentPreviousImage = 0
 		self.create_layout()
 
 	
@@ -244,8 +247,8 @@ class Application(tk.Frame):
 	def get_live_view_state():
 		return self.showingLiveView()
 
-	def get_previousImage(self):
-		return ImageTk.PhotoImage(Image.open(self.previousImage).resize((640,480),Image.ANTIALIAS))
+	def get_previousImage(self, x):
+		return ImageTk.PhotoImage(Image.open(self.previousImages[x]).resize((640,480),Image.ANTIALIAS))
 
 	def get_four_DCS_images(self):
 		return [ImageTk.PhotoImage(Image.open(self.previousImage).resize((320,240),Image.ANTIALIAS)),
@@ -280,8 +283,10 @@ class Application(tk.Frame):
 	def toggle_prev_image(self):
 		if self.display == 7:
 			self.display = 0
+			self.viewingPreviousImages = False
 		else:
 			self.display = 7
+			self.viewingPreviousImages = True
 
 	def toggle_video_state(self):
 		self.isTakingVideo = not self.isTakingVideo
@@ -412,7 +417,7 @@ class Application(tk.Frame):
 
 		# #PreviousImg -- display = 7
 		prevImgCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		previousImage = self.get_previousImage()
+		previousImage = self.get_previousImage(self.currentPreviousImage)
 		mainFrame.previousImage = previousImage
 		prevImgCanvas.create_image(0,0,anchor=NW, image=previousImage)
 		prevImgCanvas.pack_forget()
@@ -421,6 +426,11 @@ class Application(tk.Frame):
 		self.menuFrame = tk.Frame(mainFrame)
 		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
 		self.menuFrame.grid_forget()
+
+	def setPreviousImage(self,img):
+		self.mainArea.previousImage = img
+		self.mainArea.winfo_children()[4].create_image(0,0,anchor=NW, image=img)
+		self.mainArea.winfo_children()[4].pack()
 
 	def createMenu(self, previousMenu, clickedNode, atRoot):
 
@@ -463,8 +473,15 @@ class Application(tk.Frame):
 				self.menu_tree.goUpLevel()
 
 	def DISP_short_pressed(self):
-		if self.get_mode() == 0:            #capture
+		if self.get_mode() == 0:
+		    #capture mode
 			if not self.get_video_state():  #ready to take photo
+				#not taking video
+				if self.viewingPreviousImages:
+					#get the next previous image
+					self.setPreviousImage(self.get_previousImage(self.currentPreviousImage))
+					self.currentPreviousImage +=1
+
 				self.change_display()
 			else:
 				print("TAKING VIDEO --> DOING NOTHING")
@@ -472,12 +489,10 @@ class Application(tk.Frame):
 			print("go UP")
 
 	def DISP_long_pressed(self):
-		if self.get_mode() == 0:            #capture
-			if not self.get_video_state():  #ready to take photo
-				self.toggle_prev_image()
-				self.update_display()
-		else:                           
-			self.DISP_short_pressed()       #same as short press in menu mode and when taking video
+		if self.get_mode() == 0 and not self.get_video_state():  
+			#capture mode and not taking video
+			self.toggle_prev_image()
+			self.update_display()
 
 	def EXP_short_pressed(self):
 		if self.get_mode() == 0:            #capture
