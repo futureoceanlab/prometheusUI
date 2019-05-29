@@ -492,6 +492,7 @@ class Application(tk.Frame):
 		if self.get_mode() == 0 and not self.get_video_state():  
 			#capture mode and not taking video
 			self.toggle_prev_image()
+			self.currentPreviousImage = 0
 			self.update_display()
 
 	def EXP_short_pressed(self):
