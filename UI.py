@@ -181,7 +181,6 @@ class Application(tk.Frame):
 			lengthOfPress = time.time() - self.dispHeldStart 
 			if lengthOfPress < BUTTON_LONGPRESS_TIME:
 				#it was a short press
-				print("IN HERE")
 				self.DISP_short_pressed()
 
 		if self.dispBtnState:
@@ -190,7 +189,8 @@ class Application(tk.Frame):
 			if lengthOfPress > BUTTON_LONGPRESS_TIME:
 				#long press
 				self.DISP_long_pressed()
-				self.dispBtnState = 0 
+				self.dispBtnState = 0
+				self.DISP_BTN.wait_for_press(1)
 
 
 
