@@ -188,9 +188,9 @@ class Application(tk.Frame):
 			lengthOfPress = self.expoHeldStart - time.time()
 			if lengthOfPress > BUTTON_LONGPRESS_TIME:
 				#it was a long press
-				self.EXPO_long_pressed()
+				self.EXP_long_pressed()
 			else:
-				self.EXPO_short_pressed()
+				self.EXP_short_pressed()
 
 
 		#ACTION BUTTON
