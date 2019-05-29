@@ -160,6 +160,7 @@ class Application(tk.Frame):
 		self.actnHeldStart = 0
 		self.viewingPreviousImages = False
 		self.currentPreviousImage = 0
+		self.dispSinceLongheld = 0 
 		self.create_layout()
 
 	
@@ -170,27 +171,29 @@ class Application(tk.Frame):
 		#MENU BUTTON is just short press so it is handled in __init__
 
 		# DISPLAY BUTTON
-		if self.DISP_BTN.is_pressed and not self.dispBtnState:
-			#button is being pressed down 
-			self.dispBtnState = 1
-			self.dispHeldStart = time.time()
+		if (time.time() - self.dispSinceLongheld)>2:
+			if self.DISP_BTN.is_pressed and not self.dispBtnState:
+				#button is being pressed down 
+				self.dispBtnState = 1
+				self.dispHeldStart = time.time()
 
-		if not self.DISP_BTN.is_pressed and self.dispBtnState:
-			#button is being released
-			self.dispBtnState = 0
-			lengthOfPress = time.time() - self.dispHeldStart 
-			if lengthOfPress < BUTTON_LONGPRESS_TIME:
-				#it was a short press
-				self.DISP_short_pressed()
-
-		if self.dispBtnState:
-			#check if it is longpress yet
-			lengthOfPress = time.time() - self.dispHeldStart
-			if lengthOfPress > BUTTON_LONGPRESS_TIME:
-				#long press
-				self.DISP_long_pressed()
+			if not self.DISP_BTN.is_pressed and self.dispBtnState:
+				#button is being released
 				self.dispBtnState = 0
-				self.DISP_BTN.wait_for_release(3)
+				lengthOfPress = time.time() - self.dispHeldStart 
+				if lengthOfPress < BUTTON_LONGPRESS_TIME:
+					#it was a short press
+					self.DISP_short_pressed()
+
+			if self.dispBtnState:
+				#check if it is longpress yet
+				lengthOfPress = time.time() - self.dispHeldStart
+				if lengthOfPress > BUTTON_LONGPRESS_TIME:
+					#long press
+					self.DISP_long_pressed()
+					self.dispBtnState = 0
+					self.dispSinceLongheld = time.time()
+
 
 
 
