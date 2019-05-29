@@ -461,6 +461,8 @@ def gpioTest():
 	button1 = gpio.Button(21)
 	button1.when_pressed = printA
 
+	pause()
+
 def printA():
 	print('aaaaaaaaaaaaa')
 
