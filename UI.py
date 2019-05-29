@@ -466,9 +466,9 @@ def gpioTest():
 
 	while True:
 		if menuBtn.held_time: 
-			if menuBtn.held_time>2:
+			if menuBtn.held_time>0.5:
 				print("menu long press")
-			elif menuBtn.held_time<2 and menuBtn.held_time>0.2:
+			elif menuBtn.held_time<0.5 and menuBtn.held_time>0.01:
 				print("short menu press")
 
 
