@@ -28,9 +28,6 @@ MENUTREE = {'root':{
 						}
 
 
-
-
-
 class MenuTree():
 	# A tree is a list of nodes 
 	# Nodes have a name and a list of child nodes
@@ -123,7 +120,19 @@ class Application(tk.Frame):
 		super().__init__(master)
 		self.master = master
 		self.mode = 0       #   0 is capture; 1 is menu
-		self.display = 0    #   0 4x DCS; 1 pcloud; 2 rich data; 3 color map
+		self.display = 0    
+		# DISPLAY INDEXES
+		# There are 4 main displays in capture mode (0,1,2,3)
+		# The 'show previous image' display is 7 because (7+1)%4=0 
+		# 	so it goes back to display 0 (see change_display())
+		# The 'menu display' is -1 because it is the last display in the
+		# menu list self.mainArea.winfo_children and (-1+1)%4 = 0 
+		# 0  --  4x DCS images  
+		# 1  --  point cloud
+		# 2  --  'rich data' - state of the system
+		# 3  --  color map image
+		# 7  --  previous image 
+		# -1 --  menu display
 		self.exposure = 0
 		self.title = "CAPTURE"
 		self.topArea = None
@@ -152,6 +161,7 @@ class Application(tk.Frame):
 	
 
 	def buttonCheck(self):
+		# The function that continuously checks the state of the buttons
 
 		#MENU BUTTON (there is not long menu press)
 		if self.MENU_BTN.is_pressed: 
@@ -208,8 +218,8 @@ class Application(tk.Frame):
 			else:
 				self.ACTN_short_pressed()
 
-
-
+		# This allows for the button checker to run continously, 
+		# alongside the mainloop
 		self.master.after(50, self.buttonCheck)
 
 	def get_mode(self):
@@ -276,33 +286,58 @@ class Application(tk.Frame):
 		self.isTakingVideo = not self.isTakingVideo
 
 	def update_display(self):
+		# function that is called after every button push to update
+		# the state of the display
+
 		#update title
 		self.topArea["text"] = self.get_title()
+
 		#update main area dimensions
+		#the display below is the display that the screen is CHANGING TO
+		#not the one that it is coming from
 		display = self.get_display()
+
+		#erase everything that goes in main area
 		self.menuFrame.grid_forget()
-		if display == 7:
-			for i in [0,1,2,3]:
-				self.mainArea.winfo_children()[i].pack_forget()
-			self.mainArea.winfo_children()[4].pack()
+		for i in [0,1,2,3,4]:
+			self.mainArea.winfo_children()[i].pack_forget()
+
+		if display == -1 or display == 7 or display == 2:
+			#erase the data grid
 			self.winfo_children()[2].grid_forget()
-		elif display == -1:
-			for i in [0,1,2,3]:
-				self.mainArea.winfo_children()[i].pack_forget()
+
+		#now display things we want
+		if display == -1:
 			self.mainArea.winfo_children()[5].grid()
-			self.winfo_children()[2].grid_forget()
 		else:
-			self.mainArea.winfo_children()[4].pack_forget()
-			self.mainArea.winfo_children()[display].pack()
-			self.mainArea.winfo_children()[(display-1)%4].pack_forget()
+			self.mainArea.winfo_children()[min(4, display)].pack()
 
-			if display == 0:
+		if display == 0:
+			self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S)
 
-				self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S)
 
-			elif display == 2:
+		# if display == 7:
+		# 	for i in [0,1,2,3]:
+		# 		self.mainArea.winfo_children()[i].pack_forget()
+		# 	self.mainArea.winfo_children()[4].pack()
+		# 	self.winfo_children()[2].grid_forget()
 
-				self.winfo_children()[2].grid_forget()
+		# elif display == -1:
+		# 	for i in [0,1,2,3]:
+		# 		self.mainArea.winfo_children()[i].pack_forget()
+		# 	self.mainArea.winfo_children()[5].grid()
+		# 	self.winfo_children()[2].grid_forget()
+
+		# else:
+		# 	self.mainArea.winfo_children()[4].pack_forget()
+		# 	self.mainArea.winfo_children()[display].pack()
+		# 	self.mainArea.winfo_children()[(display-1)%4].pack_forget()
+
+		# 	if display == 0:
+		# 		self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S)
+
+		# 	elif display == 2:
+		# 		self.winfo_children()[2].grid_forget()
 
 
 	def create_layout(self):
