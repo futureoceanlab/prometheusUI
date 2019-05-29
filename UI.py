@@ -27,10 +27,7 @@ MENUTREE = {'root':{
 						}
 
 
-MENU_BTN = gpio.Button(21, pull_up=True)
-DISP_BTN = gpio.Button(20, pull_up=True)
-EXPO_BTN = gpio.Button(16, pull_up=True)
-ACTN_BTN = gpio.Button(12, pull_up=True)
+
 
 
 class MenuTree():
@@ -139,7 +136,15 @@ class Application(tk.Frame):
 		self.previousImage = 'ocean.jpg'
 		self.settingWidgets = {}
 		self.menuFrame = None
+		self.MENU_BTN = gpio.Button(21, pull_up=True)
+		self.DISP_BTN = gpio.Button(20, pull_up=True)
+		self.EXPO_BTN = gpio.Button(16, pull_up=True)
+		self.ACTN_BTN = gpio.Button(12, pull_up=True)
 		self.create_layout()
+
+	def buttonCheck(self):
+		print("checking buttons")
+		self.master.after(50, self.buttonCheck)
 
 	def get_mode(self):
 		return self.mode
@@ -497,9 +502,6 @@ def gpioTest():
 			else:
 				print("actn short  press")
 
-def buttonCheck():
-	while True:
-		print('a')
 
 
 def main():
@@ -507,7 +509,7 @@ def main():
 	root = tk.Tk()
 	root.geometry('800x480')
 	app = Application(master=root)
-	root.after(2000, buttonCheck)
+	app.buttonCheck()
 	app.mainloop()
 
 if __name__ == '__main__':
