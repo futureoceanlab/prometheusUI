@@ -4,6 +4,7 @@ from tkinter import *
 from PIL import ImageTk,Image 
 import gpiozero as gpio
 from signal import pause
+import time
 
 BUTTON_LONGPRESS_TIME = 1
 NUM_EXPOSURES = 5
@@ -141,22 +142,88 @@ class Application(tk.Frame):
 		self.DISP_BTN = gpio.Button(20, pull_up=True)
 		self.EXPO_BTN = gpio.Button(16, pull_up=True)
 		self.ACTN_BTN = gpio.Button(12, pull_up=True)
+
+
+
+		self.dispBtnState = 0
+		self.expoBtnState = 0
+		self.actnBtnState = 0
+		self.dispHeldStart = 0
+		self.expoHeldStart = 0
+		self.actnHeldStart = 0
 		self.create_layout()
+
+	def determineLongOrShortPress():
 
 	def buttonCheck(self):
 
-
+		#MENU BUTTON (there is not long menu press)
 		if self.MENU_BTN.is_pressed: 
 			self.MENU_pressed()
 
-		if self.DISP_BTN.held_time and self.DISP_BTN.held_time>BUTTON_LONGPRESS_TIME:
-			self.DISP_long_pressed()
 
-		if self.EXPO_BTN.held_time and self.EXPO_BTN.held_time>BUTTON_LONGPRESS_TIME:
-			self.EXP_long_pressed()
+		# DISPLAY BUTTON
+		if self.DISP_BTN.is_pressed and not self.dispBtnState:
+			#button is being pressed down 
+			self.dispBtnState = 1
+			self.dispHeldStart = time.time()
 
-		if self.ACTN_BTN.held_time and self.ACTN_BTN.held_time>BUTTON_LONGPRESS_TIME:
-			self.ACTN_long_pressed()
+		if not self.DISP_BTN.is_pressed and self.dispBtnState:
+			#button is being released
+			self.dispBtnState = 0
+			lengthOfPress = self.dispHeldStart - time.time()
+			if lengthOfPress > BUTTON_LONGPRESS_TIME:
+				#it was a long press
+				self.DISP_long_pressed()
+			else:
+				self.DISP_short_pressed()
+
+
+		# EXPOSURE BUTTON
+		if self.EXPO_BTN.is_pressed and not self.expoBtnState:
+			#button is being pressed down 
+			self.expoBtnState = 1
+			self.expoHeldStart = time.time()
+
+		if not self.EXPO_BTN.is_pressed and self.expoBtnState:
+			#button is being released
+			self.expoBtnState = 0
+			lengthOfPress = self.expoHeldStart - time.time()
+			if lengthOfPress > BUTTON_LONGPRESS_TIME:
+				#it was a long press
+				self.EXPO_long_pressed()
+			else:
+				self.EXPO_short_pressed()
+
+
+		#ACTION BUTTON
+		if self.ACTN_BTN.is_pressed and not self.actnBtnState:
+			#button is being pressed down 
+			self.actnBtnState = 1
+			self.actnHeldStart = time.time()
+
+		if not self.ACTN_BTN.is_pressed and self.actnBtnState:
+			#button is being released
+			self.actnBtnState = 0
+			lengthOfPress = self.actnHeldStart - time.time()
+			if lengthOfPress > BUTTON_LONGPRESS_TIME:
+				#it was a long press
+				self.ACTN_long_pressed()
+			else:
+				self.ACTN_short_pressed()
+
+
+
+
+
+		# if self.DISP_BTN.held_time and self.DISP_BTN.held_time>BUTTON_LONGPRESS_TIME:
+		# 	self.DISP_long_pressed()
+
+		# if self.EXPO_BTN.held_time and self.EXPO_BTN.held_time>BUTTON_LONGPRESS_TIME:
+		# 	self.EXP_long_pressed()
+
+		# if self.ACTN_BTN.held_time and self.ACTN_BTN.held_time>BUTTON_LONGPRESS_TIME:
+		# 	self.ACTN_long_pressed()
 
 
 		self.master.after(50, self.buttonCheck)
@@ -399,7 +466,6 @@ class Application(tk.Frame):
 	def DISP_long_pressed(self):
 		if self.get_mode() == 0:            #capture
 			if not self.get_video_state():  #ready to take photo
-				print("SHOW PREVIOUS IMAGE")
 				self.toggle_prev_image()
 				self.update_display()
 		else:                           
