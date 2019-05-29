@@ -1,8 +1,10 @@
 import tkinter as tk
-from tkinter.ttk import Frame, Button, Label, Style 
-from tkinter import *
+try: 
+	from Tkinter import *
+except ImportError:
+	from tkinter.ttk import Frame, Button, Label, Style 
+	from tkinter import *
 from PIL import ImageTk,Image 
-import gpiozero as gpio
 
 NUM_EXPOSURES = 5
 MODE_OPTIONS = ["CAPTURE", "MENU"]
@@ -321,19 +323,14 @@ class Application(tk.Frame):
 
 	def createMenu(self, previousMenu, clickedNode, atRoot):
 
-		print("PREVIOUS MENU", previousMenu)
-		# for i in previousMenu:
-		# 	print("--", i.name)
-		print("CLICKED NODE ", clickedNode.name)
+		print("CREATEMENU ", clickedNode.name)
 
 		if not atRoot:
-			print("forgettting ")
 			previousMenu.grid_forget()
-		newMenu = tk.Frame(self.menuFrame, bg='red', width=750, height=400)
+		newMenu = tk.Frame(self.menuFrame)
 		level = self.menu_tree.getSelectionLevel(clickedNode)
 		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
 		rowNumber = 0 
-		print("LLL ", level)
 		for child in level:
 			if child.isLeaf():
 				settingKey = Button(self.menuFrame, text=str('Change ')+child.name)
@@ -341,14 +338,66 @@ class Application(tk.Frame):
 				settingValue = Label(self.menuFrame, text=child.value)
 				settingValue.grid(row=rowNumber, column=1)
 			else:
-				print("CHILD ", child.name)
-				setting = Button(self.menuFrame, text=child.name, command=lambda : self.createMenu(newMenu,child,False))
+				setting = Button(self.menuFrame, text=child.name, command=self.createMenu(newMenu,child,False))
 				setting.grid(row=rowNumber, column=0)
 			rowNumber +=1
 
-	def clearMenuFrame(self):
-		for i in self.menuFrame:
-			i.grid_forget()
+		# menu      -- display = 11
+		# menuFrame = tk.Frame(mainFrame)
+		# level = self.menu_tree.tree[0].getImmediateChildren()
+		# childLevels = [level[:]]
+		# settingDisplayNumber = 0
+		# while len(childLevels)>0:
+		#   for level in childLevels:
+		#       tempChildLevels = []
+		#       settingLevelFrame = tk.Frame(menuFrame)
+		#       rowNumber = 0 
+		#       for setting in level:
+		#           if setting.isLeaf():
+		#               settingRowSettingKey = Button(settingLevelFrame, text=str('Change ')+setting.name)
+		#               settingRowSettingKey.grid(row=rowNumber, column=0)
+		#               settingRowSettingValue = Label(settingLevelFrame, text=setting.value)
+		#               settingRowSettingValue.grid(row=rowNumber, column=1)
+		#           else:
+		#               settingRowSetting = Button(settingLevelFrame, text=setting.name)
+		#               tempChildLevels.append(setting.getImmediateChildren())
+		#           rowNumber +=1
+		#       self.settingWidgets[settingDisplayNumber] = settingLevelFrame
+		#       settingLevelFrame.pack_forget()
+		#       settingDisplayNumber +=1
+		#   childLevels = tempChildLevels[:]
+
+		#menu --display = -1
+		# self.menuFrame = tk.Frame(mainFrame)
+		# mainMenu = Menu(self.menuFrame, tearoff=0)
+		# firstLevel = self.menu_tree.tree[0].getImmediateChildren()
+		# for setting in firstLevel:
+		#   mainMenu.add_command(label=setting.name)
+		#   # submenu = Menu(mainMenu)
+		#   # for child in setting.getImmediateChildren():
+		#   #   submenu.add_command(label=child.name)
+		# self.master.config(menu=mainMenu)
+		# self.menuFrame.pack_forget()
+
+
+
+	# def createSubmenus(level, mainMenu):
+	#   settingNum =-1
+	#   for setting in level:
+	#       settingNum +=1
+	#       if setting.isLeaf():
+	#           settingRowName = Button(mainMenu, text=str('Change '+setting.name))
+	#           settingRowName.grid(row=rowNumber, column=0)
+	#           settingRowValue = Label(mainMenu, text=setting.value)
+	#           settingRowValue.grid(row=rowNumber, column=1)
+	#           return
+	#       mainMenu.add_command(label=setting.name)
+	#       submenu = Menu(mainMenu)
+	#       name, val = createSubmenus(setting.getImmediateChildren(), submenu)
+
+
+
+
 
 	def MENU_pressed(self):
 		if self.get_mode() == 0:            #capture
