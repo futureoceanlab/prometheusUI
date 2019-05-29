@@ -456,15 +456,21 @@ class Application(tk.Frame):
 		btnG = Button(self, text="LEXP", command=self.EXP_long_pressed)
 		btnG.grid(row=3,column=2)
 
+def gpioTest():
 
+	button1 = gpio.Button(21)
+	button1.whenpressed() = printA()
+
+def printA():
+	print('aaaaaaaaaaaaa')
 
 def main():
 
-	root = tk.Tk()
-	root.geometry('800x480')
-	app = Application(master=root)
-	app.mainloop()
-
+	# root = tk.Tk()
+	# root.geometry('800x480')
+	# app = Application(master=root)
+	# app.mainloop()
+	gpioTest()
 
 if __name__ == '__main__':
 	main()
