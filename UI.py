@@ -1,6 +1,9 @@
-import tkinter as tk
-from tkinter.ttk import Frame, Button, Label, Style 
-from tkinter import *
+try: 
+	from Tkinter import *
+except ImportError:
+	import tkinter as tk
+	from tkinter.ttk import Frame, Button, Label, Style 
+	from tkinter import *
 from PIL import ImageTk,Image 
 
 NUM_EXPOSURES = 5
