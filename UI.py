@@ -3,7 +3,6 @@ from tkinter.ttk import Frame, Button, Label, Style
 from tkinter import *
 from PIL import ImageTk,Image 
 import gpiozero as gpio
-from signal import pause
 import time
 
 BUTTON_LONGPRESS_TIME = 1
@@ -186,7 +185,6 @@ class Application(tk.Frame):
 			#button is being released
 			self.expoBtnState = 0
 			lengthOfPress = time.time() - self.expoHeldStart 
-			print("Expoi length ", lengthOfPress)
 			if lengthOfPress > BUTTON_LONGPRESS_TIME:
 				#it was a long press
 				self.EXP_long_pressed()
