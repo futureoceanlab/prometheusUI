@@ -498,7 +498,8 @@ def gpioTest():
 				print("actn short  press")
 
 def buttonCheck():
-	print('a')
+	while True:
+		print('a')
 
 
 def main():
@@ -508,7 +509,6 @@ def main():
 	app = Application(master=root)
 	root.after(2000, buttonCheck)
 	app.mainloop()
-	print('after main loop')
 
 if __name__ == '__main__':
 	main()
