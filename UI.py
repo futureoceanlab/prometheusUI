@@ -466,26 +466,26 @@ def gpioTest():
 
 	while True:
 		if menuBtn.is_pressed: 
-			if menuBtn.held_time>0.5:
+			if menuBtn.held_time and menuBtn.held_time>1:
 				print("menu long press")
 			else:
 				print("menu short press")
 
 		if dispBtn.is_pressed:
-			if dispBtn.held_time>0.5:
+			if dispBtn.held_time and dispBtn.held_time>1:
 				print("disp long press")
 			else:
 				print("disp short  press")
 
 		if expoBtn.is_pressed:
-			if expoBtn.held_time>0.5:
+			if expoBtn.held_time and expoBtn.held_time>1:
 				print("expo long press")
 			else:
 				print("expo short press")
 
 		if actnBtn.is_pressed:
 
-			if actnBtn.held_time>0.5:
+			if actnBtn.held_time and actnBtn.held_time>1:
 				print("actn long press")
 			else:
 				print("actn short  press")
