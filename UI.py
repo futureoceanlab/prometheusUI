@@ -190,7 +190,7 @@ class Application(tk.Frame):
 				#long press
 				self.DISP_long_pressed()
 				self.dispBtnState = 0
-				self.DISP_BTN.wait_for_press(1)
+				self.DISP_BTN.wait_for_release(3)
 
 
 
