@@ -1,8 +1,6 @@
-try: 
-	from Tkinter import *
-except ImportError:
-	from tkinter.ttk import Frame, Button, Label, Style 
-	from tkinter import *
+import tkinter as tk
+from tkinter.ttk import Frame, Button, Label, Style 
+from tkinter import *
 from PIL import ImageTk,Image 
 
 NUM_EXPOSURES = 5
@@ -113,7 +111,7 @@ class TreeNode():
 		print(s)
 
 
-class Application(Frame):
+class Application(tk.Frame):
 	def __init__(self, master=None):
 		super().__init__(master)
 		self.master = master
@@ -255,7 +253,7 @@ class Application(Frame):
 		topLabel = Label(self, text=self.title, relief=RIDGE, borderwidth=5)
 		topLabel.grid(row=0, column=4, sticky=W+N+E+S, columnspan=2)
 
-		mainFrame = Frame(self, relief=RIDGE, borderwidth=5)
+		mainFrame = tk.Frame(self, relief=RIDGE, borderwidth=5)
 		mainFrame.grid(row=1,column=4, sticky=W+N+E+S)
 
 		dataLabel = Label(self, text=self.get_mainImportantData_string(), relief=RIDGE, borderwidth=5)
@@ -268,7 +266,7 @@ class Application(Frame):
 		self.dataArea = dataLabel
 
 		#DCS grid -- display = 0
-		DCSgrid = Canvas(mainFrame, width=640, height=400)
+		DCSgrid = tk.Canvas(mainFrame, width=640, height=400)
 		DCSgrid.pack()
 		imgs = self.get_four_DCS_images()
 
@@ -284,14 +282,14 @@ class Application(Frame):
 
 
 		#Point Cloud -- display = 1
-		pointCloudCanvas = Canvas(mainFrame, width=640, height=400)
+		pointCloudCanvas = tk.Canvas(mainFrame, width=640, height=400)
 		img = self.get_PC_image()
 		mainFrame.img = img
 		pointCloudCanvas.create_image(0,0,anchor=NW, image=img)
 		pointCloudCanvas.pack_forget()
 
 		#Rich Data -- display = 2
-		richDataGrid = Frame(mainFrame)
+		richDataGrid = tk.Frame(mainFrame)
 		rowNum = 0 
 		for key in self.richData:
 			dataRowKey = Label(richDataGrid, text=key)
@@ -302,21 +300,21 @@ class Application(Frame):
 		richDataGrid.grid_forget()
 
 		# #Color Map -- display = 3
-		colorMapCanvas = Canvas(mainFrame, width=800, height=480)
+		colorMapCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		imgColor = self.get_colorMap_image()
 		mainFrame.imgColor = imgColor
 		colorMapCanvas.create_image(0,0,anchor=NW, image=imgColor)
 		colorMapCanvas.pack_forget()
 
 		# #PreviousImg -- display = 7
-		prevImgCanvas = Canvas(mainFrame, width=800, height=480)
+		prevImgCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		previousImage = self.get_previousImage()
 		mainFrame.previousImage = previousImage
 		prevImgCanvas.create_image(0,0,anchor=NW, image=previousImage)
 		prevImgCanvas.pack_forget()
 
 
-		self.menuFrame = Frame(mainFrame)
+		self.menuFrame = tk.Frame(mainFrame)
 		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
 		self.menuFrame.grid_forget()
 
@@ -326,7 +324,7 @@ class Application(Frame):
 
 		if not atRoot:
 			previousMenu.grid_forget()
-		newMenu = Frame(self.menuFrame)
+		newMenu = tk.Frame(self.menuFrame)
 		level = self.menu_tree.getSelectionLevel(clickedNode)
 		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
 		rowNumber = 0 
@@ -508,7 +506,7 @@ class Application(Frame):
 
 def main():
 
-	root = Tk()
+	root = tk.Tk()
 	root.geometry('800x480')
 	app = Application(master=root)
 	app.mainloop()
