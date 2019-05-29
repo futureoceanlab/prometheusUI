@@ -142,9 +142,6 @@ class Application(tk.Frame):
 		self.DISP_BTN = gpio.Button(20, pull_up=True)
 		self.EXPO_BTN = gpio.Button(16, pull_up=True)
 		self.ACTN_BTN = gpio.Button(12, pull_up=True)
-
-
-
 		self.dispBtnState = 0
 		self.expoBtnState = 0
 		self.actnBtnState = 0
@@ -153,7 +150,7 @@ class Application(tk.Frame):
 		self.actnHeldStart = 0
 		self.create_layout()
 
-	def determineLongOrShortPress():
+	
 
 	def buttonCheck(self):
 
