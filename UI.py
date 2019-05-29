@@ -161,6 +161,8 @@ class Application(tk.Frame):
 		self.viewingPreviousImages = False
 		self.currentPreviousImage = 0
 		self.dispSinceLongheld = 0 
+		self.expoSinceLongheld = 0
+		self.actnSinceLongheld = 0 
 		self.create_layout()
 
 	
@@ -198,37 +200,53 @@ class Application(tk.Frame):
 
 
 		# EXPOSURE BUTTON
-		if self.EXPO_BTN.is_pressed and not self.expoBtnState:
-			#button is being pressed down 
-			self.expoBtnState = 1
-			self.expoHeldStart = time.time()
+		if (time.time() - self.expoSinceLongheld)>1:
+			if self.EXPO_BTN.is_pressed and not self.expoBtnState:
+				#button is being pressed down 
+				self.expoBtnState = 1
+				self.expoHeldStart = time.time()
 
-		if not self.EXPO_BTN.is_pressed and self.expoBtnState:
-			#button is being released
-			self.expoBtnState = 0
-			lengthOfPress = time.time() - self.expoHeldStart 
-			if lengthOfPress > BUTTON_LONGPRESS_TIME:
-				#it was a long press
-				self.EXP_long_pressed()
-			else:
-				self.EXP_short_pressed()
+			if not self.EXPO_BTN.is_pressed and self.expoBtnState:
+				#button is being released
+				self.expoBtnState = 0
+				lengthOfPress = time.time() - self.expoHeldStart 
+				if lengthOfPress < BUTTON_LONGPRESS_TIME:
+					#it was a short press
+					self.EXP_short_pressed()
+
+			if self.expoBtnState:
+				#check if it is longpress yet
+				lengthOfPress = time.time() - self.expoHeldStart
+				if lengthOfPress > BUTTON_LONGPRESS_TIME:
+					#long press
+					self.EXP_long_pressed()
+					self.expoBtnState = 0
+					self.expoSinceLongheld = time.time()
 
 
 		#ACTION BUTTON
-		if self.ACTN_BTN.is_pressed and not self.actnBtnState:
-			#button is being pressed down 
-			self.actnBtnState = 1
-			self.actnHeldStart = time.time()
+		if (time.time() - self.actnSinceLongheld)>1:
+			if self.ACTN_BTN.is_pressed and not self.actnBtnState:
+				#button is being pressed down 
+				self.actnBtnState = 1
+				self.actnHeldStart = time.time()
 
-		if not self.ACTN_BTN.is_pressed and self.actnBtnState:
-			#button is being released
-			self.actnBtnState = 0
-			lengthOfPress = time.time() - self.actnHeldStart
-			if lengthOfPress > BUTTON_LONGPRESS_TIME:
-				#it was a long press
-				self.ACTN_long_pressed()
-			else:
-				self.ACTN_short_pressed()
+			if not self.ACTN_BTN.is_pressed and self.actnBtnState:
+				#button is being released
+				self.actnBtnState = 0
+				lengthOfPress = time.time() - self.actnHeldStart 
+				if lengthOfPress < BUTTON_LONGPRESS_TIME:
+					#it was a short press
+					self.ACTN_short_pressed()
+
+			if self.actnBtnState:
+				#check if it is longpress yet
+				lengthOfPress = time.time() - self.actnHeldStart
+				if lengthOfPress > BUTTON_LONGPRESS_TIME:
+					#long press
+					self.ACTN_long_pressed()
+					self.actnBtnState = 0
+					self.actnSinceLongheld = time.time()
 
 		# This allows for the button checker to run continously, 
 		# alongside the mainloop
