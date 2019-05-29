@@ -26,6 +26,13 @@ MENUTREE = {'root':{
 							}
 						}
 
+
+MENU_BTN = gpio.Button(21, pull_up=True)
+DISP_BTN = gpio.Button(20, pull_up=True)
+EXPO_BTN = gpio.Button(16, pull_up=True)
+ACTN_BTN = gpio.Button(12, pull_up=True)
+
+
 class MenuTree():
 	# A tree is a list of nodes 
 	# Nodes have a name and a list of child nodes
@@ -490,13 +497,17 @@ def gpioTest():
 			else:
 				print("actn short  press")
 
+def buttonCheck():
+	print('a')
+
+
 def main():
 
-	# root = tk.Tk()
-	# root.geometry('800x480')
-	# app = Application(master=root)
-	# app.mainloop()
-	gpioTest()
+	root = tk.Tk()
+	root.geometry('800x480')
+	app = Application(master=root)
+	root.after(2000, buttonCheck)
+	app.mainloop()
 
 if __name__ == '__main__':
 	main()
