@@ -189,7 +189,7 @@ class Application(tk.Frame):
 			if lengthOfPress > BUTTON_LONGPRESS_TIME:
 				#long press
 				self.DISP_long_pressed()
-				time.sleep(5)
+				self.dispBtnState = 0 
 
 
 
