@@ -146,16 +146,16 @@ class Application(tk.Frame):
 	def buttonCheck(self):
 
 
-		if menuBtn.is_pressed: 
+		if self.MENU_BTN.is_pressed: 
 			self.MENU_pressed()
 
-		if dispBtn.held_time and dispBtn.held_time>BUTTON_LONGPRESS_TIME:
+		if self.DISP_BTN.held_time and self.DISP_BTN.held_time>BUTTON_LONGPRESS_TIME:
 			self.DISP_long_pressed()
 
-		if expoBtn.held_time and expoBtn.held_time>BUTTON_LONGPRESS_TIME:
+		if self.EXPO_BTN.held_time and self.EXPO_BTN.held_time>BUTTON_LONGPRESS_TIME:
 			self.EXP_long_pressed()
 
-		if actnBtn.held_time and actnBtn.held_time>BUTTON_LONGPRESS_TIME:
+		if self.ACTN_BTN.held_time and self.ACTN_BTN.held_time>BUTTON_LONGPRESS_TIME:
 			self.ACTN_long_pressed()
 
 
