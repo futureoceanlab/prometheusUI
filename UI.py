@@ -186,6 +186,7 @@ class Application(tk.Frame):
 			#button is being released
 			self.expoBtnState = 0
 			lengthOfPress = self.expoHeldStart - time.time()
+			print("Expoi length ", lengthOfPress)
 			if lengthOfPress > BUTTON_LONGPRESS_TIME:
 				#it was a long press
 				self.EXP_long_pressed()
@@ -209,18 +210,6 @@ class Application(tk.Frame):
 			else:
 				self.ACTN_short_pressed()
 
-
-
-
-
-		# if self.DISP_BTN.held_time and self.DISP_BTN.held_time>BUTTON_LONGPRESS_TIME:
-		# 	self.DISP_long_pressed()
-
-		# if self.EXPO_BTN.held_time and self.EXPO_BTN.held_time>BUTTON_LONGPRESS_TIME:
-		# 	self.EXP_long_pressed()
-
-		# if self.ACTN_BTN.held_time and self.ACTN_BTN.held_time>BUTTON_LONGPRESS_TIME:
-		# 	self.ACTN_long_pressed()
 
 
 		self.master.after(50, self.buttonCheck)
