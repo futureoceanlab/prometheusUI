@@ -171,7 +171,7 @@ class Application(tk.Frame):
 		#MENU BUTTON is just short press so it is handled in __init__
 
 		# DISPLAY BUTTON
-		if (time.time() - self.dispSinceLongheld)>2:
+		if (time.time() - self.dispSinceLongheld)>1:
 			if self.DISP_BTN.is_pressed and not self.dispBtnState:
 				#button is being pressed down 
 				self.dispBtnState = 1
