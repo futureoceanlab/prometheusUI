@@ -480,7 +480,7 @@ class Application(tk.Frame):
 				if self.viewingPreviousImages:
 					#get the next previous image
 					self.setPreviousImage(self.get_previousImage(self.currentPreviousImage))
-					self.currentPreviousImage +=1
+					self.currentPreviousImage = (1 + self.currentPreviousImage)%len(self.previousImages)
 
 				self.change_display()
 			else:
