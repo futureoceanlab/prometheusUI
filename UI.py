@@ -481,8 +481,9 @@ class Application(tk.Frame):
 					#get the next previous image
 					self.setPreviousImage(self.get_previousImage(self.currentPreviousImage))
 					self.currentPreviousImage = (1 + self.currentPreviousImage)%len(self.previousImages)
-
-				self.change_display()
+					self.update_display()
+				else:
+					self.change_display()
 			else:
 				print("TAKING VIDEO --> DOING NOTHING")
 		else:                           
