@@ -508,6 +508,7 @@ def main():
 	app = Application(master=root)
 	root.after(2000, buttonCheck)
 	app.mainloop()
+	print('after main loop')
 
 if __name__ == '__main__':
 	main()
