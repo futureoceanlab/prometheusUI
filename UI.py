@@ -459,13 +459,14 @@ class Application(tk.Frame):
 
 def gpioTest():
 
-	button1 = gpio.Button(21)
-	button1.when_pressed = printA
+	menuBtn = gpio.Button(21)
+	dispBtn = gpio.Button(20)
+	expoBtn = gpio.Button(16)
+	actnBtn = gpio.Button(12)
 
-	pause()
+	while True:
+		print(menuBtn.held_time)
 
-def printA():
-	print('aaaaaaaaaaaaa')
 
 def main():
 
