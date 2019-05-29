@@ -491,6 +491,7 @@ class Application(tk.Frame):
 
 	def DISP_long_pressed(self):
 		self.currentPreviousImage = 0
+		self.setPreviousImage(self.get_previousImage(self.currentPreviousImage))
 		if self.get_mode() == 0 and not self.get_video_state():  
 			#capture mode and not taking video
 			self.toggle_prev_image()
