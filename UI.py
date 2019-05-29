@@ -167,10 +167,7 @@ class Application(tk.Frame):
 	def buttonCheck(self):
 		# The function that continuously checks the state of the buttons
 
-		#MENU BUTTON (there is not long menu press)
-		# if self.MENU_BTN.is_pressed: 
-		# 	self.MENU_pressed()
-
+		#MENU BUTTON is just short press so it is handled in __init__
 
 		# DISPLAY BUTTON
 		if self.DISP_BTN.is_pressed and not self.dispBtnState:
@@ -182,11 +179,12 @@ class Application(tk.Frame):
 			#button is being released
 			self.dispBtnState = 0
 			lengthOfPress = time.time() - self.dispHeldStart 
-			if lengthOfPress > BUTTON_LONGPRESS_TIME:
-				#it was a long press
-				self.DISP_long_pressed()
-			else:
+			if lengthOfPress < BUTTON_LONGPRESS_TIME:
+				#it was a short press
 				self.DISP_short_pressed()
+
+		if self.DISP_BTN.held_time > BUTTON_LONGPRESS_TIME:
+			self.DISP_long_pressed()
 
 
 		# EXPOSURE BUTTON
@@ -320,30 +318,6 @@ class Application(tk.Frame):
 
 		if display == 0:
 			self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S)
-
-
-		# if display == 7:
-		# 	for i in [0,1,2,3]:
-		# 		self.mainArea.winfo_children()[i].pack_forget()
-		# 	self.mainArea.winfo_children()[4].pack()
-		# 	self.winfo_children()[2].grid_forget()
-
-		# elif display == -1:
-		# 	for i in [0,1,2,3]:
-		# 		self.mainArea.winfo_children()[i].pack_forget()
-		# 	self.mainArea.winfo_children()[5].grid()
-		# 	self.winfo_children()[2].grid_forget()
-
-		# else:
-		# 	self.mainArea.winfo_children()[4].pack_forget()
-		# 	self.mainArea.winfo_children()[display].pack()
-		# 	self.mainArea.winfo_children()[(display-1)%4].pack_forget()
-
-		# 	if display == 0:
-		# 		self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S)
-
-		# 	elif display == 2:
-		# 		self.winfo_children()[2].grid_forget()
 
 
 	def create_layout(self):
