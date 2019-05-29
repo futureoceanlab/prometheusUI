@@ -241,10 +241,6 @@ class Application(tk.Frame):
 				ImageTk.PhotoImage(Image.open(self.previousImage).resize((320,240),Image.ANTIALIAS)),
 				ImageTk.PhotoImage(Image.open(self.previousImage).resize((320,240),Image.ANTIALIAS)),
 				ImageTk.PhotoImage(Image.open(self.previousImage).resize((320,240),Image.ANTIALIAS))]
-		# return [PhotoImage(file=self.previousImage),
-		#       PhotoImage(file=self.previousImage),
-		#       PhotoImage(file=self.previousImage),
-		#       PhotoImage(file=self.previousImage)]
 
 	def get_PC_image(self):
 		return ImageTk.PhotoImage(Image.open(self.previousImage).resize((640,480),Image.ANTIALIAS))
@@ -296,6 +292,7 @@ class Application(tk.Frame):
 			self.mainArea.winfo_children()[5].grid()
 			self.winfo_children()[2].grid_forget()
 		else:
+			self.mainArea.winfo_children()[4].pack_forget()
 			self.mainArea.winfo_children()[display].pack()
 			self.mainArea.winfo_children()[(display-1)%4].pack_forget()
 
@@ -306,9 +303,6 @@ class Application(tk.Frame):
 			elif display == 2:
 
 				self.winfo_children()[2].grid_forget()
-
-				
-
 
 
 	def create_layout(self):
