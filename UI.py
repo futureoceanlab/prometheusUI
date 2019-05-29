@@ -274,16 +274,16 @@ class Application(tk.Frame):
 		return self.showingLiveView()
 
 	def get_previousImage(self, x):
-		return ImageTk.PhotoImage(Image.open(self.previousImages[x]).resize((640,480),Image.ANTIALIAS))
+		return ImageTk.PhotoImage(Image.open(self.previousImages[x]).resize((600,450),Image.ANTIALIAS))
 
 	def get_four_DCS_images(self):
-		return [ImageTk.PhotoImage(Image.open(self.previousImage).resize((320,240),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(Image.open(self.previousImage).resize((320,240),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(Image.open(self.previousImage).resize((320,240),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(Image.open(self.previousImage).resize((320,240),Image.ANTIALIAS))]
+		return [ImageTk.PhotoImage(Image.open(self.previousImage).resize((300,225),Image.ANTIALIAS)),
+				ImageTk.PhotoImage(Image.open(self.previousImage).resize((300,225),Image.ANTIALIAS)),
+				ImageTk.PhotoImage(Image.open(self.previousImage).resize((300,225),Image.ANTIALIAS)),
+				ImageTk.PhotoImage(Image.open(self.previousImage).resize((300,225),Image.ANTIALIAS))]
 
 	def get_PC_image(self):
-		return ImageTk.PhotoImage(Image.open(self.previousImage).resize((640,480),Image.ANTIALIAS))
+		return ImageTk.PhotoImage(Image.open(self.previousImage).resize((600,450),Image.ANTIALIAS))
 
 	def get_colorMap_image(self):
 		return ImageTk.PhotoImage(Image.open(self.previousImage).resize((800,480),Image.ANTIALIAS))
@@ -377,7 +377,7 @@ class Application(tk.Frame):
 		self.dataArea = dataLabel
 
 		#DCS grid -- display = 0
-		DCSgrid = tk.Canvas(mainFrame, width=640, height=400)
+		DCSgrid = tk.Canvas(mainFrame, width=600, height=450)
 		DCSgrid.pack()
 		imgs = self.get_four_DCS_images()
 
@@ -387,13 +387,13 @@ class Application(tk.Frame):
 		mainFrame.d = d = imgs[3]
 
 		DCSgrid.create_image(0,0, anchor=NW, image=a)
-		DCSgrid.create_image(240,0,anchor=NW, image=b)
-		DCSgrid.create_image(0,240,anchor=NW, image=c)
-		DCSgrid.create_image(240,240,anchor=NW, image=d)
+		DCSgrid.create_image(300,0,anchor=NW, image=b)
+		DCSgrid.create_image(0,225,anchor=NW, image=c)
+		DCSgrid.create_image(300,225,anchor=NW, image=d)
 
 
 		#Point Cloud -- display = 1
-		pointCloudCanvas = tk.Canvas(mainFrame, width=640, height=400)
+		pointCloudCanvas = tk.Canvas(mainFrame, width=600, height=450)
 		img = self.get_PC_image()
 		mainFrame.img = img
 		pointCloudCanvas.create_image(0,0,anchor=NW, image=img)
