@@ -148,7 +148,7 @@ class Application(tk.Frame):
 		self.settingWidgets = {}
 		self.menuFrame = None
 		self.MENU_BTN = gpio.Button(21, pull_up=True)
-		self.DISP_BTN = gpio.Button(20, pull_up=True)
+		self.DISP_BTN = gpio.Button(20, pull_up=True, bounce_time=1)
 		self.EXPO_BTN = gpio.Button(16, pull_up=True)
 		self.ACTN_BTN = gpio.Button(12, pull_up=True)
 		self.MENU_BTN.when_pressed = self.MENU_pressed
@@ -183,7 +183,8 @@ class Application(tk.Frame):
 				#it was a short press
 				self.DISP_short_pressed()
 
-		if self.DISP_BTN.held_time and self.DISP_BTN.held_time > BUTTON_LONGPRESS_TIME:
+		if 	self.DISP_BTN.held_time and 
+			self.DISP_BTN.held_time > BUTTON_LONGPRESS_TIME:
 			self.DISP_long_pressed()
 
 
