@@ -361,7 +361,7 @@ class Application(tk.Frame):
 
 		#the 3 main frames
 
-		topLabel = Label(self, text=self.title, relief=RIDGE, borderwidth=5)
+		topLabel = Label(self, text=self.title, relief=RIDGE, borderwidth=5, font=('Helvetica', 16))
 		topLabel.grid(row=0, column=0, sticky=W+N+E+S, columnspan=2)
 
 		mainFrame = tk.Frame(self, relief=RIDGE, borderwidth=5)
@@ -442,13 +442,11 @@ class Application(tk.Frame):
 		print("CLICKED NODE ", clickedNode.name)
 
 		if not atRoot:
-			print("forgettting ")
 			previousMenu.grid_forget()
 		newMenu = tk.Frame(self.menuFrame, bg='red', width=750, height=400)
 		level = self.menu_tree.getSelectionLevel(clickedNode)
 		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
 		rowNumber = 0 
-		print("LLL ", level)
 		for child in level:
 			if child.isLeaf():
 				settingKey = Button(self.menuFrame, text=str('Change ')+child.name)
