@@ -317,29 +317,23 @@ class Application(tk.Frame):
 		#used at the inital turn on
 
 		self.pack(fill=BOTH, expand=True)
-		self.columnconfigure(0,weight=1)
+		self.columnconfigure(0,weight=3)
 		self.columnconfigure(1,weight=1)
-		self.columnconfigure(2,weight=1)
-		self.columnconfigure(3,weight=1)
-		self.columnconfigure(4,weight=10)
-		self.columnconfigure(5,weight=2)
 		self.rowconfigure(0,weight=1)
-		self.rowconfigure(1,weight=10)
-		self.rowconfigure(2,weight=1)
-		self.rowconfigure(3,weight=1)
+		self.rowconfigure(1,weight=5)
 
 		#the 3 main frames
 
 		topLabel = Label(self, text=self.title, relief=RIDGE, borderwidth=5)
-		topLabel.grid(row=0, column=4, sticky=W+N+E+S, columnspan=2)
+		topLabel.grid(row=0, column=0, sticky=W+N+E+S, columnspan=2)
 
 		mainFrame = tk.Frame(self, relief=RIDGE, borderwidth=5)
-		mainFrame.grid(row=1,column=4, sticky=W+N+E+S)
+		mainFrame.grid(row=1,column=0, sticky=W+N+E+S)
 
 		dataLabel = Label(self, text=self.get_mainImportantData_string(), relief=RIDGE, borderwidth=5)
-		dataLabel.grid(row=1, column=5, sticky=W+N+E+S)
+		dataLabel.grid(row=1, column=1, sticky=W+N+E+S)
 
-		self.create_temp_buttons()
+		# self.create_temp_buttons()
 
 		self.topArea = topLabel
 		self.mainArea = mainFrame
