@@ -119,15 +119,12 @@ class Application(tk.Frame):
 	def __init__(self, master=None):
 		super().__init__(master)
 		self.master = master
-		self._geom='200x200+0+0'
-		self.master.geometry("{0}x{1}+0+0".format(
-			self.master.winfo_screenwidth()-4, self.master.winfo_screenheight()-4))
 		self.mode = 0       #   0 is capture; 1 is menu
 		self.display = 0    
 		# DISPLAY INDEXES
 		# There are 4 main displays in capture mode (0,1,2,3)
 		# The 'show previous image' display is 7 because (7+1)%4=0 
-		#   so it goes back to display 0 (see change_display())
+		# 	so it goes back to display 0 (see change_display())
 		# The 'menu display' is -1 because it is the last display in the
 		# menu list self.mainArea.winfo_children and (-1+1)%4 = 0 
 		# 0  --  4x DCS images  
@@ -441,7 +438,7 @@ class Application(tk.Frame):
 
 		print("PREVIOUS MENU", previousMenu)
 		# for i in previousMenu:
-		#   print("--", i.name)
+		# 	print("--", i.name)
 		print("CLICKED NODE ", clickedNode.name)
 
 		if not atRoot:
@@ -479,7 +476,7 @@ class Application(tk.Frame):
 
 	def DISP_short_pressed(self):
 		if self.get_mode() == 0:
-			#capture mode
+		    #capture mode
 			if not self.get_video_state():  #ready to take photo
 				#not taking video
 				if self.viewingPreviousImages:
@@ -585,7 +582,8 @@ class Application(tk.Frame):
 def main():
 
 	root = tk.Tk()
-	root.geometry('800x480')
+	root.overrideredirect(True)
+	root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
 	app = Application(master=root)
 	app.buttonCheck()
 	app.mainloop()
