@@ -490,10 +490,10 @@ class Application(tk.Frame):
 			print("go UP")
 
 	def DISP_long_pressed(self):
+		self.currentPreviousImage = 0
 		if self.get_mode() == 0 and not self.get_video_state():  
 			#capture mode and not taking video
 			self.toggle_prev_image()
-			self.currentPreviousImage = 0
 			self.update_display()
 
 	def EXP_short_pressed(self):
