@@ -471,21 +471,24 @@ def gpioTest():
 			elif menuBtn.held_time<0.5 and menuBtn.held_time>0.01:
 				print("short menu press")
 
+		if dispBtn.held_time:
+			if dispBtn.held_time>0.5:
+				print("disp long press")
+			elif dispBtn.held_time<0.5 and dispBtn.held_time>0.01:
+				print("short disp press")
 
-		# if dispBtn.held_time>2:
-		# 	print("disp long press")
-		# elif dispBtn.held_time<2 and dispBtn.held_time>0.2:
-		# 	print("short disp press")
+		if expoBtn.held_time:
+			if expoBtn.held_time>0.5:
+				print("expo long press")
+			elif expoBtn.held_time<0.5 and expoBtn.held_time>0.01:
+				print("short expo press")
 
-		# if expoBtn.held_time>2:
-		# 	print("expo long press")
-		# elif expoBtn.held_time<2 and expoBtn.held_time>0.2:
-		# 	print("short expo press")
+		if actnBtn.held_time:
 
-		# if actnBtn.held_time>2:
-		# 	print("actn long press")
-		# elif actnBtn.held_time<2 and actnBtn.held_time>0.2:
-		# 	print("short actn press")
+			if actnBtn.held_time>0.5:
+				print("actn long press")
+			elif actnBtn.held_time<0.5 and actnBtn.held_time>0.01:
+				print("short actn press")
 
 def main():
 
