@@ -148,7 +148,7 @@ class Application(tk.Frame):
 		self.settingWidgets = {}
 		self.menuFrame = None
 		self.MENU_BTN = gpio.Button(21, pull_up=True)
-		self.DISP_BTN = gpio.Button(20, pull_up=True, bounce_time=5.0)
+		self.DISP_BTN = gpio.Button(20, pull_up=True)
 		self.EXPO_BTN = gpio.Button(16, pull_up=True)
 		self.ACTN_BTN = gpio.Button(12, pull_up=True)
 		self.MENU_BTN.when_pressed = self.MENU_pressed
@@ -189,6 +189,7 @@ class Application(tk.Frame):
 			if lengthOfPress > BUTTON_LONGPRESS_TIME:
 				#long press
 				self.DISP_long_pressed()
+				time.sleep(1)
 
 
 
