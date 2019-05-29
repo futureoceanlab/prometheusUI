@@ -183,9 +183,13 @@ class Application(tk.Frame):
 				#it was a short press
 				self.DISP_short_pressed()
 
-		if 	self.DISP_BTN.held_time and self.DISP_BTN.held_time > BUTTON_LONGPRESS_TIME and not self.dispBtnState:
-			self.DISP_long_pressed()
-			self.dispBtnState = 1 
+		if self.dispBtnState:
+			#check if it is longpress yet
+			lengthOfPress = time.time() - self.dispHeldStart
+			if lengthOfPress > BUTTON_LONGPRESS_TIME:
+				#long press
+				self.DISP_long_pressed()
+			
 
 
 		# EXPOSURE BUTTON
