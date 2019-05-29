@@ -459,7 +459,7 @@ class Application(tk.Frame):
 def gpioTest():
 
 	button1 = gpio.Button(21)
-	button1.whenpressed() = printA()
+	button1.whenpressed() = printA
 
 def printA():
 	print('aaaaaaaaaaaaa')
