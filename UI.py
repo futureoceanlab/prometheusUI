@@ -3,6 +3,7 @@ from tkinter.ttk import Frame, Button, Label, Style
 from tkinter import *
 from PIL import ImageTk,Image 
 import gpiozero as gpio
+from signal import pause
 
 NUM_EXPOSURES = 5
 MODE_OPTIONS = ["CAPTURE", "MENU"]
