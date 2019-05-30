@@ -451,7 +451,7 @@ class Application(tk.Frame):
 		if not atRoot:
 			previousMenu.grid_forget()
 		newMenu = tk.Frame(self.menuFrame, bg='red', width=750, height=400)
-		level = self.menu_tree.getSelectionLevel(clickedNode)
+		level = sort(self.menu_tree.getSelectionLevel(clickedNode))
 		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
 		rowNumber = 0 
 		for child in level:
