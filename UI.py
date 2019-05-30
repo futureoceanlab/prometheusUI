@@ -659,11 +659,13 @@ class Application(tk.Frame):
 	def change_exposure2d(self):
 		exposureIndex = EXPOSURE_OPTIONS.index(self.exposure2d)
 		self.exposure2d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
+		self.update_display()
 		print("EXP2D: ", self.exposure2d)
 
 	def change_exposure3d(self):
 		exposureIndex = EXPOSURE_OPTIONS.index(self.exposure3d)
 		self.exposure3d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
+		self.update_display()
 		print("EXP3D: ", self.exposure3d)
 
 	def capture_video(self):
