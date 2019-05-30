@@ -21,8 +21,7 @@ MENUTREE = {'root':{
 												'light angle': 5,
 												'light color': 6
 											} ,
-							'Key1': 'val1',
-							'key2': 'val2'
+							'Key1': 'val1'
 
 							}
 						}
