@@ -6,10 +6,11 @@ import gpiozero as gpio
 import time
 import os
 import numpy as np
-import uiFunctionCalls
+# import uiFunctionCalls
 
 BUTTON_LONGPRESS_TIME = 1
-NUM_EXPOSURES = 5
+EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
+NUM_EXPOSURES = len(EXPOSURE_OPTIONS)
 MODE_OPTIONS = ["CAPTURE", "MENU"]
 MENUTREE = {'root':{
 							'Camera Settings': {'CamSubsetting1': 'f22',
@@ -30,9 +31,9 @@ MENUTREE = {'root':{
 						}
 
 TEMP_MENUTREE ={'root': {
-						"NUMBER OF CAMERAS": (0, [0,1,2]),
-						"ANOTHER PARAMETER": (2, [2,4,6]),
-						"A THIRD PARAMETER": (56,[56,123,345,45234]),
+						"DIMENSION MODE": ('2D', ['2D','3D','4D']),
+						"MODULATION FREQ": (0, [0,1,2]),
+						"ENABLE PI DELAY": (0, [0,1,2]),
 
 }
 	
@@ -186,12 +187,12 @@ class Application(tk.Frame):
 		self.menuFrame = None
 
 		#data contained in the UI 
-		self.mainImportantData = {'Battery': '50%', 'Mem': str(43.2)+'GB', 'S/N ratio': 0.6} 
-		self.richData = {'exposure':self.exposure2d, 'aperture': 'f22', 'PC size': 1000000}
+		self.mainImportantData = {'Battery': '50%', 'Mem': str(43.2)+'GB', 'S/N ratio': 0.6, 'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d} 
+		self.richData = {'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d}
 		self.menu_tree = MenuTree(MENUTREE)
 		self.temp_menu_tree = MenuTree(TEMP_MENUTREE)
 		self.previousImage = 'ocean.jpg'
-		self.previousImages = ['ocean.jpg', 'ocean2.gif','reef.jpg']
+		self.previousImages = []
 		self.currentSelectionButton = None
 		self.currentSelectionNode = None
 		self.nodeToButtonDict = {}
@@ -605,10 +606,10 @@ class Application(tk.Frame):
 		if self.get_mode() == 0:            #capture
 			if not self.dimensionMode:		#2d
 				self.change_exposure2d()
-				uiFunctionCalls.change2dExposure(self.exposure2d)
+				# uiFunctionCalls.change2dExposure(self.exposure2d)
 			else:
 				self.change_exposure3d()
-				uiFunctionCalls.change3dExposure(self.exposure3d)
+				# uiFunctionCalls.change3dExposure(self.exposure3d)
 		else:                               #menu mode
 			self.selectDown(self.currentSelectionNode)
 
@@ -622,10 +623,12 @@ class Application(tk.Frame):
 	def ACTN_short_pressed(self):
 		if self.get_mode() == 0:            #capture
 			if not self.get_video_state():  #ready to take photo
-				if not self.dimensionMode:		#2d
-					uiFunctionCalls.capturePhotoCommand2D("./captureImages/"+str(time.utctime.now()))
-				else:
-					uiFunctionCalls.capturePhotoCommand3D("./captureImages/"+str(time.utctime.now()))
+				fileLocation = "./captureImages/"+str(time.utctime.now())
+				self.previousImages = [fileLocation] + self.previousImages
+				# if not self.dimensionMode:		#2d
+				# 	uiFunctionCalls.capturePhotoCommand2D(fileLocation)
+				# else:
+				# 	uiFunctionCalls.capturePhotoCommand3D(fileLocation)
 			else:
 				print("END VIDEO")          #currently taking video
 				self.toggle_video_state()
@@ -654,12 +657,14 @@ class Application(tk.Frame):
 		self.update_display()
 
 	def change_exposure2d(self):
-		self.exposure2d = (self.exposure2d +1)%NUM_EXPOSURES
-		print("EXP: ", self.exposure2d)
+		exposureIndex = EXPOSURE_OPTIONS.index(self.exposure2d)
+		self.exposure2d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
+		print("EXP2D: ", self.exposure2d)
 
 	def change_exposure3d(self):
-		self.exposure3d = (self.exposure3d +1)%NUM_EXPOSURES
-		print("EXP: ", self.exposure3d)
+		exposureIndex = EXPOSURE_OPTIONS.index(self.exposure3d)
+		self.exposure3d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
+		print("EXP3D: ", self.exposure3d)
 
 	def capture_video(self):
 		print("TAKE VIDEO")
@@ -669,19 +674,19 @@ class Application(tk.Frame):
 
 	def toggle_2d3d(self):
 		self.dimensionMode = 1 - self.dimensionMode
-		uiFunctionCalls.toggle2d3dMode(self.dimensionMode)
+		# uiFunctionCalls.toggle2d3dMode(self.dimensionMode)
 
 	def setModulationFrequency(self):
 		self.modFreq = 1 - self.modFreq
-		uiFunctionCalls.setModulationFrequency(self.modFreq)
+		# uiFunctionCalls.setModulationFrequency(self.modFreq)
 
 	def toggleEnablePiDelay(self):
 		self.piDelay = 1 - self.piDelay
-		uiFunctionCalls.enablePiDelay(self.piDelay)
+		# uiFunctionCalls.enablePiDelay(self.piDelay)
 
 	def toggleEnableCapture(self):
 		self.enableCapture = 1 - self.enableCapture
-		uiFunctionCalls.enablePiDelay(self.enableCapture)
+		# uiFunctionCalls.enablePiDelay(self.enableCapture)
 
 
 
