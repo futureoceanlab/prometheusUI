@@ -95,12 +95,23 @@ class TreeNode():
 			self.children = None
 
 	def getImmediateChildren(self):
-		return sorted(self.children, key=self.sortChildren())
+		sortedChildren = sortChildren(self.children)
+		return sortedChildren
 
-	def sortChildren(self):
-		if self.isLeaf():			
-			return str(self.value)
-		return self.name
+	def sortChildren(children):        
+	    for i in range(len(children)):
+	        minimum = i
+	        
+	        for j in range(i + 1, len(children)):
+	            # Select the smallest value
+	            if children[j].name < children[minimum].name:
+	                minimum = j
+
+	        # Place it at the front of the 
+	        # sorted end of the array
+	        children[minimum], children[i] = children[i], children[minimum]
+	            
+	    return children
 
 	def isLeaf(self):
 		return self.children == None
