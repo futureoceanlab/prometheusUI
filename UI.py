@@ -377,6 +377,9 @@ class Application(tk.Frame):
 		#update title
 		self.topArea["text"] = self.get_title()
 
+		#update data
+		self.dataArea['text'] = self.get_mainImportantData_string()
+
 		#update main area dimensions
 		#the display below is the display that the screen is CHANGING TO
 		#not the one that it is coming from
