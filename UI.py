@@ -8,6 +8,7 @@ import os
 import numpy as np
 import uiFunctionCalls
 import camera_power
+from datetime import datetime
 
 BUTTON_LONGPRESS_TIME = 1
 EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
@@ -334,6 +335,7 @@ class Application(tk.Frame):
 		return self.showingLiveView()
 
 	def get_previousImage(self, x):
+		print("PREEEEVVV", self.previousImages)
 		return ImageTk.PhotoImage(Image.open(self.previousImages[x]).resize((600,450),Image.ANTIALIAS))
 
 	def get_four_DCS_images(self):
@@ -637,12 +639,13 @@ class Application(tk.Frame):
 	def ACTN_short_pressed(self):
 		if self.get_mode() == 0:            #capture
 			if not self.get_video_state():  #ready to take photo
-				fileLocation = "./captureImages/"+str(time.utctime.now())
-				self.previousImages = [fileLocation] + self.previousImages
+				fileLocation = "./captureImages/"+str(datetime.utcnow().strftime(
+"%m%d%H%M%S"))
 				if not self.dimensionMode:		#2d
-					uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
+					returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
 				else:
-					uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
+					returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
+				self.previousImages = returnedFile + self.previousImages
 			else:
 				print("END VIDEO")          #currently taking video
 				self.toggle_video_state()

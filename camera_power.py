@@ -104,7 +104,7 @@ if __name__ == "__main__":
     #        time.sleep(4)
     #except TimeoutError as e:
     #    print("Got here?")
-    prom_cli_works()
+    #prom_cli_works()
     target = sys.argv[1]
     print("Start power cycling BBB target %s" %(target))
     if (target == '0'):

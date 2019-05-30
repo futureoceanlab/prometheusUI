@@ -10,8 +10,8 @@ def capturePhotoCommand2D(filename):
     cmd = " -a \"getBWSorted\"" 
     file0 = filename + "_0.bin"
     file1 = filename + "_1.bin"
-    prom_cli0 = prom_cli + cmd + " -i 0 | hexdump >> %s" %(file0)
-    prom_cli1 = prom_cli + cmd + " -i 1 | hexdump >> %s" %(file1)
+    prom_cli0 = prom_cli + cmd + " -i 0  >> %s" %(file0)
+    prom_cli1 = prom_cli + cmd + " -i 1  >> %s" %(file1)
     camsel = LED(18)
     # capture 0 
     camsel.off()
@@ -19,10 +19,11 @@ def capturePhotoCommand2D(filename):
     # capture 1
     camsel.on()
     os.system(prom_cli1)
-    camset.off()
+    camsel.off()
     # image processing
-    binReader.readBinaryFile(file0)
-    binReader.readBinaryFile(file1)
+    img0s = binReader.readBinaryFile(file0)
+    img1s = binReader.readBinaryFile(file1)
+    return img0s + img1s
 
 def capturePhotoCommand3D(filename):
     # sanity check may be necessary
@@ -32,8 +33,8 @@ def capturePhotoCommand3D(filename):
     cmd = " -a \"getDCSSorted\"" 
     file0 = filename + "_0.bin"
     file1 = filename + "_1.bin"
-    prom_cli0 = prom_cli + cmd + " -i 0 | hexdump >> %s" %(file0)
-    prom_cli1 = prom_cli + cmd + " -i 1 | hexdump >> %s" %(file1)
+    prom_cli0 = prom_cli + cmd + " -i 0 >> %s" %(file0)
+    prom_cli1 = prom_cli + cmd + " -i 1 >> %s" %(file1)
     camsel = LED(18)
     # capture 0 
     camsel.off()
@@ -41,12 +42,12 @@ def capturePhotoCommand3D(filename):
     # capture 1
     camsel.on()
     os.system(prom_cli1)
-    camset.off()
+    camsel.off()
 
     # image processing
-    binReader.readBinaryFile(file0)
-    binReader.readBinaryFile(file1)
-
+    img0s = binReader.readBinaryFile(file0)
+    img1s = binReader.readBinaryFile(file1)
+    return img0s+img1s
 
 def change2dExposure(exposure):
     # Power sanity might be neede
