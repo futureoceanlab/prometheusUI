@@ -458,12 +458,8 @@ class Application(tk.Frame):
 
 	def createMenu(self, previousMenu, clickedNode, atRoot):
 
-		print("PREVIOUS MENU", previousMenu)
-		# for i in previousMenu:
-		# 	print("--", i.name)
-		print("CLICKED NODE ", clickedNode.name)
-
 		if not atRoot:
+			print("FORGETTITNG")
 			previousMenu.grid_forget()
 		newMenu = tk.Frame(self.menuFrame, bg='red', width=750, height=400)
 		level = self.menu_tree.getSelectionLevel(clickedNode)
@@ -481,6 +477,9 @@ class Application(tk.Frame):
 				setting = Button(self.menuFrame, text=child.name, command=lambda : self.createMenu(newMenu,child,False))
 				setting.grid(row=rowNumber, column=0)
 			rowNumber +=1
+
+	def openChildMenu(self, node):
+
 
 	def clearMenuFrame(self):
 		for i in self.menuFrame:
