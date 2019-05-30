@@ -66,22 +66,7 @@ class MenuTree():
 			print(n.name)
 
 	def isAtRoot(self):
-		return self.sortLevel(self.tree) == self.sortLevel(self.currentLevel)
-
-	def sortLevel(self,children):        
-	    for i in range(len(children)):
-	        minimum = i
-	        
-	        for j in range(i + 1, len(children)):
-	            # Select the smallest value
-	            if children[j].name < children[minimum].name:
-	                minimum = j
-
-	        # Place it at the front of the 
-	        # sorted end of the array
-	        children[minimum], children[i] = children[i], children[minimum]
-	            
-	    return children
+		return self.tree == self.currentLevel
 
 	def findPreviousLevel(self):
 		exploreList = [self.tree[:]]
@@ -111,7 +96,7 @@ class TreeNode():
 
 	def getImmediateChildren(self):
 		sortedChildren = self.sortLevel(self.children)
-		return sortedChildren
+		return self.children
 
 	def sortLevel(self,children):        
 	    for i in range(len(children)):
