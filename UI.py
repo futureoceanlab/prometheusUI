@@ -491,6 +491,7 @@ class Application(tk.Frame):
 		if self.get_mode() == 0:            #capture
 			self.change_mode()
 		else:
+			print("AT ROOT: ", self.menu_tree.isAtRoot())
 			if self.menu_tree.isAtRoot():
 				self.change_mode()
 			else:
