@@ -72,6 +72,8 @@ def prom_cli_works(target):
         #sys.stdout = outcome
     #   try:
     #       with timeout(seconds=5):
+    # Set time out to 10 seconds
+    timeout = 10
     p = subprocess.Popen(args)
     try:
         p.wait(timeout)
