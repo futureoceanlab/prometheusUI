@@ -43,7 +43,7 @@ def capturePhotoCommand3D(filename):
 
 def change2dExposure(exposure):
     # Power sanity might be neede
-    exp_options = [30. 100. 300. 1000. 3000]
+    exp_options = [30, 100, 300, 1000, 3000]
     if (exposure in exp_options):
         cwd = os.getcwd()
         prom_cli = os.path.join(cwd, "prometheus-cli", "build", "prom-cli")
@@ -59,7 +59,7 @@ def change2dExposure(exposure):
 
 def change3dExposure(exposure):
     # -sanity check of power may be required
-    exp_options = [30. 100. 300. 1000. 3000]
+    exp_options = [30, 100, 300, 1000, 3000]
     if (exposure in exp_options):
         cwd = os.getcwd()
         prom_cli = os.path.join(cwd, "prometheus-cli", "build", "prom-cli")
