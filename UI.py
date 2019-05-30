@@ -7,6 +7,7 @@ import time
 import os
 import numpy as np
 import uiFunctionCalls
+import camera_power
 
 BUTTON_LONGPRESS_TIME = 1
 EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
@@ -301,6 +302,12 @@ class Application(tk.Frame):
 		# This allows for the button checker to run continously, 
 		# alongside the mainloop
 		self.master.after(50, self.buttonCheck)
+
+	def checkBeagle(self):
+
+		camera_power.turn_on_BBBx(0)
+		camera_power.turn_on_BBBx(1)
+		self.master.after(10000, self.buttonCheck)
 
 	def get_mode(self):
 		return self.mode
@@ -705,6 +712,8 @@ class Application(tk.Frame):
 
 def main():
 
+	camera_power.turn_on_BBBx(0)
+	camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
 	root.overrideredirect(True)
 	root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
