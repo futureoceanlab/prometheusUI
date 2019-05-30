@@ -152,6 +152,9 @@ class Application(tk.Frame):
 		self.exposure2d = 30
 		self.exposure3d = 30
 		self.title = "CAPTURE"
+		self.modFreq = 0 
+		self.piDelay = 0 
+		self.enableCapture = 0 
 
 		#states
 		self.isTakingVideo = False
@@ -174,7 +177,7 @@ class Application(tk.Frame):
 		#previous image settings
 		self.viewingPreviousImages = False
 		self.currentPreviousImage = 0
-		self.dimensionMode = '2d'
+		self.dimensionMode = 0
 
 		#frame areas of the UI
 		self.topArea = None
@@ -600,7 +603,7 @@ class Application(tk.Frame):
 
 	def EXP_short_pressed(self):
 		if self.get_mode() == 0:            #capture
-			if self.dimensionMode == '2d':
+			if not self.dimensionMode:		#2d
 				self.change_exposure2d()
 				uiFunctionCalls.change2dExposure(self.exposure2d)
 			else:
@@ -619,7 +622,10 @@ class Application(tk.Frame):
 	def ACTN_short_pressed(self):
 		if self.get_mode() == 0:            #capture
 			if not self.get_video_state():  #ready to take photo
-				uiFunctionCalls.capturePhotoCommand("./captureImages/"+str(time.utctime.now()))
+				if not self.dimensionMode:		#2d
+					uiFunctionCalls.capturePhotoCommand2D("./captureImages/"+str(time.utctime.now()))
+				else:
+					uiFunctionCalls.capturePhotoCommand3D("./captureImages/"+str(time.utctime.now()))
 			else:
 				print("END VIDEO")          #currently taking video
 				self.toggle_video_state()
@@ -660,6 +666,23 @@ class Application(tk.Frame):
 
 	def change_title(self, newTitle):
 		self.title = newTitle 
+
+	def toggle_2d3d(self):
+		self.dimensionMode = 1 - self.dimensionMode
+		uiFunctionCalls.toggle2d3dMode(self.dimensionMode)
+
+	def setModulationFrequency(self):
+		self.modFreq = 1 - self.modFreq
+		uiFunctionCalls.setModulationFrequency(self.modFreq)
+
+	def toggleEnablePiDelay(self):
+		self.piDelay = 1 - self.piDelay
+		uiFunctionCalls.enablePiDelay(self.piDelay)
+
+	def toggleEnableCapture(self):
+		self.enableCapture = 1 - self.enableCapture
+		uiFunctionCalls.enablePiDelay(self.enableCapture)
+
 
 
 
