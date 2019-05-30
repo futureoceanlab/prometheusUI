@@ -77,7 +77,7 @@ class MenuTree():
 	def isAtRoot(self):
 		return self.tree[0].getImmediateChildren() == self.currentLevel
 
-	def isAtTempRoot():
+	def isAtTempRoot(self):
 		return True
 
 	def findPreviousLevel(self):
