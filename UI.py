@@ -536,6 +536,8 @@ class Application(tk.Frame):
 		newNodeSelection = self.currentLevel[newindex]
 		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
+		self.currentSelectionNode = newNodeSelection
+		self.currentSelectionButton = self.nodeToButtonDict[newNodeSelection][0]
 
 	def selectDown(self, currentSelectionNode):
 		currentSelectionIndex = self.currentLevel.index(currentSelectionNode)
@@ -543,6 +545,8 @@ class Application(tk.Frame):
 		newNodeSelection = self.currentLevel[newindex]
 		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
+		self.currentSelectionNode = newNodeSelection
+		self.currentSelectionButton = self.nodeToButtonDict[newNodeSelection][0]
 
 	def clearMenuFrame(self):
 		for i in self.menuFrame:
@@ -573,7 +577,7 @@ class Application(tk.Frame):
 			else:
 				print("TAKING VIDEO --> DOING NOTHING")
 		else:                           
-			print("go UP")
+			self.selectUp(self.currentSelectionNode)
 
 	def DISP_long_pressed(self):
 		self.currentPreviousImage = 0
@@ -587,7 +591,7 @@ class Application(tk.Frame):
 		if self.get_mode() == 0:            #capture
 			self.change_exposure()
 		else:                               #menu mode
-			print("go DOWN")
+			self.selectDown(self.currentSelectionNode)
 
 	def EXP_long_pressed(self):
 		if self.get_mode() == 0:            #capture
