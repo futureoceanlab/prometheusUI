@@ -6,6 +6,7 @@ import gpiozero as gpio
 import time
 import os
 import numpy as np
+import uiFunctionCalls
 
 BUTTON_LONGPRESS_TIME = 1
 NUM_EXPOSURES = 5
@@ -148,7 +149,8 @@ class Application(tk.Frame):
 		super().__init__(master)
 		self.master = master
 
-		self.exposure = 0
+		self.exposure2d = 30
+		self.exposure3d = 30
 		self.title = "CAPTURE"
 
 		#states
@@ -172,6 +174,7 @@ class Application(tk.Frame):
 		#previous image settings
 		self.viewingPreviousImages = False
 		self.currentPreviousImage = 0
+		self.dimensionMode = '2d'
 
 		#frame areas of the UI
 		self.topArea = None
@@ -181,7 +184,7 @@ class Application(tk.Frame):
 
 		#data contained in the UI 
 		self.mainImportantData = {'Battery': '50%', 'Mem': str(43.2)+'GB', 'S/N ratio': 0.6} 
-		self.richData = {'exposure':self.exposure, 'aperture': 'f22', 'PC size': 1000000}
+		self.richData = {'exposure':self.exposure2d, 'aperture': 'f22', 'PC size': 1000000}
 		self.menu_tree = MenuTree(MENUTREE)
 		self.temp_menu_tree = MenuTree(TEMP_MENUTREE)
 		self.previousImage = 'ocean.jpg'
@@ -301,8 +304,11 @@ class Application(tk.Frame):
 	def get_display(self):
 		return self.display
 
-	def get_exposure(self):
-		return self.exposure
+	def get_exposure2d(self):
+		return self.exposure2d
+
+	def get_exposure3d(self):
+		return self.exposure3d
 
 	def get_title(self):
 		return MODE_OPTIONS[self.mode]
@@ -594,7 +600,12 @@ class Application(tk.Frame):
 
 	def EXP_short_pressed(self):
 		if self.get_mode() == 0:            #capture
-			self.change_exposure()
+			if self.dimensionMode == '2d':
+				self.change_exposure2d()
+				uiFunctionCalls.change2dExposure(self.exposure2d)
+			else:
+				self.change_exposure3d()
+				uiFunctionCalls.change3dExposure(self.exposure3d)
 		else:                               #menu mode
 			self.selectDown(self.currentSelectionNode)
 
@@ -608,7 +619,7 @@ class Application(tk.Frame):
 	def ACTN_short_pressed(self):
 		if self.get_mode() == 0:            #capture
 			if not self.get_video_state():  #ready to take photo
-				print("TAKE SINGLE PHOTO")
+				uiFunctionCalls.capturePhotoCommand("./captureImages/"+str(time.utctime.now()))
 			else:
 				print("END VIDEO")          #currently taking video
 				self.toggle_video_state()
@@ -619,8 +630,8 @@ class Application(tk.Frame):
 	def ACTN_long_pressed(self):
 		if not self.get_mode() and not self.get_video_state():  
 			#capture mode and ready to take video
-			print("TAKE VIDEO")
 			self.toggle_video_state()
+			self.capture_video()
 		else:                               
 			#else is same as short press
 			self.ACTN_short_pressed()
@@ -636,12 +647,13 @@ class Application(tk.Frame):
 		print("DISP: ",self.display)
 		self.update_display()
 
-	def change_exposure(self):
-		self.exposure = (self.exposure +1)%NUM_EXPOSURES
-		print("EXP: ", self.exposure)
+	def change_exposure2d(self):
+		self.exposure2d = (self.exposure2d +1)%NUM_EXPOSURES
+		print("EXP: ", self.exposure2d)
 
-	def capture_photo(self):
-		print("TAKE PHOTO")
+	def change_exposure3d(self):
+		self.exposure3d = (self.exposure3d +1)%NUM_EXPOSURES
+		print("EXP: ", self.exposure3d)
 
 	def capture_video(self):
 		print("TAKE VIDEO")
