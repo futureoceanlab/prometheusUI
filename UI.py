@@ -449,7 +449,7 @@ class Application(tk.Frame):
 
 
 		self.menuFrame = tk.Frame(mainFrame)
-		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
+		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
 		self.menuFrame.grid_forget()
 
 	def setPreviousImage(self,img):
