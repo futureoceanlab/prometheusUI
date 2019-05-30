@@ -13,13 +13,13 @@ MENUTREE = {'root':{
 												'Shutter Speed': '1/250',
 												'ISO': 800
 												},
-							'Physical Settings':{'A':1,
-												 'B':2,
-												 'C':3
+							'Physical Settings':{'Camera position':1,
+												 'sensor position':2,
+												 'sensor angle':3
 												} , 
-							'Light Settings':{ 'D': 4,
-												'E': 5,
-												'F': 6
+							'Light Settings':{ 'exposure': 4,
+												'light angle': 5,
+												'light color': 6
 											} ,
 							'Key1': 'val1',
 							'key2': 'val2'
@@ -119,6 +119,13 @@ class Application(tk.Frame):
 	def __init__(self, master=None):
 		super().__init__(master)
 		self.master = master
+
+		self.exposure = 0
+		self.title = "CAPTURE"
+
+		#states
+		self.isTakingVideo = False
+		self.showingLiveView = False
 		self.mode = 0       #   0 is capture; 1 is menu
 		self.display = 0    
 		# DISPLAY INDEXES
@@ -133,20 +140,25 @@ class Application(tk.Frame):
 		# 3  --  color map image
 		# 7  --  previous image 
 		# -1 --  menu display
-		self.exposure = 0
-		self.title = "CAPTURE"
+
+		#previous image settings
+		self.viewingPreviousImages = False
+		self.currentPreviousImage = 0
+
+		#frame areas of the UI
 		self.topArea = None
 		self.mainArea = None
 		self.dataArea = None
+		self.menuFrame = None
+
+		#data contained in the UI 
 		self.mainImportantData = {'Battery': '50%', 'Mem': str(43.2)+'GB', 'S/N ratio': 0.6} 
 		self.richData = {'exposure':self.exposure, 'aperture': 'f22', 'PC size': 1000000}
-		self.isTakingVideo = False
-		self.showingLiveView = False
 		self.menu_tree = MenuTree(MENUTREE)
 		self.previousImage = 'ocean.jpg'
 		self.previousImages = ['ocean.jpg', 'ocean2.gif','reef.jpg']
-		self.settingWidgets = {}
-		self.menuFrame = None
+
+		#button information
 		self.MENU_BTN = gpio.Button(21, pull_up=True)
 		self.DISP_BTN = gpio.Button(20, pull_up=True)
 		self.EXPO_BTN = gpio.Button(16, pull_up=True)
@@ -158,11 +170,11 @@ class Application(tk.Frame):
 		self.dispHeldStart = 0
 		self.expoHeldStart = 0
 		self.actnHeldStart = 0
-		self.viewingPreviousImages = False
-		self.currentPreviousImage = 0
 		self.dispSinceLongheld = 0 
 		self.expoSinceLongheld = 0
 		self.actnSinceLongheld = 0 
+
+		#create the initial UI
 		self.create_layout()
 
 	
@@ -195,8 +207,6 @@ class Application(tk.Frame):
 					self.DISP_long_pressed()
 					self.dispBtnState = 0
 					self.dispSinceLongheld = time.time()
-
-
 
 
 		# EXPOSURE BUTTON
@@ -370,8 +380,6 @@ class Application(tk.Frame):
 		dataLabel = Label(self, text=self.get_mainImportantData_string(), relief=RIDGE, borderwidth=5)
 		dataLabel.grid(row=1, column=1, sticky=W+N+E+S)
 
-		# self.create_temp_buttons()
-
 		self.topArea = topLabel
 		self.mainArea = mainFrame
 		self.dataArea = dataLabel
@@ -426,7 +434,7 @@ class Application(tk.Frame):
 
 
 		self.menuFrame = tk.Frame(mainFrame)
-		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
+		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
 		self.menuFrame.grid_forget()
 
 	def setPreviousImage(self,img):
@@ -554,27 +562,27 @@ class Application(tk.Frame):
 	def change_title(self, newTitle):
 		self.title = newTitle    
 
-	def create_temp_buttons(self):
-		btnA = Button(self, text="MENU", command=self.MENU_pressed)
-		btnA.grid(row=2,column=0)
+	# def create_temp_buttons(self):
+	# 	btnA = Button(self, text="MENU", command=self.MENU_pressed)
+	# 	btnA.grid(row=2,column=0)
 
-		btnB = Button(self, text="DISP", command=self.DISP_short_pressed)
-		btnB.grid(row=2,column=1)
+	# 	btnB = Button(self, text="DISP", command=self.DISP_short_pressed)
+	# 	btnB.grid(row=2,column=1)
 
-		btnC = Button(self, text="EXP", command=self.EXP_short_pressed)
-		btnC.grid(row=2,column=2)
+	# 	btnC = Button(self, text="EXP", command=self.EXP_short_pressed)
+	# 	btnC.grid(row=2,column=2)
 
-		btnD = Button(self, text="ACTN", command=self.ACTN_short_pressed)
-		btnD.grid(row=2,column=3)
+	# 	btnD = Button(self, text="ACTN", command=self.ACTN_short_pressed)
+	# 	btnD.grid(row=2,column=3)
 
-		btnE = Button(self, text="LACTN", command=self.ACTN_long_pressed)
-		btnE.grid(row=3,column=3)
+	# 	btnE = Button(self, text="LACTN", command=self.ACTN_long_pressed)
+	# 	btnE.grid(row=3,column=3)
 
-		btnF = Button(self, text="LDISP", command=self.DISP_long_pressed)
-		btnF.grid(row=3,column=1)
+	# 	btnF = Button(self, text="LDISP", command=self.DISP_long_pressed)
+	# 	btnF.grid(row=3,column=1)
 
-		btnG = Button(self, text="LEXP", command=self.EXP_long_pressed)
-		btnG.grid(row=3,column=2)
+	# 	btnG = Button(self, text="LEXP", command=self.EXP_long_pressed)
+	# 	btnG.grid(row=3,column=2)
 
 
 def main():
