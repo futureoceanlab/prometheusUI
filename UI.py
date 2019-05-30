@@ -492,7 +492,7 @@ class Application(tk.Frame):
 		currentValue = clickedNode.value[0]
 		potentialValues = clickedNode.value[1]
 		currentValueIndex = potentialValues.index(currentValue)
-		nextValue = potentialValues[(currentValueIndex+1)%len((potentialValues)-1)]
+		nextValue = potentialValues[(currentValueIndex+1)%(len(potentialValues)-1)]
 		clickedNode.value = (nextValue, potentialValues)
 		labelToChange["text"] = nextValue
 
