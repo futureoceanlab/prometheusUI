@@ -478,7 +478,7 @@ class Application(tk.Frame):
 				setting.grid(row=rowNumber, column=0)
 			rowNumber +=1
 
-	def openChildMenu(self, node):
+	# def openChildMenu(self, node):
 
 
 	def clearMenuFrame(self):
