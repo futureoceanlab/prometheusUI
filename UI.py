@@ -27,9 +27,9 @@ MENUTREE = {'root':{
 						}
 
 TEMP_MENUTREE ={'root': {
-						"NUMBER OF CAMERAS": 0,
-						"ANOTHER PARAMETER": 2,
-						"A THIRD PARAMETER": 56,
+						"NUMBER OF CAMERAS": (0, [0,1,2]),
+						"ANOTHER PARAMETER": (2, [2,4,6]),
+						"A THIRD PARAMETER": (56,[56,123,345,45234]),
 
 }
 	
@@ -184,6 +184,9 @@ class Application(tk.Frame):
 		self.temp_menu_tree = MenuTree(TEMP_MENUTREE)
 		self.previousImage = 'ocean.jpg'
 		self.previousImages = ['ocean.jpg', 'ocean2.gif','reef.jpg']
+		self.currentSelectionButton = None
+		self.currentSelectionNode = None
+		self.nodeToButtonDict = {}
 
 		#button information
 		self.MENU_BTN = gpio.Button(21, pull_up=True)
@@ -200,6 +203,7 @@ class Application(tk.Frame):
 		self.dispSinceLongheld = 0 
 		self.expoSinceLongheld = 0
 		self.actnSinceLongheld = 0 
+		self.buttonColor = 'white'
 
 		#create the initial UI
 		self.create_layout()
@@ -470,11 +474,34 @@ class Application(tk.Frame):
 		level = self.menu_tree.getSelectionLevel(self.temp_menu_tree.tree[0])
 		rowNumber = 0
 		for child in level: 
-			settingKey = Button(self.menuFrame, text=str('Change ')+child.name)
-			settingKey.grid(row=rowNumber, column=0)
-			settingValue = Label(self.menuFrame, text=child.value)
+			
+			settingValue = Label(self.menuFrame, text=child.value[0])
 			settingValue.grid(row=rowNumber, column=1)
+			settingKey = Button(self.menuFrame, text=str('Change ')+child.name, command=lambda: self.changeMenuValue(child, settingValue))
+			self.buttonColor = settingKey.cget('bg')
+			settingKey.grid(row=rowNumber, column=0)
+			self.nodeToButtonDict[child] = (settingKey, settingValue)
+			if rowNumber == 0:
+				self.currentSelectionButton = settingKey
+				self.currentSelectionNode = child
 			rowNumber+=1
+		self.makeSelectedButtonColored(self.currentSelectionButton)
+
+
+	def changeMenuValue(self, clickedNode, labelToChange):
+		currentValue = clickedNode.value[0]
+		potentialValues = clickedNode.value[1]
+		currentValueIndex = potentialValues.index(currentValue)
+		nextValue = potentialValues[(currentValueIndex+1)%len((potentialValues)-1)]
+		clickedNode.value = (nextValue, potentialValues)
+		labelToChange["text"] = nextValue
+
+	def makeSelectedButtonColored(self, button):
+		button['bg'] = '#9ee3ff'
+
+	def makeButtonWhite(self, button):
+		button['bg'] = self.buttonColor
+
 
 	def setPreviousImage(self,img):
 		self.mainArea.previousImage = img
@@ -484,7 +511,6 @@ class Application(tk.Frame):
 	def createMenu(self, previousMenu, clickedNode, atRoot):
 
 		if not atRoot:
-			print("FORGETTITNG")
 			previousMenu.grid_forget()
 		newMenu = tk.Frame(self.menuFrame, bg='red', width=750, height=400)
 		level = self.menu_tree.getSelectionLevel(clickedNode)
@@ -498,13 +524,25 @@ class Application(tk.Frame):
 				settingValue = Label(self.menuFrame, text=child.value)
 				settingValue.grid(row=rowNumber, column=1)
 			else:
-				print("CHILD ", child.name)
 				setting = Button(self.menuFrame, text=child.name, command=lambda : self.createMenu(newMenu,child,False))
 				setting.grid(row=rowNumber, column=0)
 			rowNumber +=1
 
 	# def openChildMenu(self, node):
 
+	def selectUp(self, currentSelectionNode):
+		currentSelectionIndex = self.currentLevel.index(currentSelectionNode)
+		newIndex = max(0, currentSelectionIndex - 1)
+		newNodeSelection = self.currentLevel[newindex]
+		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
+		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
+
+	def selectDown(self, currentSelectionNode):
+		currentSelectionIndex = self.currentLevel.index(currentSelectionNode)
+		newIndex = max(len(self.currentLevel)-1, currentSelectionIndex + 1)
+		newNodeSelection = self.currentLevel[newindex]
+		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
+		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
 
 	def clearMenuFrame(self):
 		for i in self.menuFrame:
@@ -566,7 +604,7 @@ class Application(tk.Frame):
 				print("END VIDEO")          #currently taking video
 				self.toggle_video_state()
 		else:                               #menu mode
-			print("select ITEM")
+			self.changeMenuValue(self.currentSelectionNode, self.nodeToButtonDict[self.currentSelectionNode][1])
 
 
 	def ACTN_long_pressed(self):
