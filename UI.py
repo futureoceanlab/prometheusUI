@@ -66,6 +66,8 @@ class MenuTree():
 			print(n.name)
 
 	def isAtRoot(self):
+		print("TREE ", self.tree)
+		print("currentL: ", self.currentLevel)
 		return self.tree == self.currentLevel
 
 	def findPreviousLevel(self):
@@ -449,7 +451,7 @@ class Application(tk.Frame):
 
 
 		self.menuFrame = tk.Frame(mainFrame)
-		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
+		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
 		self.menuFrame.grid_forget()
 
 	def setPreviousImage(self,img):
