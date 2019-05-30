@@ -675,7 +675,7 @@ class Application(tk.Frame):
 	def change_exposure3d(self):
 		exposureIndex = EXPOSURE_OPTIONS.index(self.exposure3d)
 		self.exposure3d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
-		self.mainImportantData['EXP 3D'] = self.exposure2d
+		self.mainImportantData['EXP 3D'] = self.exposure3d
 		self.update_display()
 		print("EXP3D: ", self.exposure3d)
 
