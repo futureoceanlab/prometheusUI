@@ -512,6 +512,13 @@ class Application(tk.Frame):
 		clickedNode.value = (nextValue, potentialValues)
 		labelToChange["text"] = nextValue
 
+		if clickedNode.name == "DIMENSION MODE":
+			self.toggle_2d3d()
+		elif clickedNode.name == "MODULATION FREQ":
+			self.setModulationFrequency()
+		elif clickedNode.name == "ENABLE PI DELAY":
+			self.toggleEnablePiDelay()
+
 	def makeSelectedButtonColored(self, button):
 		button['bg'] = '#9ee3ff'
 
@@ -533,7 +540,6 @@ class Application(tk.Frame):
 		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
 		rowNumber = 0 
 		for child in level:
-			print(child.name)
 			if child.isLeaf():
 				settingKey = Button(self.menuFrame, text=str('Change ')+child.name)
 				settingKey.grid(row=rowNumber, column=0)
