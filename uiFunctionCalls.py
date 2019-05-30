@@ -18,7 +18,7 @@ def capturePhotoCommand2D(filename):
     # capture 1
     camsel.on()
     os.system(prom_cli1)
-
+    camset.off()
     # image processing
 
 def capturePhotoCommand3D(filename):
@@ -38,7 +38,7 @@ def capturePhotoCommand3D(filename):
     # capture 1
     camsel.on()
     os.system(prom_cli1)
-
+    camset.off()
     # image processing
 
 def change2dExposure(exposure):
@@ -91,10 +91,10 @@ def toggle2d3dMode(mode):
 
 def setModulationFrequency(freq):
     # -sanity check of power may be required
-    if (enable == 0 or enable == 1):
+    if (freq == 0 or freq == 1):
         cwd = os.getcwd()
         prom_cli = os.path.join(cwd, "prometheus-cli", "build", "prom-cli")
-        cmd = " -a \"setModulationFrequency %d.\"" %(enable)
+        cmd = " -a \"setModulationFrequency %d.\"" %(freq)
         prom_cli0 = prom_cli + cmd + " -i 0 | hexdump"
         prom_cli1 = prom_cli + cmd + " -i 1 | hexdump"
         # Timer may be required
