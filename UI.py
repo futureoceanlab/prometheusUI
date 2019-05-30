@@ -410,8 +410,8 @@ class Application(tk.Frame):
 		#used at the inital turn on
 
 		self.pack(fill=BOTH, expand=True)
-		self.columnconfigure(0,weight=3)
-		self.columnconfigure(1,weight=1)
+		self.columnconfigure(0,weight=5)
+		self.columnconfigure(1,weight=2)
 		self.rowconfigure(0,weight=1)
 		self.rowconfigure(1,weight=5)
 
