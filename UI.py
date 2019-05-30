@@ -531,8 +531,8 @@ class Application(tk.Frame):
 	# def openChildMenu(self, node):
 
 	def selectUp(self, currentSelectionNode):
-		print("CURRENT LEVEL: ", self.menu_tree.currentLevel)
-		print("NODE: ", currentSelectionNode)
+		print("CURRENT LEVEL: ", self.menu_tree.currentLevel[0].name)
+		print("NODE: ", currentSelectionNode.name)
 		currentSelectionIndex = self.menu_tree.currentLevel.index(currentSelectionNode)
 		newIndex = max(0, currentSelectionIndex - 1)
 		newNodeSelection = self.menu_tree.currentLevel[newindex]
