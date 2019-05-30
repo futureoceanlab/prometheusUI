@@ -77,6 +77,9 @@ class MenuTree():
 	def isAtRoot(self):
 		return self.tree[0].getImmediateChildren() == self.currentLevel
 
+	def isAtTempRoot():
+		return True
+
 	def findPreviousLevel(self):
 		exploreList = [self.tree[:]]
 		if self.currentLevel == self.tree:
@@ -511,8 +514,8 @@ class Application(tk.Frame):
 		if self.get_mode() == 0:            #capture
 			self.change_mode()
 		else:
-			print("AT ROOT: ", self.menu_tree.isAtRoot())
-			if self.menu_tree.isAtRoot():
+			print("AT ROOT: ", self.menu_tree.isAtTempRoot())
+			if self.menu_tree.isAtTempRoot():
 				self.change_mode()
 			else:
 				self.menu_tree.goUpLevel(self.menu_tree.currentLevel)
