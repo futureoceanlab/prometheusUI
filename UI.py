@@ -410,8 +410,8 @@ class Application(tk.Frame):
 		#used at the inital turn on
 
 		self.pack(fill=BOTH, expand=True)
-		self.columnconfigure(0,weight=5)
-		self.columnconfigure(1,weight=2)
+		self.columnconfigure(0,weight=3)
+		self.columnconfigure(1,weight=1)
 		self.rowconfigure(0,weight=1)
 		self.rowconfigure(1,weight=5)
 
@@ -423,7 +423,7 @@ class Application(tk.Frame):
 		mainFrame = tk.Frame(self, relief=RIDGE, borderwidth=5)
 		mainFrame.grid(row=1,column=0, sticky=W+N+E+S)
 
-		dataLabel = Label(self, text=self.get_mainImportantData_string(), relief=RIDGE, borderwidth=5)
+		dataLabel = Label(self, text=self.get_mainImportantData_string(), font=('Helvetica', 16) relief=RIDGE, borderwidth=5)
 		dataLabel.grid(row=1, column=1, sticky=W+N+E+S)
 
 		self.topArea = topLabel
