@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 
 from gpiozero import LED, Button
+from timeout import timeout
 import os
 import sys
 import time
 import signal
+import shlex, subprocess
 
 def turn_on_BBBx(x):
     # control pin for BBB0
@@ -57,45 +59,58 @@ def power_cycle(target, bbb_ctrl, bbb_reset):
     return
 
 # Check if prom cli returns successfully
+#@timeout
 def prom_cli_works(target):
     outcome_name = "redirect.txt"
     cwd = os.getcwd()
     prom_cli = os.path.join(cwd, "prometheus-cli", "build", "prom-cli")
     prom_cli += " -a \"setSpeedOfLight 300000000.\" -i %d | hexdump >> %s" %(target, outcome_name)
-    print(prom_cli)
+    args = shlex.split(prom_cli)
+    print(args)
     #original = sys.stdout
-    firstSix = "FAILED"
-    with open(outcome_name, 'a+') as outcome:
+    #ith open(outcome_name, 'a+') as outcome:
         #sys.stdout = outcome
-        try:
-            with timeout(seconds=5):
-                os.system(prom_cli)
-                firstSix = outcome.read(6)
-        except TimeoutError as e:
-            print(e)
-        #sys.stdout = original
-    os.remove(outcome_name)
-    if firstSix == "000000":
-        print("prom cli check is successful")
-        return True
-    else:
-        print("prom cli check failed...!")
+    #   try:
+    #       with timeout(seconds=5):
+    p = subprocess.Popen(args)
+    try:
+        p.wait(timeout)
+        firstSix = outcome.read(6)
+        if firstSix == "000000":
+            print("prom cli check is successful")
+            return True
+    except subprocess.TimeoutExpired:
+        p.kill()
+        print("prom cli timedout...!")
         return False
 
-class timeout:
-    def __init__(self, seconds=1, error_message="Timeout"):
-        self.seconds = seconds
-        self.error_message = error_message
+    # # os.system(prom_cli)
+    # firstSix = outcome.read(6)
+    # #   except TimeoutError as e:
+    # #       print(e)
+    #     #sys.stdout = original
+    # os.remove(outcome_name)
+    # if firstSix == "000000":
+    #     print("prom cli check is successful")
+    #     return True
+    # else:
+    #     print("prom cli check failed...!")
+    #     return False
 
-    def handle_timeout(self, signum, frame):
-        raise TimeoutError(self.error_message)
+# class timeout:
+#     def __init__(self, seconds=1, error_message="Timeout"):
+#         self.seconds = seconds
+#         self.error_message = error_message
 
-    def __enter__(self):
-        signal.signal(signal.SIGALRM, self.handle_timeout)
-        signal.alarm(self.seconds)
+#     def handle_timeout(self, signum, frame):
+#         raise TimeoutError(self.error_message)
 
-    def __exit__(self, type, value, traceback):
-        signal.alarm(0)
+#     def __enter__(self):
+#         signal.signal(signal.SIGALRM, self.handle_timeout)
+#         signal.alarm(self.seconds)
+
+#     def __exit__(self, type, value, traceback):
+#         signal.alarm(0)
 
 
 if __name__ == "__main__":
