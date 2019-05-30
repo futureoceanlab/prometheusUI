@@ -10,7 +10,7 @@ def turn_on_BBBx(x):
     bbb0_ctrl = LED(7)
     bbb1_ctrl = LED(8)
     # sys_reset polling pins
-    reset0 = Button(25)
+    reset0 = Button(23) 
     reset1 = Button(24)
     print("start power cycle %d!" %(x))
     if (x == 0):
