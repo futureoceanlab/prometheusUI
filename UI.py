@@ -491,7 +491,10 @@ class Application(tk.Frame):
 
 	def MENU_pressed(self):
 		if self.get_mode() == 0:            #capture
+			
+			print("CL1: ", self.currentLevel)
 			self.change_mode()
+			print("CL2: ", self.currentLevel)
 		else:
 			print("AT ROOT: ", self.menu_tree.isAtRoot())
 			if self.menu_tree.isAtRoot():
