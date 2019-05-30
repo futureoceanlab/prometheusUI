@@ -26,6 +26,15 @@ MENUTREE = {'root':{
 							}
 						}
 
+TEMP_MENUTREE ={'root': {
+						"NUMBER OF CAMERAS": 0;
+						"ANOTHER PARAMETER": 2;
+						"A THIRD PARAMETER": 56;
+
+}
+	
+}
+
 
 class MenuTree():
 	# A tree is a list of nodes 
@@ -169,6 +178,7 @@ class Application(tk.Frame):
 		self.mainImportantData = {'Battery': '50%', 'Mem': str(43.2)+'GB', 'S/N ratio': 0.6} 
 		self.richData = {'exposure':self.exposure, 'aperture': 'f22', 'PC size': 1000000}
 		self.menu_tree = MenuTree(MENUTREE)
+		self.temp_menu_tree = MenuTree(TEMP_MENUTREE)
 		self.previousImage = 'ocean.jpg'
 		self.previousImages = ['ocean.jpg', 'ocean2.gif','reef.jpg']
 
@@ -448,8 +458,20 @@ class Application(tk.Frame):
 
 
 		self.menuFrame = tk.Frame(mainFrame)
-		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
+		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
+		self.createTempMenu()
 		self.menuFrame.grid_forget()
+
+	def createTempMenu():
+
+		level = self.menu_tree.getSelectionLevel(self.temp_menu_tree.tree[0])
+		rowNumber = 0
+		for child in level: 
+			settingKey = Button(self.menuFrame, text=str('Change ')+child.name)
+			settingKey.grid(row=rowNumber, column=0)
+			settingValue = Label(self.menuFrame, text=child.value)
+			settingValue.grid(row=rowNumber, column=1)
+			rowNumber+=1
 
 	def setPreviousImage(self,img):
 		self.mainArea.previousImage = img
