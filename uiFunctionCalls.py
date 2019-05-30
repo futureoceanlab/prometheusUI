@@ -1,9 +1,45 @@
 import os
+from gpiozero import LED
 
 def capturePhotoCommand2D(filename):
-	#
-def capturePhotoCommand3D(filename):
+    # Sanity power check may be required 
+    # setup API
+    cwd = os.getcwd()
+    prom_cli = os.path.join(cwd, "prometheus-cli", "build", "prom-cli")
+    cmd = " -a \"getBWSorted\"" 
+    file0 = filename + "_0.bin"
+    file1 = filename + "_1.bin"
+    prom_cli0 = prom_cli + cmd + " -i 0 | hexdump >> %s" %(file0)
+    prom_cli1 = prom_cli + cmd + " -i 1 | hexdump >> %s" %(file1)
+    camsel = LED(18)
+    # capture 0 
+    camsel.off()
+    os.system(prom_cli0)
+    # capture 1
+    camsel.on()
+    os.system(prom_cli1)
 
+    # image processing
+
+def capturePhotoCommand3D(filename):
+    # sanity check may be necessary
+    # setup API
+    cwd = os.getcwd()
+    prom_cli = os.path.join(cwd, "prometheus-cli", "build", "prom-cli")
+    cmd = " -a \"getDCSSorted\"" 
+    file0 = filename + "_0.bin"
+    file1 = filename + "_1.bin"
+    prom_cli0 = prom_cli + cmd + " -i 0 | hexdump >> %s" %(file0)
+    prom_cli1 = prom_cli + cmd + " -i 1 | hexdump >> %s" %(file1)
+    camsel = LED(18)
+    # capture 0 
+    camsel.off()
+    os.system(prom_cli0)
+    # capture 1
+    camsel.on()
+    os.system(prom_cli1)
+
+    # image processing
 
 def change2dExposure(exposure):
     # Power sanity might be neede
