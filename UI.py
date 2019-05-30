@@ -31,9 +31,9 @@ MENUTREE = {'root':{
 						}
 
 TEMP_MENUTREE ={'root': {
-						"DIMENSION MODE": ('2D', ['2D','3D','4D']),
-						"MODULATION FREQ": (0, [0,1,2]),
-						"ENABLE PI DELAY": (0, [0,1,2]),
+						"DIMENSION MODE": ('2D', ['2D','3D']),
+						"MODULATION FREQ": (0, [0,1]),
+						"ENABLE PI DELAY": (0, [0,1]),
 
 }
 	
@@ -508,7 +508,7 @@ class Application(tk.Frame):
 		currentValue = clickedNode.value[0]
 		potentialValues = clickedNode.value[1]
 		currentValueIndex = potentialValues.index(currentValue)
-		nextValue = potentialValues[(currentValueIndex+1)%(len(potentialValues)-1)]
+		nextValue = potentialValues[(currentValueIndex+1)%(len(potentialValues))]
 		clickedNode.value = (nextValue, potentialValues)
 		labelToChange["text"] = nextValue
 
