@@ -1,5 +1,6 @@
 import os
 from gpiozero import LED
+import readBinary as binReader
 
 def capturePhotoCommand2D(filename):
     # Sanity power check may be required 
@@ -20,6 +21,8 @@ def capturePhotoCommand2D(filename):
     os.system(prom_cli1)
     camset.off()
     # image processing
+    binReader.readBinaryFile(file0)
+    binReader.readBinaryFile(file1)
 
 def capturePhotoCommand3D(filename):
     # sanity check may be necessary
@@ -39,7 +42,11 @@ def capturePhotoCommand3D(filename):
     camsel.on()
     os.system(prom_cli1)
     camset.off()
+
     # image processing
+    binReader.readBinaryFile(file0)
+    binReader.readBinaryFile(file1)
+
 
 def change2dExposure(exposure):
     # Power sanity might be neede
