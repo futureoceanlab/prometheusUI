@@ -6,7 +6,7 @@ import gpiozero as gpio
 import time
 import os
 import numpy as np
-# import uiFunctionCalls
+import uiFunctionCalls
 
 BUTTON_LONGPRESS_TIME = 1
 EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
