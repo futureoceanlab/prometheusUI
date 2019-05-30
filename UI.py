@@ -536,7 +536,7 @@ class Application(tk.Frame):
 		print("NODE: ", currentSelectionNode.name)
 		currentSelectionIndex = self.menu_tree.currentLevel.index(currentSelectionNode)
 		newIndex = max(0, currentSelectionIndex - 1)
-		newNodeSelection = self.menu_tree.currentLevel[newindex]
+		newNodeSelection = self.menu_tree.currentLevel[newIndex]
 		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
 		self.currentSelectionNode = newNodeSelection
@@ -545,7 +545,7 @@ class Application(tk.Frame):
 	def selectDown(self, currentSelectionNode):
 		currentSelectionIndex = self.menu_tree.currentLevel.index(currentSelectionNode)
 		newIndex = max(len(self.menu_tree.currentLevel)-1, currentSelectionIndex + 1)
-		newNodeSelection = self.menu_tree.currentLevel[newindex]
+		newNodeSelection = self.menu_tree.currentLevel[newIndex]
 		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
 		self.currentSelectionNode = newNodeSelection
