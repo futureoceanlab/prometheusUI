@@ -495,7 +495,7 @@ class Application(tk.Frame):
 			if self.menu_tree.isAtRoot():
 				self.change_mode()
 			else:
-				self.menu_tree.goUpLevel()
+				self.menu_tree.goUpLevel(self.menu_tree.currentLevel)
 
 	def DISP_short_pressed(self):
 		if self.get_mode() == 0:
