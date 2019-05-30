@@ -673,9 +673,9 @@ class Application(tk.Frame):
 def main():
 
 	root = tk.Tk()
-	# root.overrideredirect(True)
-	# root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
-	root.geometry((800,480))
+	root.overrideredirect(True)
+	root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
+	# root.geometry((800,480))
 	app = Application(master=root)
 	app.buttonCheck()
 	app.mainloop()
