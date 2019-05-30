@@ -95,7 +95,7 @@ class TreeNode():
 			self.children = None
 
 	def getImmediateChildren(self):
-		return sorted(self.children, key=self.sortChildren)
+		return sorted(self.children, key=self.sortChildren())
 
 	def sortChildren(self):
 		if self.isLeaf():			
