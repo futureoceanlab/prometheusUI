@@ -9,17 +9,17 @@ BUTTON_LONGPRESS_TIME = 1
 NUM_EXPOSURES = 5
 MODE_OPTIONS = ["CAPTURE", "MENU"]
 MENUTREE = {'root':{
-							'Camera Settings': {'Aperture': 'f22',
-												'Shutter Speed': '1/250',
-												'ISO': 800
+							'Camera Settings': {'CamSubsetting1': 'f22',
+												'CamSubsetting2': '1/250',
+												'CamSubsetting3': 800
 												},
-							'Physical Settings':{'Camera position':1,
-												 'sensor position':2,
-												 'sensor angle':3
+							'Physical Settings':{'PhysicalSetting1':1,
+												 'PhysicalSetting2':2,
+												 'PhysicalSetting3':3
 												} , 
-							'Light Settings':{ 'exposure': 4,
-												'light angle': 5,
-												'light color': 6
+							'Light Settings':{ 'lightSetting1': 4,
+												'lightSetting2': 5,
+												'lightSetting3': 6
 											} ,
 							'Key1': 'val1'
 
