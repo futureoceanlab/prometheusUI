@@ -15,10 +15,10 @@ int connectToNode(const char *hostname, uint16_t portno) {
     struct hostent *he;
     struct in_addr **addr_list;
     memset(&addr, 0, sizeof(addr));
-    addr.sin_port = htons(NODE0_PORTNO);
-    he = gethostbyname(NODE0_HOSTNAME);
+    addr.sin_port = htons(portno);
+    he = gethostbyname(hostname);
     if (he == NULL) {
-        fprintf(stderr, "ERROR: invalid hostname: %s\n", NODE0_HOSTNAME);
+        fprintf(stderr, "ERROR: invalid hostname: %s\n", hostname);
         return -1;
     } else {
         addr.sin_family = he->h_addrtype;

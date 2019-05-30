@@ -4,6 +4,7 @@ from gpiozero import LED, Button
 import os
 import sys
 import time
+import signal
 
 def turn_on_BBBx(x):
     # control pin for BBB0
@@ -63,11 +64,16 @@ def prom_cli_works(target):
     prom_cli += " -a \"setSpeedOfLight 300000000.\" -i %d | hexdump >> %s" %(target, outcome_name)
     print(prom_cli)
     #original = sys.stdout
+    firstSix = "FAILED"
     with open(outcome_name, 'a+') as outcome:
         #sys.stdout = outcome
-        os.system(prom_cli)
+        try:
+            with timer(seconds=5):
+                os.system(prom_cli)
+                firstSix = outcome.read(6)
+        except TimeoutError as e:
+            print(e)
         #sys.stdout = original
-        firstSix = outcome.read(6)
     os.remove(outcome_name)
     if firstSix == "000000":
         print("prom cli check is successful")
@@ -76,8 +82,29 @@ def prom_cli_works(target):
         print("prom cli check failed...!")
         return False
 
+class timeout:
+    def __init__(self, seconds=1, error_message="Timeout"):
+        self.seconds = seconds
+        self.error_message = error_message
+
+    def handle_timeout(self, signum, frame):
+        raise TimeoutError(self.error_message)
+
+    def __enter__(self):
+        signal.signal(signal.SIGALRM, self.handle_timeout)
+        signal.alarm(self.seconds)
+
+    def __exit__(self, type, value, traceback):
+        signal.alarm(0)
+
+
 if __name__ == "__main__":
-#    prom_cli_works()
+    #try:
+    #    with timeout(seconds=3):
+    #        time.sleep(4)
+    #except TimeoutError as e:
+    #    print("Got here?")
+    prom_cli_works()
     target = sys.argv[1]
     print("Start power cycling BBB target %s" %(target))
     if (target == '0'):
