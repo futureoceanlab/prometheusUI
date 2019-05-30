@@ -473,13 +473,13 @@ class Application(tk.Frame):
 		for child in level:
 			print(child.name)
 			if child.isLeaf():
-				settingKey = Button(newMenu, text=str('Change ')+child.name)
+				settingKey = Button(self.menuFrame, text=str('Change ')+child.name)
 				settingKey.grid(row=rowNumber, column=0)
-				settingValue = Label(newMenu, text=child.value)
+				settingValue = Label(self.menuFrame, text=child.value)
 				settingValue.grid(row=rowNumber, column=1)
 			else:
 				print("CHILD ", child.name)
-				setting = Button(newMenu, text=child.name, command=lambda : self.createMenu(newMenu,child,False))
+				setting = Button(self.menuFrame, text=child.name, command=lambda : self.createMenu(newMenu,child,False))
 				setting.grid(row=rowNumber, column=0)
 			rowNumber +=1
 
