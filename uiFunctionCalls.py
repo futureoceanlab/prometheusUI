@@ -1,8 +1,9 @@
 import 
 
-def capturePhotoCommand(filename):
+def capturePhotoCommand2D(filename):
 	#
-
+def capturePhotoCommand3D(filename):
+	
 def change2dExposure(exposure):
 
 def change3dExposure(exposure):
