@@ -462,7 +462,7 @@ class Application(tk.Frame):
 		self.createTempMenu()
 		self.menuFrame.grid_forget()
 
-	def createTempMenu():
+	def createTempMenu(self):
 
 		level = self.menu_tree.getSelectionLevel(self.temp_menu_tree.tree[0])
 		rowNumber = 0
