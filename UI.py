@@ -531,18 +531,18 @@ class Application(tk.Frame):
 	# def openChildMenu(self, node):
 
 	def selectUp(self, currentSelectionNode):
-		currentSelectionIndex = self.currentLevel.index(currentSelectionNode)
+		currentSelectionIndex = self.menu_tree.currentLevel.index(currentSelectionNode)
 		newIndex = max(0, currentSelectionIndex - 1)
-		newNodeSelection = self.currentLevel[newindex]
+		newNodeSelection = self.menu_tree.currentLevel[newindex]
 		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
 		self.currentSelectionNode = newNodeSelection
 		self.currentSelectionButton = self.nodeToButtonDict[newNodeSelection][0]
 
 	def selectDown(self, currentSelectionNode):
-		currentSelectionIndex = self.currentLevel.index(currentSelectionNode)
-		newIndex = max(len(self.currentLevel)-1, currentSelectionIndex + 1)
-		newNodeSelection = self.currentLevel[newindex]
+		currentSelectionIndex = self.menu_tree.currentLevel.index(currentSelectionNode)
+		newIndex = max(len(self.menu_tree.currentLevel)-1, currentSelectionIndex + 1)
+		newNodeSelection = self.menu_tree.currentLevel[newindex]
 		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
 		self.currentSelectionNode = newNodeSelection
