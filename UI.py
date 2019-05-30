@@ -95,7 +95,7 @@ class TreeNode():
 			self.children = None
 
 	def getImmediateChildren(self):
-		return self.children
+		return sorted(self.children, key=self.name)
 
 	def isLeaf(self):
 		return self.children == None
@@ -451,7 +451,7 @@ class Application(tk.Frame):
 		if not atRoot:
 			previousMenu.grid_forget()
 		newMenu = tk.Frame(self.menuFrame, bg='red', width=750, height=400)
-		level = sorted(self.menu_tree.getSelectionLevel(clickedNode))
+		level = self.menu_tree.getSelectionLevel(clickedNode)
 		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
 		rowNumber = 0 
 		for child in level:
