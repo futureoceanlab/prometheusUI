@@ -95,10 +95,10 @@ class TreeNode():
 			self.children = None
 
 	def getImmediateChildren(self):
-		sortedChildren = sortChildren(self.children)
+		sortedChildren = self.sortChildren(self.children)
 		return sortedChildren
 
-	def sortChildren(children):        
+	def sortChildren(self,children):        
 	    for i in range(len(children)):
 	        minimum = i
 	        
