@@ -68,7 +68,7 @@ def prom_cli_works(target):
     with open(outcome_name, 'a+') as outcome:
         #sys.stdout = outcome
         try:
-            with timer(seconds=5):
+            with timeout(seconds=5):
                 os.system(prom_cli)
                 firstSix = outcome.read(6)
         except TimeoutError as e:
