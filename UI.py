@@ -27,9 +27,9 @@ MENUTREE = {'root':{
 						}
 
 TEMP_MENUTREE ={'root': {
-						"NUMBER OF CAMERAS": 0;
-						"ANOTHER PARAMETER": 2;
-						"A THIRD PARAMETER": 56;
+						"NUMBER OF CAMERAS": 0,
+						"ANOTHER PARAMETER": 2,
+						"A THIRD PARAMETER": 56,
 
 }
 	
