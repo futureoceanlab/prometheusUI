@@ -472,6 +472,7 @@ class Application(tk.Frame):
 	def createTempMenu(self):
 
 		level = self.menu_tree.getSelectionLevel(self.temp_menu_tree.tree[0])
+		self.menu_tree.traverseDownToSelectionLevel(self.temp_menu_tree.tree[0])
 		rowNumber = 0
 		for child in level: 
 			
