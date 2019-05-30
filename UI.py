@@ -192,7 +192,7 @@ class Application(tk.Frame):
 		self.menu_tree = MenuTree(MENUTREE)
 		self.temp_menu_tree = MenuTree(TEMP_MENUTREE)
 		self.previousImage = 'ocean.jpg'
-		self.previousImages = []
+		self.previousImages = ['ocean.jpg','reef.jpg']
 		self.currentSelectionButton = None
 		self.currentSelectionNode = None
 		self.nodeToButtonDict = {}
