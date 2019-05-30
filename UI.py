@@ -647,28 +647,6 @@ class Application(tk.Frame):
 	def change_title(self, newTitle):
 		self.title = newTitle    
 
-	# def create_temp_buttons(self):
-	# 	btnA = Button(self, text="MENU", command=self.MENU_pressed)
-	# 	btnA.grid(row=2,column=0)
-
-	# 	btnB = Button(self, text="DISP", command=self.DISP_short_pressed)
-	# 	btnB.grid(row=2,column=1)
-
-	# 	btnC = Button(self, text="EXP", command=self.EXP_short_pressed)
-	# 	btnC.grid(row=2,column=2)
-
-	# 	btnD = Button(self, text="ACTN", command=self.ACTN_short_pressed)
-	# 	btnD.grid(row=2,column=3)
-
-	# 	btnE = Button(self, text="LACTN", command=self.ACTN_long_pressed)
-	# 	btnE.grid(row=3,column=3)
-
-	# 	btnF = Button(self, text="LDISP", command=self.DISP_long_pressed)
-	# 	btnF.grid(row=3,column=1)
-
-	# 	btnG = Button(self, text="LEXP", command=self.EXP_long_pressed)
-	# 	btnG.grid(row=3,column=2)
-
 
 def main():
 
