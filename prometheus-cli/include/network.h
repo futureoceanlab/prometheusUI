@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define NODE0_HOSTNAME "prometheusBone0.local"
+#define NODE0_HOSTNAME "prometheusBone0.local"//"beagleBone.local" //"prometheusBone0.local"
 #define NODE0_PORTNO 50660
 
 #define NODE1_HOSTNAME "prometheusBone2.local"

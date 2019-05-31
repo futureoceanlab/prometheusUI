@@ -305,10 +305,10 @@ class Application(tk.Frame):
 		self.master.after(50, self.buttonCheck)
 
 	def checkBeagle(self):
-
-		camera_power.turn_on_BBBx(0)
-		camera_power.turn_on_BBBx(1)
-		self.master.after(10000, self.buttonCheck)
+		camera_power.connect_both_cameras()
+		#camera_power.turn_on_BBBx(0)
+		#camera_power.turn_on_BBBx(1)
+		self.master.after(5000, self.buttonCheck)
 
 	def get_mode(self):
 		return self.mode
@@ -714,9 +714,9 @@ class Application(tk.Frame):
 
 
 def main():
-
-	camera_power.turn_on_BBBx(0)
-	camera_power.turn_on_BBBx(1)
+	camera_power.connect_both_cameras()
+	#camera_power.turn_on_BBBx(0)
+	#camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
 	root.overrideredirect(True)
 	root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
