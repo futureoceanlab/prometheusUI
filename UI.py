@@ -527,7 +527,7 @@ class Application(tk.Frame):
 				settingValue = Label(newMenu, text=child.value)
 				settingValue.grid(row=rowNumber, column=1)
 			else:
-				setting = Button(previousMenu, text=child.name)#, command=lambda : self.createMenu(newMenu,child,False))
+				setting = Button(previousMenu, text=child.name, command=lambda : self.createMenu(newMenu,child,False))
 				setting.grid(row=rowNumber, column=0)
 			rowNumber +=1
 
