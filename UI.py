@@ -516,7 +516,6 @@ class Application(tk.Frame):
 		level = self.menu_tree.getSelectionLevel(clickedNode)
 		levelSize =len(level)
 		newMenu.columnconfigure(0,weight=1)
-		print("SIZE: ", levelSize)
 		for i in range(0,levelSize):
 			newMenu.rowconfigure(i,weight=1)
 		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
@@ -528,7 +527,7 @@ class Application(tk.Frame):
 				settingValue = Label(newMenu, text=child.value)
 				settingValue.grid(row=rowNumber, column=1)
 			else:
-				setting = Button(newMenu, text=child.name, command=lambda : self.createMenu(newMenu,child,False))
+				setting = Button(newMenu, text=child.name)#, command=lambda : self.createMenu(newMenu,child,False))
 				setting.grid(row=rowNumber, column=0)
 			rowNumber +=1
 
