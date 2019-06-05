@@ -516,6 +516,7 @@ class Application(tk.Frame):
 		level = self.menu_tree.getSelectionLevel(clickedNode)
 		levelSize =len(level)
 		newMenu.columnconfigure(0,weight=1)
+		print("SIZE: ", levelSize)
 		for i in range(0,levelSize):
 			newMenu.rowconfigure(i,weight=1)
 		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
