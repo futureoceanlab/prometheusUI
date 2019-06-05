@@ -219,6 +219,9 @@ class Application(tk.Frame):
 		self.buttonColor = 'white'
 
 		#create the initial UI
+		self._geom = '200x200+0+0'
+		master.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
+		master.bind('<Escape>',self.toggle_geom)
 		self.create_layout()
 
 	
@@ -710,7 +713,11 @@ class Application(tk.Frame):
 		self.enableCapture = 1 - self.enableCapture
 		uiFunctionCalls.enablePiDelay(self.enableCapture)
 
-
+	def toggle_geom(self,event):
+        geom=self.master.winfo_geometry()
+        print(geom,self._geom)
+        self.master.geometry(self._geom)
+        self._geom=geom
 
 
 
@@ -720,7 +727,6 @@ def main():
 	#camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
 	root.overrideredirect(True)
-	root.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
 	# root.geometry((800,480))
 	app = Application(master=root)
 	app.buttonCheck()
