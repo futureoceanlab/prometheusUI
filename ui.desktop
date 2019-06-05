@@ -1,0 +1,5 @@
+[Desktop Entry]
+Name=ui
+Exec=/home/pi/Documents/prometheusUI/prometheusUI/UI.py
+Terminal=true
+Type=Application

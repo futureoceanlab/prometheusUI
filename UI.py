@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import tkinter as tk
 from tkinter.ttk import Frame, Button, Label, Style 
 from tkinter import *
@@ -308,7 +310,7 @@ class Application(tk.Frame):
 		camera_power.connect_both_cameras()
 		#camera_power.turn_on_BBBx(0)
 		#camera_power.turn_on_BBBx(1)
-		self.master.after(5000, self.buttonCheck)
+		self.master.after(10000, self.buttonCheck)
 
 	def get_mode(self):
 		return self.mode
