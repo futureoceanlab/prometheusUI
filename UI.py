@@ -715,7 +715,7 @@ class Application(tk.Frame):
 
 	def toggle_geom(self,event):
 		geom=self.master.winfo_geometry()
-		print(geom,self._geom)
+		self.master.overrideredirect(False)
 		self.master.geometry(self._geom)
 		self._geom=geom
 
@@ -726,7 +726,7 @@ def main():
 	#camera_power.turn_on_BBBx(0)
 	#camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
-	#root.overrideredirect(True)
+	root.overrideredirect(True)
 	# root.geometry((800,480))
 	app = Application(master=root)
 	app.buttonCheck()
