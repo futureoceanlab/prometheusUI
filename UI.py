@@ -118,19 +118,19 @@ class TreeNode():
 		return self.children
 
 	def sortLevel(self,children):        
-	    for i in range(len(children)):
-	        minimum = i
-	        
-	        for j in range(i + 1, len(children)):
-	            # Select the smallest value
-	            if children[j].name < children[minimum].name:
-	                minimum = j
+		for i in range(len(children)):
+			minimum = i
+			
+			for j in range(i + 1, len(children)):
+				# Select the smallest value
+				if children[j].name < children[minimum].name:
+					minimum = j
 
-	        # Place it at the front of the 
-	        # sorted end of the array
-	        children[minimum], children[i] = children[i], children[minimum]
-	            
-	    return children
+			# Place it at the front of the 
+			# sorted end of the array
+			children[minimum], children[i] = children[i], children[minimum]
+				
+		return children
 
 	def isLeaf(self):
 		return self.children == None
@@ -599,7 +599,7 @@ class Application(tk.Frame):
 
 	def DISP_short_pressed(self):
 		if self.get_mode() == 0:
-		    #capture mode
+			#capture mode
 			if not self.get_video_state():  #ready to take photo
 				#not taking video
 				if self.viewingPreviousImages:
@@ -714,10 +714,10 @@ class Application(tk.Frame):
 		uiFunctionCalls.enablePiDelay(self.enableCapture)
 
 	def toggle_geom(self,event):
-        geom=self.master.winfo_geometry()
-        print(geom,self._geom)
-        self.master.geometry(self._geom)
-        self._geom=geom
+		geom=self.master.winfo_geometry()
+		print(geom,self._geom)
+		self.master.geometry(self._geom)
+		self._geom=geom
 
 
 
