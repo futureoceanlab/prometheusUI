@@ -501,6 +501,7 @@ class Application(tk.Frame):
 
 		self.menuFrame = tk.Frame(mainFrame, bg='green')
 		labelName = Label(self.menuFrame, text="TEMPORARY TEXT")
+		self.menuFrame.pack()
 		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
 		# self.createTempMenu()
 		self.menuFrame.grid_forget()
