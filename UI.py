@@ -220,7 +220,7 @@ class Application(tk.Frame):
 
 		#create the initial UI
 		self._geom = '200x200+0+0'
-		master.geometry("{0}x{1}+0+0".format(root.winfo_screenwidth(), root.winfo_screenheight()))
+		master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(), master.winfo_screenheight()))
 		master.bind('<Escape>',self.toggle_geom)
 		self.create_layout()
 
