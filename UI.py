@@ -502,6 +502,8 @@ class Application(tk.Frame):
 		self.menuFrame = tk.Frame(mainFrame, bg='green')
 		# labelName = Label(self.menuFrame, text="TEMPORARY TEXT")
 		# self.menuFrame.pack()
+		self.menuFrame.rowconfigure(0,weight=1)
+		self.menuFrame.columnconfigure(0,weight=1)
 		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
 		# self.createTempMenu()
 		self.menuFrame.grid_forget()
@@ -513,8 +515,9 @@ class Application(tk.Frame):
 		newMenu = tk.Frame(self.menuFrame, bg='red', width=750, height=400)
 		level = self.menu_tree.getSelectionLevel(clickedNode)
 		levelSize =len(level)
+		newMenu.columnconfigure(0,weight=1)
 		for i in range(0,levelSize):
-			newMenu.rowconfigure(1,weight=1)
+			newMenu.rowconfigure(0,weight=1)
 		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
 		rowNumber = 0 
 		for child in level:
