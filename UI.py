@@ -500,8 +500,8 @@ class Application(tk.Frame):
 
 
 		self.menuFrame = tk.Frame(mainFrame)
-		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
-		self.createTempMenu()
+		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
+		# self.createTempMenu()
 		self.menuFrame.grid_forget()
 
 	def createTempMenu(self):
@@ -522,6 +522,26 @@ class Application(tk.Frame):
 				self.currentSelectionNode = child
 			rowNumber+=1
 		self.makeSelectedButtonColored(self.currentSelectionButton)
+		
+
+	def createMenu(self, previousMenu, clickedNode, atRoot):
+
+		if not atRoot:
+			previousMenu.grid_forget()
+		newMenu = tk.Frame(self.menuFrame, bg='red', width=750, height=400)
+		level = self.menu_tree.getSelectionLevel(clickedNode)
+		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
+		rowNumber = 0 
+		for child in level:
+			if child.isLeaf():
+				settingKey = Button(self.menuFrame, text=str('Change ')+child.name)
+				settingKey.grid(row=rowNumber, column=0)
+				settingValue = Label(self.menuFrame, text=child.value)
+				settingValue.grid(row=rowNumber, column=1)
+			else:
+				setting = Button(self.menuFrame, text=child.name, command=lambda : self.createMenu(newMenu,child,False))
+				setting.grid(row=rowNumber, column=0)
+			rowNumber +=1
 
 
 	def changeMenuValue(self, clickedNode, labelToChange):
@@ -549,25 +569,6 @@ class Application(tk.Frame):
 		self.mainArea.previousImage = img
 		self.mainArea.winfo_children()[4].create_image(0,0,anchor=NW, image=img)
 		self.mainArea.winfo_children()[4].pack()
-
-	def createMenu(self, previousMenu, clickedNode, atRoot):
-
-		if not atRoot:
-			previousMenu.grid_forget()
-		newMenu = tk.Frame(self.menuFrame, bg='red', width=750, height=400)
-		level = self.menu_tree.getSelectionLevel(clickedNode)
-		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
-		rowNumber = 0 
-		for child in level:
-			if child.isLeaf():
-				settingKey = Button(self.menuFrame, text=str('Change ')+child.name)
-				settingKey.grid(row=rowNumber, column=0)
-				settingValue = Label(self.menuFrame, text=child.value)
-				settingValue.grid(row=rowNumber, column=1)
-			else:
-				setting = Button(self.menuFrame, text=child.name, command=lambda : self.createMenu(newMenu,child,False))
-				setting.grid(row=rowNumber, column=0)
-			rowNumber +=1
 
 	# def openChildMenu(self, node):
 
