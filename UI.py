@@ -499,7 +499,7 @@ class Application(tk.Frame):
 		prevImgCanvas.pack_forget()
 
 
-		self.menuFrame = tk.Frame(mainFrame)
+		self.menuFrame = tk.Frame(mainFrame, bg='green')
 		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
 		# self.createTempMenu()
 		self.menuFrame.grid_forget()
@@ -522,7 +522,7 @@ class Application(tk.Frame):
 				self.currentSelectionNode = child
 			rowNumber+=1
 		self.makeSelectedButtonColored(self.currentSelectionButton)
-		
+
 
 	def createMenu(self, previousMenu, clickedNode, atRoot):
 
