@@ -626,10 +626,10 @@ class Application(tk.Frame):
 		if self.get_mode() == 0:            #capture
 			if not self.dimensionMode:		#2d
 				self.change_exposure2d()
-				uiFunctionCalls.change2dExposure(self.exposure2d)
+				# uiFunctionCalls.change2dExposure(self.exposure2d)
 			else:
 				self.change_exposure3d()
-				uiFunctionCalls.change3dExposure(self.exposure3d)
+				# uiFunctionCalls.change3dExposure(self.exposure3d)
 		else:                               #menu mode
 			self.selectDown(self.currentSelectionNode)
 
@@ -646,9 +646,11 @@ class Application(tk.Frame):
 				fileLocation = "./captureImages/"+str(datetime.utcnow().strftime(
 "%m%d%H%M%S"))
 				if not self.dimensionMode:		#2d
-					returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
+					# returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
+					returnedFile = [] #TEMP
 				else:
-					returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
+					# returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
+					returnedFile = [] #TEMP
 				self.previousImages = returnedFile + self.previousImages
 			else:
 				print("END VIDEO")          #currently taking video
@@ -699,19 +701,19 @@ class Application(tk.Frame):
 
 	def toggle_2d3d(self):
 		self.dimensionMode = 1 - self.dimensionMode
-		uiFunctionCalls.toggle2d3dMode(self.dimensionMode)
+		# uiFunctionCalls.toggle2d3dMode(self.dimensionMode)
 
 	def setModulationFrequency(self):
 		self.modFreq = 1 - self.modFreq
-		uiFunctionCalls.setModulationFrequency(self.modFreq)
+		# uiFunctionCalls.setModulationFrequency(self.modFreq)
 
 	def toggleEnablePiDelay(self):
 		self.piDelay = 1 - self.piDelay
-		uiFunctionCalls.enablePiDelay(self.piDelay)
+		# uiFunctionCalls.enablePiDelay(self.piDelay)
 
 	def toggleEnableCapture(self):
 		self.enableCapture = 1 - self.enableCapture
-		uiFunctionCalls.enablePiDelay(self.enableCapture)
+		# uiFunctionCalls.enablePiDelay(self.enableCapture)
 
 	def toggle_geom(self,event):
 		geom=self.master.winfo_geometry()
