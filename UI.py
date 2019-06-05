@@ -335,7 +335,6 @@ class Application(tk.Frame):
 		return self.showingLiveView()
 
 	def get_previousImage(self, x):
-		print("PREEEEVVV", self.previousImages)
 		return ImageTk.PhotoImage(Image.open(self.previousImages[x]).resize((600,450),Image.ANTIALIAS))
 
 	def get_four_DCS_images(self):
@@ -714,7 +713,7 @@ class Application(tk.Frame):
 
 
 def main():
-	camera_power.connect_both_cameras()
+	# camera_power.connect_both_cameras()
 	#camera_power.turn_on_BBBx(0)
 	#camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
@@ -724,7 +723,6 @@ def main():
 	app = Application(master=root)
 	app.buttonCheck()
 	app.mainloop()
-	# readBinaryFile('image.bin')
 
 if __name__ == '__main__':
 	main()
