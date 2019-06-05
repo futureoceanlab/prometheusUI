@@ -51,12 +51,15 @@ class MenuTree():
 	# the previous and next level of the menu
 
 	def __init__(self, treeStructure):
+		#treeStructure is a dictionary, like the MENU_TREE above
+
 		self.root = 'root'
-		self.numberOfLevels = 0
 		self.tree = self.makeTree(treeStructure)
 		self.currentLevel = self.tree
 
 	def makeTree(self, treeStructure):
+		#recursively make each TreeNode be a name a list of child TreeNodes
+
 		if type(treeStructure) is not dict:
 			return treeStructure
 		treeFromHere = []
@@ -69,6 +72,7 @@ class MenuTree():
 		return selection.getImmediateChildren()
 
 	def traverseDownToSelectionLevel(self, selection):
+		#when the user clicks on the selection, this gets the children of that selection
 		self.currentLevel = self.getSelectionLevel(selection)
 
 	def goUpLevel(self, currentListOfNodes):
@@ -86,6 +90,7 @@ class MenuTree():
 		return self.tree[0].getImmediateChildren() == self.currentLevel
 
 	def isAtTempRoot(self):
+		#TEMP
 		return True
 
 	def findPreviousLevel(self):
@@ -108,9 +113,11 @@ class TreeNode():
 		self.name = name
 
 		if type(childrenOrValue)==list:
+			#a node has children
 			self.children = childrenOrValue
 			self.value = None
 		else:
+			#or it is a leaf
 			self.value = childrenOrValue
 			self.children = None
 
@@ -538,7 +545,6 @@ class Application(tk.Frame):
 	def makeButtonWhite(self, button):
 		button['bg'] = self.buttonColor
 
-
 	def setPreviousImage(self,img):
 		self.mainArea.previousImage = img
 		self.mainArea.winfo_children()[4].create_image(0,0,anchor=NW, image=img)
@@ -569,8 +575,8 @@ class Application(tk.Frame):
 		currentSelectionIndex = self.menu_tree.currentLevel.index(currentSelectionNode)
 		newIndex = max(0, currentSelectionIndex - 1)
 		newNodeSelection = self.menu_tree.currentLevel[newIndex]
-		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
+		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.currentSelectionNode = newNodeSelection
 		self.currentSelectionButton = self.nodeToButtonDict[newNodeSelection][0]
 
@@ -578,8 +584,8 @@ class Application(tk.Frame):
 		currentSelectionIndex = self.menu_tree.currentLevel.index(currentSelectionNode)
 		newIndex = min(len(self.menu_tree.currentLevel)-1, currentSelectionIndex + 1)
 		newNodeSelection = self.menu_tree.currentLevel[newIndex]
-		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
+		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.currentSelectionNode = newNodeSelection
 		self.currentSelectionButton = self.nodeToButtonDict[newNodeSelection][0]
 
@@ -643,8 +649,7 @@ class Application(tk.Frame):
 	def ACTN_short_pressed(self):
 		if self.get_mode() == 0:            #capture
 			if not self.get_video_state():  #ready to take photo
-				fileLocation = "./captureImages/"+str(datetime.utcnow().strftime(
-"%m%d%H%M%S"))
+				fileLocation = "./captureImages/"+str(datetime.utcnow().strftime("%m%d%H%M%S"))
 				if not self.dimensionMode:		#2d
 					# returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
 					returnedFile = [] #TEMP
@@ -728,8 +733,7 @@ def main():
 	#camera_power.turn_on_BBBx(0)
 	#camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
-	root.overrideredirect(True)
-	# root.geometry((800,480))
+	root.overrideredirect(True)		#for debugging turn this to False (allows to press ESCAPE)
 	app = Application(master=root)
 	app.buttonCheck()
 	app.mainloop()
