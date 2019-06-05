@@ -499,9 +499,9 @@ class Application(tk.Frame):
 		prevImgCanvas.pack_forget()
 
 
-		self.menuFrame = tk.Frame(mainFrame, bg='green', width=500, height=500)
-		labelName = Label(self.menuFrame, text="TEMPORARY TEXT")
-		labelName.pack()
+		self.menuFrame = tk.Frame(mainFrame, bg='green')
+		# labelName = Label(self.menuFrame, text="TEMPORARY TEXT")
+		# self.menuFrame.pack()
 		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
 		# self.createTempMenu()
 		self.menuFrame.grid_forget()
@@ -512,6 +512,9 @@ class Application(tk.Frame):
 			previousMenu.grid_forget()
 		newMenu = tk.Frame(self.menuFrame, bg='red', width=750, height=400)
 		level = self.menu_tree.getSelectionLevel(clickedNode)
+		levelSize =len(level)
+		for i in range(0,levelSize):
+			newMenu.rowconfigure(1,weight=1)
 		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
 		rowNumber = 0 
 		for child in level:
@@ -524,7 +527,6 @@ class Application(tk.Frame):
 				setting = Button(newMenu, text=child.name, command=lambda : self.createMenu(newMenu,child,False))
 				setting.grid(row=rowNumber, column=0)
 			rowNumber +=1
-
 
 	def createTempMenu(self):
 
