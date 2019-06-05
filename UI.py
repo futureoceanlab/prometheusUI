@@ -499,7 +499,7 @@ class Application(tk.Frame):
 		prevImgCanvas.pack_forget()
 
 
-		self.menuFrame = tk.Frame(mainFrame, bg='green')
+		self.menuFrame = tk.Frame(mainFrame, bg='green', width=500, height=500)
 		labelName = Label(self.menuFrame, text="TEMPORARY TEXT")
 		labelName.pack()
 		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
