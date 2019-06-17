@@ -328,7 +328,7 @@ class Application(tk.Frame):
 	def createMainLog(self):
 		numFolders, numFiles = self.directoryCounter("./logs")
 		print(os.getcwd())
-		newFile = open("./logs/"+"log_"+str(numFiles)+".txt", "w")
+		newFile = open("/logs/"+"log_"+str(numFiles)+".txt", "w")
 		newFile.write("START TIME: "+str(datetime.utcnow().strftime("%m%d%H%M%S")))
 		newFile.close()
 		self.currentLogFile = os.path.dirname(os.path.abspath(newFile))
