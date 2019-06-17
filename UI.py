@@ -652,12 +652,7 @@ class Application(tk.Frame):
 
 	def EXP_short_pressed(self):
 		if self.get_mode() == 0:            #capture
-			if not self.dimensionMode:		#2d
-				self.change_exposure2d()
-				# uiFunctionCalls.change2dExposure(self.exposure2d)
-			else:
-				self.change_exposure3d()
-				# uiFunctionCalls.change3dExposure(self.exposure3d)
+			self.change_exposure(self.dimensionMode)
 		else:                               #menu mode
 			self.selectDown(self.currentSelectionNode)
 
@@ -671,18 +666,7 @@ class Application(tk.Frame):
 	def ACTN_short_pressed(self):
 		if self.get_mode() == 0:            #capture
 			if not self.get_video_state():  #ready to take photo
-				numFolders, numFiles = self.directoryCounter("./previousImages")
-				elementLocation = "./previousImages/"+str(numFolders)+"/"
-				fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S"))
-				if not self.dimensionMode:		#2d
-					# returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
-					returnedFile = [] #TEMP
-				else:
-					# returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
-					returnedFile = [] #TEMP
-				self.previousImages = returnedFile + self.previousImages
-				self.writeImageMetaFile(elementLocation)
-
+				self.take_photo()
 			else:
 				print("END VIDEO")          #currently taking video
 				self.toggle_video_state()
@@ -734,6 +718,18 @@ class Application(tk.Frame):
 
 		newFile.close()
 
+	def take_photo():
+		numFolders, numFiles = self.directoryCounter("./previousImages")
+		elementLocation = "./previousImages/"+str(numFolders)+"/"
+		fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S"))
+		if not self.dimensionMode:		#2d
+			# returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
+			returnedFile = [] #TEMP
+		else:
+			# returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
+			returnedFile = [] #TEMP
+		self.previousImages = returnedFile + self.previousImages
+		self.writeImageMetaFile(elementLocation)
 
 	def change_mode(self):
 		self.mode = 1 - self.mode
@@ -746,19 +742,22 @@ class Application(tk.Frame):
 		print("DISP: ",self.display)
 		self.update_display()
 
-	def change_exposure2d(self):
-		exposureIndex = EXPOSURE_OPTIONS.index(self.exposure2d)
-		self.exposure2d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
-		self.mainImportantData['EXP 2D'] = self.exposure2d
+	def change_exposure(self, mode):
+		if mode:
+			#3d
+			exposureIndex = EXPOSURE_OPTIONS.index(self.exposure3d)
+			self.exposure3d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
+			self.mainImportantData['EXP 3D'] = self.exposure3d
+			# uiFunctionCalls.change3dExposure(self.exposure3d)
+			print("EXP3D: ", self.exposure3d)
+		else:
+			#2d
+			exposureIndex = EXPOSURE_OPTIONS.index(self.exposure2d)
+			self.exposure2d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
+			self.mainImportantData['EXP 2D'] = self.exposure2d
+			# uiFunctionCalls.change2dExposure(self.exposure2d)
+			print("EXP2D: ", self.exposure2d)
 		self.update_display()
-		print("EXP2D: ", self.exposure2d)
-
-	def change_exposure3d(self):
-		exposureIndex = EXPOSURE_OPTIONS.index(self.exposure3d)
-		self.exposure3d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
-		self.mainImportantData['EXP 3D'] = self.exposure3d
-		self.update_display()
-		print("EXP3D: ", self.exposure3d)
 
 	def capture_video(self):
 		print("TAKE VIDEO")
@@ -799,6 +798,18 @@ class Application(tk.Frame):
 		self.I2Cdata["direction"] = d
 		self.I2Cdata["temperature"] = t 
 		self.I2Cdata["pressure"] = p 
+
+	def doHDRtest(self):
+		print("DOING HDR TEST")
+		self.dimensionMode = 1
+		for dimMode in [0,1]:			#2d and 3d mode
+			self.toggle_2d3d()
+			for exp in EXPOSURE_OPTIONS:
+				self.change_exposure(self.dimensionMode)
+				self.take_photo()
+
+
+
 
 
 
