@@ -207,6 +207,8 @@ class Application(tk.Frame):
 		self.currentSelectionButton = None
 		self.currentSelectionNode = None
 		self.nodeToButtonDict = {}
+		self.I2Cdata = {'direction': None, 'temperature': None, 'pressure':None}
+		self.currentLogFile = ""
 
 		#button information
 		self.MENU_BTN = gpio.Button(21, pull_up=True)
@@ -226,9 +228,10 @@ class Application(tk.Frame):
 		self.buttonColor = 'white'
 
 		#create the initial UI
+		self.createMainLog()
 		self._geom = '200x200+0+0'
 		master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(), master.winfo_screenheight()))
-		master.bind('<Escape>',self.toggle_geom)
+		master.bind('<Escape>',lambda e: master.quit())
 		self.create_layout()
 
 	
@@ -321,6 +324,18 @@ class Application(tk.Frame):
 		#camera_power.turn_on_BBBx(0)
 		#camera_power.turn_on_BBBx(1)
 		self.master.after(10000, self.buttonCheck)
+
+	def createMainLog(self):
+		numFolders, numFiles = self.directoryCounter("./logs")
+		newFile = open("./logs/"+"log_"+str(numFiles)+".txt", "w+")
+		newFile.write("START TIME: "+str(datetime.utcnow().strftime("%m%d%H%M%S")))
+		newFile.close()
+		self.currentLogFile = os.path.dirname(os.path.abspath(newFile))
+
+	def updateMainLog(msg):
+		logFile = open(self.currentLogFile, 'a')
+		logFile.write(msg)
+		logFile.close()
 
 	def get_mode(self):
 		return self.mode
@@ -656,7 +671,9 @@ class Application(tk.Frame):
 	def ACTN_short_pressed(self):
 		if self.get_mode() == 0:            #capture
 			if not self.get_video_state():  #ready to take photo
-				fileLocation = "./captureImages/"+str(datetime.utcnow().strftime("%m%d%H%M%S"))
+				numFolders, numFiles = self.directoryCounter("./previousImages")
+				elementLocation = "./previousImages/"+str(numFolders)+"/"
+				fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S"))
 				if not self.dimensionMode:		#2d
 					# returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
 					returnedFile = [] #TEMP
@@ -664,6 +681,8 @@ class Application(tk.Frame):
 					# returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
 					returnedFile = [] #TEMP
 				self.previousImages = returnedFile + self.previousImages
+				self.writeImageMetaFile(elementLocation)
+
 			else:
 				print("END VIDEO")          #currently taking video
 				self.toggle_video_state()
@@ -679,6 +698,42 @@ class Application(tk.Frame):
 		else:                               
 			#else is same as short press
 			self.ACTN_short_pressed()
+
+	def directoryCounter(self, path):
+
+		numFolders = 0
+		numFiles = 0
+		for _, folderNames, fileNames in os.walk(path):
+			numFolders+=len(folderNames)
+			numFiles +=len(fileNames)
+
+		return numFolders, numFiles
+
+	def writeImageMetaFile(self, path):
+		newFile = open(path+"meta.txt", 'w+')
+		#time 
+		newFile.write(datetime.utcnow().strftime("%m%d%H%M%S"))
+
+		#i2c data
+		for data in self.I2Cdata:
+			newFile.write(str(data) + ":" + str(self.I2Cdata[data])+'\n')
+
+		#cam settings
+		for data in self.mainImportantData:
+			newFile.write(str(data) + ":" + str(self.mainImportantData[data])+'\n')
+		newFile.close()
+
+	def writeVideoMetaFile(self, path):
+		newFile = open(path+"meta.txt", 'w+')
+		
+		#timeStart
+		#timeEnd
+		#numberofframes
+		#camsettings
+
+
+		newFile.close()
+
 
 	def change_mode(self):
 		self.mode = 1 - self.mode
@@ -707,6 +762,13 @@ class Application(tk.Frame):
 
 	def capture_video(self):
 		print("TAKE VIDEO")
+		numFolders, numFiles = self.directoryCounter("./previousImages")
+		elementLocation = "./previousImages/"+str(numFolders)+"/"
+		self.writeVideoMetaFile(elementLocation)
+		# videoImages = uiFunctionCalls.getABunchOfImages############################################################
+		# for image in videoImages:
+		# 	self.writeImageMetaFile(elementLocation+"videoImages/"+str(videoImages.index(image))+"/")
+
 
 	def change_title(self, newTitle):
 		self.title = newTitle 
@@ -732,6 +794,11 @@ class Application(tk.Frame):
 		self.master.overrideredirect(False)
 		self.master.geometry(self._geom)
 		self._geom=geom
+
+	def updateI2Cdata(self, d,t,p):
+		self.I2Cdata["direction"] = d
+		self.I2Cdata["temperature"] = t 
+		self.I2Cdata["pressure"] = p 
 
 
 
