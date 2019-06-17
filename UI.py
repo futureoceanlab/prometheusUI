@@ -514,21 +514,20 @@ class Application(tk.Frame):
 			previousMenu.grid_forget()
 		newMenu = tk.Frame(self.menuFrame, bg='red', width=750, height=400)
 		level = self.menu_tree.getSelectionLevel(clickedNode)
-		levelSize =len(level)
-		newMenu.columnconfigure(0,weight=1)
-		for i in range(0,levelSize):
-			newMenu.rowconfigure(i,weight=1)
+
 		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
 		rowNumber = 0 
 		for child in level:
 			if child.isLeaf():
-				settingKey = Button(newMenu, text=str('Change ')+child.name)
-				settingKey.grid(row=rowNumber, column=0)
-				settingValue = Label(newMenu, text=child.value)
+				settingName = Button(previousMenu, text=str('Change ')+child.name)
+				settingName.grid(row=rowNumber, column=0)
+				settingValue = Label(previousMenu, text=child.value)
 				settingValue.grid(row=rowNumber, column=1)
+				self.nodeToButtonDict[child] = (settingName, settingValue)
 			else:
-				setting = Button(previousMenu, text=child.name, command=lambda : self.createMenu(self.menuFrame,child,False))
-				setting.grid(row=rowNumber, column=0)
+				settingCategory = Button(previousMenu, text=child.name, command=lambda : self.createMenu(self.menuFrame,child,False))
+				settingCategory.grid(row=rowNumber, column=0)
+				self.nodeToButtonDict[child] = (settingCategory, None)
 			rowNumber +=1
 
 	def createTempMenu(self):
@@ -741,7 +740,7 @@ def main():
 	#camera_power.turn_on_BBBx(0)
 	#camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
-	root.overrideredirect(True)		#for debugging turn this to False (allows to press ESCAPE)
+	root.overrideredirect(False)		#for debugging turn this to False (allows to press ESCAPE)
 	app = Application(master=root)
 	app.buttonCheck()
 	app.mainloop()
