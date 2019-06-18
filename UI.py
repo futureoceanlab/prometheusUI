@@ -787,7 +787,7 @@ class Application(tk.Frame):
 				self.buttonCheck()
 		else:
 			while self.isTakingVideo:
-				self.doHDRtest()
+				self.doHDRtest([],[],[])
 				frameCounter +=1
 				self.buttonCheck()
 
