@@ -717,7 +717,7 @@ class Application(tk.Frame):
 			print("TOGGLE LIVE VIEW")
 			self.toggle_live_view()
 			self.update_display()
-			# self.rapidFireUpdate()
+			self.rapidFireUpdate()
 		else:                           
 			self.EXP_short_pressed()
 
@@ -752,6 +752,7 @@ class Application(tk.Frame):
 			self.setLiveImage(img)
 			self.buttonCheck()
 			tempCounter +=1
+			time.pause(1)
 
 	def directoryCounter(self, path):
 
