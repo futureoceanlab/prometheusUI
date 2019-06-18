@@ -388,7 +388,7 @@ class Application(tk.Frame):
 	def get_previousImage(self, x):
 		return ImageTk.PhotoImage(Image.open(self.previousImages[x]).resize((600,450),Image.ANTIALIAS))
 
-	def get_previousImageIndex():
+	def get_previousImageIndex(self):
 		return (self.currentPreviousImage)%len(self.previousImages)
 
 	def get_four_DCS_images(self):
