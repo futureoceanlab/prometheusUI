@@ -386,22 +386,22 @@ class Application(tk.Frame):
 		return self.showingLiveView()
 
 	def get_previousImage(self, x):
-		return ImageTk.PhotoImage(Image.open(self.previousImages[x]).resize((600,450),Image.ANTIALIAS))
+		return Image.open(self.previousImages[x])
 
-	def get_previousImageIndex(self):
-		return (self.currentPreviousImage)%len(self.previousImages)
+	def get_previousImageIndex(self, offset=0):
+		return (self.currentPreviousImage+offset)%len(self.previousImages)
 
 	def get_four_DCS_images(self):
-		return [ImageTk.PhotoImage(Image.open(self.get_previousImage(self.get_previousImageIndex())).resize((300,225),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(Image.open(self.get_previousImage(self.get_previousImageIndex()-1)).resize((300,225),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(Image.open(self.get_previousImage(self.get_previousImageIndex()-2)).resize((300,225),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(Image.open(self.get_previousImage(self.get_previousImageIndex()-3)).resize((300,225),Image.ANTIALIAS))]
+		return [ImageTk.PhotoImage(self.get_previousImage(self.get_previousImageIndex()).resize((300,225),Image.ANTIALIAS)),
+				ImageTk.PhotoImage(self.get_previousImage(self.get_previousImageIndex(-1)).resize((300,225),Image.ANTIALIAS)),
+				ImageTk.PhotoImage(self.get_previousImage(self.get_previousImageIndex(-2)).resize((300,225),Image.ANTIALIAS)),
+				ImageTk.PhotoImage(self.get_previousImage(self.get_previousImageIndex(-3)).resize((300,225),Image.ANTIALIAS))]
 
 	def get_PC_image(self):
-		return ImageTk.PhotoImage(Image.open(self.get_previousImage(self.get_previousImageIndex())).resize((600,450),Image.ANTIALIAS))
+		return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((600,450),Image.ANTIALIAS))
 
 	def get_colorMap_image(self):
-		return ImageTk.PhotoImage(Image.open(self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
+		return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
 		
 	def get_richData_string(self):
 		s = ''
@@ -535,7 +535,7 @@ class Application(tk.Frame):
 
 		# #PreviousImg -- display = 7
 		prevImgCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		previousImage = self.get_previousImage(self.currentPreviousImage)
+		previousImage = ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS))
 		mainFrame.previousImage = previousImage
 		prevImgCanvas.create_image(0,0,anchor=NW, image=previousImage)
 		prevImgCanvas.pack_forget()
@@ -659,7 +659,7 @@ class Application(tk.Frame):
 				#not taking video
 				if self.viewingPreviousImages:
 					#get the next previous image
-					self.setPreviousImage(self.get_previousImage(self.currentPreviousImage))
+					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage)).resize((600,450),Image.ANTIALIAS))
 					self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
 					self.update_display()
 				else:
@@ -671,7 +671,7 @@ class Application(tk.Frame):
 
 	def DISP_long_pressed(self):
 		self.currentPreviousImage = len(self.previousImages)-1
-		self.setPreviousImage(self.get_previousImage(self.currentPreviousImage))
+		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage)).resize((300,225),Image.ANTIALIAS))
 		if self.get_mode() == 0 and not self.get_video_state():  
 			#capture mode and not taking video
 			self.toggle_prev_image()
