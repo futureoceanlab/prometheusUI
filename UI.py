@@ -643,6 +643,7 @@ class Application(tk.Frame):
 
 	def setLiveImage(self, img):
 		self.mainArea.liveImg = img
+		self.mainArea.winfo_children()[5].pack_forget()
 		self.mainArea.winfo_children()[5].create_image(0,0,anchor=NW, image=img)
 		self.mainArea.winfo_children()[5].pack()
 
@@ -750,9 +751,10 @@ class Application(tk.Frame):
 		while self.showingLiveView:
 			img = self.get_live_image_temp(tempCounter)
 			self.setLiveImage(img)
+			
+			time.sleep(1)
 			self.buttonCheck()
 			tempCounter +=1
-			time.sleep(1)
 
 	def directoryCounter(self, path):
 
