@@ -351,6 +351,7 @@ class Application(tk.Frame):
 			reader = csv.reader(file, delimiter=',')
 			for row in reader:
 				self.previousImages.append(row[1])	#appending the image file location
+				print(row)
 				#the most recent previous image is at the end
 			self.numPreviousImages = len(list(reader))
 			print("HERE: ", self.numPreviousImages)
