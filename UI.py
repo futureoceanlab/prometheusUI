@@ -413,7 +413,6 @@ class Application(tk.Frame):
 		if x%2==0:
 			img = Image.open('whale.jpg').resize((800,480),Image.ANTIALIAS)
 		img = Image.open('diver.jpg').resize((800,480),Image.ANTIALIAS)
-		print("LIVE IMG: ", img)
 		return ImageTk.PhotoImage(img)
 		
 	def get_richData_string(self):
@@ -718,7 +717,7 @@ class Application(tk.Frame):
 			print("TOGGLE LIVE VIEW")
 			self.toggle_live_view()
 			self.update_display()
-			self.rapidFireUpdate()
+			# self.rapidFireUpdate()
 		else:                           
 			self.EXP_short_pressed()
 
