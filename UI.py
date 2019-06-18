@@ -743,7 +743,7 @@ class Application(tk.Frame):
 		if not self.get_mode() and not self.get_video_state():  
 			#capture mode and ready to take video
 			self.toggle_video_state()
-			self.capture_video(0)
+			self.capture_video()
 		else:                               
 			#else is same as short press
 			self.ACTN_short_pressed()
@@ -823,27 +823,27 @@ class Application(tk.Frame):
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
 		frameCounter +=1
 
-		if self.HDRmode:
-			self.doHDRtest([],[],[])
-		else:
-			self.take_photo()
-
-		self.after(50, self.capture_video, frameCounter)
-
-
-		# self.toggle_live_view()
-		# self.update_display()#turn on live view
-
-		# if not self.dispBtnState:
-		# 	while self.isTakingVideo:
-		# 		self.take_photo()
-		# 		frameCounter +=1
-		# 		self.buttonCheck()
+		# if self.HDRmode:
+		# 	self.doHDRtest([],[],[])
 		# else:
-		# 	while self.isTakingVideo:
-		# 		self.doHDRtest([],[],[])
-		# 		frameCounter +=1
-		# 		self.buttonCheck()
+		# 	self.take_photo()
+
+		# self.after(50, self.capture_video, frameCounter)
+
+
+		self.toggle_live_view()
+		self.update_display()#turn on live view
+
+		if not self.dispBtnState:
+			while self.isTakingVideo:
+				self.take_photo()
+				frameCounter +=1
+				self.buttonCheck()
+		else:
+			while self.isTakingVideo:
+				self.doHDRtest([],[],[])
+				frameCounter +=1
+				self.buttonCheck()
 
 		print("IT GOT HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
