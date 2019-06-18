@@ -743,7 +743,7 @@ class Application(tk.Frame):
 		if not self.get_mode() and not self.get_video_state():  
 			#capture mode and ready to take video
 			self.toggle_video_state()
-			self.capture_video()
+			self.capture_video(0)
 		else:                               
 			#else is same as short press
 			self.ACTN_short_pressed()
