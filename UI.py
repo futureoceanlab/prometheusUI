@@ -753,7 +753,7 @@ class Application(tk.Frame):
 		self.previousImages = self.previousImages + returnedFile
 
 		#update CSV
-		numImages = len(csv.reader(self.currentCSVFile))
+		numImages = sum(1 for row in csv.reader(self.currentCSVFile))
 		csvFile = open(self.currentCSVFile, 'wb')
 		writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
 		#CSV FORMAT
