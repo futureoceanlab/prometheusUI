@@ -459,7 +459,7 @@ class Application(tk.Frame):
 			self.mainArea.winfo_children()[i].pack_forget()
 			print("III", i)
 
-		if display == -1 or display == 2 or display == 7 or self.showingLiveView:
+		if display == -1 or display == 2 or display == 7 or display == 11:
 			#erase the data grid
 			self.winfo_children()[2].grid_forget()
 			print("AAAAA")
