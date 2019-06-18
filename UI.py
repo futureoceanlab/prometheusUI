@@ -737,7 +737,7 @@ class Application(tk.Frame):
 		#numberofframes
 		#camsettings 
 
-		newFile.write(start + '\n' + end + '\n' + numFrames + '\n')
+		newFile.write(start + '\n' + end + '\n' + str(numFrames) + '\n')
 
 
 		newFile.close()
