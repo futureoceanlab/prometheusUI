@@ -344,14 +344,13 @@ class Application(tk.Frame):
 		#on startup, check if the main csv exists
 		#if it does, populate the previous images
 		#otherwise, create a new one
-		exists = os.path("./mainCSV.csv")
-		if exists:
+		try:
 			file = open('./mainCSV.csv', 'r')
 			reader = csv.reader(file, delimiter=',')
 			for row in reader:
 				self.previousImages.append(row[1])	#appending the image file location
 				#the most recent previous image is at the end
-		else:
+		except FileNotFoundError:
 			file = open("./mainCSV.csv", "wb")
 			self.previousImages = []
 		file.close()
