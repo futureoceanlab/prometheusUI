@@ -190,7 +190,8 @@ class Application(tk.Frame):
 		#previous image settings
 		self.viewingPreviousImages = False
 		self.previousImages = []
-		self.createMainCSV()			
+		self.numPreviousImages = 0
+		self.createMainCSV()	
 		self.previousImages = ['ocean.jpg','reef.jpg'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
 		self.currentPreviousImage = len(self.previousImages)-1
 		self.dimensionMode = 0
@@ -351,9 +352,11 @@ class Application(tk.Frame):
 			for row in reader:
 				self.previousImages.append(row[1])	#appending the image file location
 				#the most recent previous image is at the end
+			self.numPreviousImages = len(list(reader))
 		except FileNotFoundError:
 			file = open(self.currentCSVFile, "w")
 			self.previousImages = []
+			self.numPreviousImages = 0
 		file.close()
 
 	def get_mode(self):
@@ -755,15 +758,13 @@ class Application(tk.Frame):
 		returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
 
 		#update CSV
-		csvFile = open(self.currentCSVFile, 'r')
-		numImages = len(list(csv.reader(csvFile)))
 		csvFile = open(self.currentCSVFile, 'w')
 		writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
 		#CSV FORMAT
 		#index, imageLocation, metadataLocation
 		metaFile = fileLocation+"_meta.txt"
 		self.writeImageMetaFile(metaFile)
-		writer.writerow([numImages, returnedFileName, metaFile])
+		writer.writerow([self.numPreviousImages, returnedFileName, metaFile])
 		
 		csvFile.close()
 
