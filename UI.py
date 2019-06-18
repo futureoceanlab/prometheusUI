@@ -353,6 +353,7 @@ class Application(tk.Frame):
 				self.previousImages.append(row[1])	#appending the image file location
 				print(row)
 				#the most recent previous image is at the end
+			print(list(reader))
 			self.numPreviousImages = len(list(reader))
 			print("HERE: ", self.numPreviousImages)
 		except FileNotFoundError:
