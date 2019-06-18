@@ -189,7 +189,10 @@ class Application(tk.Frame):
 
 		#previous image settings
 		self.viewingPreviousImages = False
-		self.previousImages = []			#TEMPORARY
+		self.previousImages = []
+		self.createMainCSV()			
+		self.previousImages = ['ocean.jpg','reef.jpg'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
+		self.currentPreviousImage = len(self.previousImages)-1
 		self.dimensionMode = 0
 
 		#frame areas of the UI
@@ -230,10 +233,6 @@ class Application(tk.Frame):
 
 		#create the initial UI
 		self.createMainLog()
-		self.createMainCSV()
-		print("PREVIOUS: ", self.previousImages)
-		self.previousImages = ['ocean.jpg','reef.jpg'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
-		self.currentPreviousImage = len(self.previousImages)-1
 		self._geom = '200x200+0+0'
 		master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(), master.winfo_screenheight()))
 		master.bind('<Escape>',lambda e: master.quit())
