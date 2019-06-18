@@ -757,12 +757,12 @@ class Application(tk.Frame):
 		self.buttonCheck()
 		tempCounter +=1
 
-		# print("B")
-		# time.sleep(sleeptime)
-		# img = self.get_live_image_temp(tempCounter)
-		# self.setLiveImage(img)
-		# self.buttonCheck()
-		# tempCounter +=1
+		print("B")
+		time.sleep(sleeptime)
+		img = self.get_live_image_temp(tempCounter)
+		self.setLiveImage(img)
+		self.buttonCheck()
+		tempCounter +=1
 
 		# print("C")
 		# time.sleep(sleeptime)
