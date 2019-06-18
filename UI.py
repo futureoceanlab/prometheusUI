@@ -758,7 +758,7 @@ class Application(tk.Frame):
 		returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
 
 		#update CSV
-		csvFile = open(self.currentCSVFile, 'w')
+		csvFile = open(self.currentCSVFile, 'a')
 		writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
 		#CSV FORMAT
 		#index, imageLocation, metadataLocation
