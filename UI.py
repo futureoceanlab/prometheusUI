@@ -189,6 +189,7 @@ class Application(tk.Frame):
 
 		#previous image settings
 		self.viewingPreviousImages = False
+		self.previousImages = []			#TEMPORARY
 		self.dimensionMode = 0
 
 		#frame areas of the UI
