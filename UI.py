@@ -765,7 +765,7 @@ class Application(tk.Frame):
 		print(numImages, type(numImages))
 		print(returnedFile, type(returnedFile))
 		print(metaFile, type(metaFile))
-		writer.writerow([numImages, returnedFile, metaFile])
+		writer.writerow([numImages, returnedFileName, metaFile])
 		
 		csvFile.close()
 
