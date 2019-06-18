@@ -271,11 +271,7 @@ class Application(tk.Frame):
 					#long press
 					self.dispBtnState = 0
 					self.dispSinceLongheld = time.time()
-					if self.actnBtnState:
-						#the actn btn is pressed while the display button is held
-						self.doHDRtest([],[],[])
-					else: 
-						self.DISP_long_pressed()
+					self.DISP_long_pressed()
 
 
 		# EXPOSURE BUTTON
@@ -699,7 +695,11 @@ class Application(tk.Frame):
 	def ACTN_short_pressed(self):
 		if self.get_mode() == 0:            #capture
 			if not self.get_video_state():  #ready to take photo
-				self.take_photo()
+				if self.dispBtnState:
+					#display button is pushed WHILE action button pressed
+					self.doHDRtest([],[],[])
+				else:
+					self.take_photo()
 			else:
 				print("END VIDEO")          #currently taking video
 				self.toggle_video_state()
@@ -780,10 +780,16 @@ class Application(tk.Frame):
 
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
 		frameCounter = 0
-		while self.isTakingVideo:
-			self.take_photo()
-			frameCounter +=1
-			self.buttonCheck()
+		if self.dispBtnState:
+			while self.isTakingVideo:
+				self.take_photo()
+				frameCounter +=1
+				self.buttonCheck()
+		else:
+			while self.isTakingVideo:
+				self.doHDRtest()
+				frameCounter +=1
+				self.buttonCheck()
 
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
