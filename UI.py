@@ -752,7 +752,6 @@ class Application(tk.Frame):
 		tempCounter = 0
 		sleeptime = 0.1
 		# while self.showingLiveView:
-		print("A")
 		# time.sleep(sleeptime)
 		r = randint(0,1)
 		img = self.get_live_image_temp(r)
@@ -760,7 +759,7 @@ class Application(tk.Frame):
 		# self.buttonCheck()
 		# tempCounter +=1
 
-		self.after(500, self.rapidFireUpdate)
+		self.after(1, self.rapidFireUpdate)
 
 		# print("B", tempCounter)
 		# time.sleep(sleeptime)
