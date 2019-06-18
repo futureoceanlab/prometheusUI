@@ -344,8 +344,8 @@ class Application(tk.Frame):
 		#on startup, check if the main csv exists
 		#if it does, populate the previous images
 		#otherwise, create a new one
-
-		if os.path("./mainCSV.csv"):
+		exists = os.path("./mainCSV.csv")
+		if exists:
 			file = open('./mainCSV.csv', 'r')
 			reader = csv.reader(file, delimiter=',')
 			for row in reader:
