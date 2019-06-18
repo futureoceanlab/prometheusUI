@@ -321,6 +321,7 @@ class Application(tk.Frame):
 
 		# This allows for the button checker to run continously, 
 		# alongside the mainloop
+		print("yoooo", time.time())
 		self.master.after(1, self.buttonCheck)
 
 	def checkBeagle(self):
