@@ -748,11 +748,12 @@ class Application(tk.Frame):
 
 	def rapidFireUpdate(self):
 		tempCounter = 0
-		while self.showingLiveView:
-			img = self.get_live_image_temp(tempCounter)
-			self.setLiveImage(img)
-			# self.buttonCheck()
-			tempCounter +=1
+		# while self.showingLiveView:
+		time.sleep(1)
+		img = self.get_live_image_temp(tempCounter)
+		self.setLiveImage(img)
+		self.buttonCheck()
+		tempCounter +=1
 
 	def directoryCounter(self, path):
 
