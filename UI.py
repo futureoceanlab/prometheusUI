@@ -411,8 +411,8 @@ class Application(tk.Frame):
 
 	def get_live_image_temp(self, x):
 		if x%2==0:
-			img = Image.open('whale.jpg').resize((800,480),Image.ANTIALIAS)
-		img = Image.open('diver.jpg').resize((800,480),Image.ANTIALIAS)
+			img = Image.open('small1.jpg').resize((800,480),Image.ANTIALIAS)
+		img = Image.open('small2.jpg').resize((800,480),Image.ANTIALIAS)
 		return ImageTk.PhotoImage(img)
 		
 	def get_richData_string(self):
