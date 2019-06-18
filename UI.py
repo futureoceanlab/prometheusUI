@@ -816,7 +816,7 @@ class Application(tk.Frame):
 		
 		csvFile.close()
 
-	def capture_video(self, frameCounter):
+	def capture_video(self):
 		print("TAKE VIDEO")
 		numFolders, numFiles = self.directoryCounter("./images")
 
