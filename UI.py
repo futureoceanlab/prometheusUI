@@ -748,8 +748,33 @@ class Application(tk.Frame):
 
 	def rapidFireUpdate(self):
 		tempCounter = 0
+		sleeptime = 0.5
 		# while self.showingLiveView:
-		time.sleep(1)
+		time.sleep(sleeptime)
+		img = self.get_live_image_temp(tempCounter)
+		self.setLiveImage(img)
+		self.buttonCheck()
+		tempCounter +=1
+
+		time.sleep(sleeptime)
+		img = self.get_live_image_temp(tempCounter)
+		self.setLiveImage(img)
+		self.buttonCheck()
+		tempCounter +=1
+
+		time.sleep(sleeptime)
+		img = self.get_live_image_temp(tempCounter)
+		self.setLiveImage(img)
+		self.buttonCheck()
+		tempCounter +=1
+
+		time.sleep(sleeptime)
+		img = self.get_live_image_temp(tempCounter)
+		self.setLiveImage(img)
+		self.buttonCheck()
+		tempCounter +=1
+
+		time.sleep(sleeptime)
 		img = self.get_live_image_temp(tempCounter)
 		self.setLiveImage(img)
 		self.buttonCheck()
