@@ -718,7 +718,7 @@ class Application(tk.Frame):
 	def writeImageMetaFile(self, path):
 		newFile = open(path, 'w+')
 		#time 
-		newFile.write(datetime.utcnow().strftime("%m%d%H%M%S"))
+		newFile.write(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
 
 		#i2c data
 		for data in self.I2Cdata:
@@ -746,7 +746,7 @@ class Application(tk.Frame):
 
 
 		elementLocation = "./images/"
-		fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S"))
+		fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
 		if not self.dimensionMode:		#2d
 			# returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
 			returnedFile = [] #TEMP
