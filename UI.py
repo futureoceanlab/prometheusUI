@@ -755,9 +755,7 @@ class Application(tk.Frame):
 		returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
 
 		#update CSV
-		numImages = sum(1 for row in csv.reader(self.currentCSVFile))
-		for row in csv.reader(self.currentCSVFile):
-			print("ROW: ", row)
+		numImages = len(list(csv.reader(self.currentCSVFile)))
 		csvFile = open(self.currentCSVFile, 'w')
 		writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
 		#CSV FORMAT
