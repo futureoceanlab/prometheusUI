@@ -12,6 +12,7 @@ import uiFunctionCalls
 import camera_power
 from datetime import datetime
 import csv
+from random import randint
 
 BUTTON_LONGPRESS_TIME = 1
 EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
@@ -751,18 +752,22 @@ class Application(tk.Frame):
 		sleeptime = 0.1
 		# while self.showingLiveView:
 		print("A")
-		time.sleep(sleeptime)
-		img = self.get_live_image_temp(tempCounter)
+		# time.sleep(sleeptime)
+		r = randint(0,1)
+		print(r)
+		img = self.get_live_image_temp(r)
 		self.setLiveImage(img)
 		# self.buttonCheck()
-		tempCounter +=1
+		# tempCounter +=1
 
-		print("B", tempCounter)
-		time.sleep(sleeptime)
-		img = self.get_live_image_temp(tempCounter)
-		self.setLiveImage(img)
-		# self.buttonCheck()
-		tempCounter +=1
+		self.after(500, self.rapidFireUpdate)
+
+		# print("B", tempCounter)
+		# time.sleep(sleeptime)
+		# img = self.get_live_image_temp(tempCounter)
+		# self.setLiveImage(img)
+		# # self.buttonCheck()
+		# tempCounter +=1
 
 		# print("C")
 		# time.sleep(sleeptime)
