@@ -780,7 +780,7 @@ class Application(tk.Frame):
 
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
 		frameCounter = 0
-		if self.dispBtnState:
+		if not self.dispBtnState:
 			while self.isTakingVideo:
 				self.take_photo()
 				frameCounter +=1
