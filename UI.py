@@ -188,7 +188,8 @@ class Application(tk.Frame):
 		# 1  --  point cloud
 		# 2  --  'rich data' - state of the system
 		# 3  --  color map image
-		# 7  --  previous image 
+		# 7  --  previous image
+		# 11 -- live view 
 		# -1 --  menu display
 
 		#previous image settings
@@ -422,14 +423,17 @@ class Application(tk.Frame):
 
 	def toggle_live_view(self):
 		self.showingLiveView = not self.showingLiveView
+		if self.display == 11:
+			self.display = 0
+		else:
+			self.display = 11
 
 	def toggle_prev_image(self):
+		self.viewingPreviousImages = not self.viewingPreviousImages
 		if self.display == 7:
 			self.display = 0
-			self.viewingPreviousImages = False
 		else:
 			self.display = 7
-			self.viewingPreviousImages = True
 
 	def toggle_video_state(self):
 		self.isTakingVideo = not self.isTakingVideo
@@ -451,7 +455,7 @@ class Application(tk.Frame):
 
 		#erase everything that goes in main area
 		self.menuFrame.grid_forget()
-		for i in [0,1,2,3,4]:
+		for i in [0,1,2,3,4,5]:
 			self.mainArea.winfo_children()[i].pack_forget()
 
 		if display == -1 or display == 7 or display == 2:
@@ -460,9 +464,9 @@ class Application(tk.Frame):
 
 		#now display things we want
 		if display == -1:
-			self.mainArea.winfo_children()[5].grid()
+			self.mainArea.winfo_children()[6].grid()
 		else:
-			self.mainArea.winfo_children()[min(4, display)].pack()
+			self.mainArea.winfo_children()[min(5, display)].pack()
 
 		if display == 0:
 			self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S)
@@ -535,12 +539,19 @@ class Application(tk.Frame):
 		colorMapCanvas.create_image(0,0,anchor=NW, image=imgColor)
 		colorMapCanvas.pack_forget()
 
-		# #PreviousImg -- display = 7
+		# #PreviousImg -- display = 7	(4th in mainArea list)
 		prevImgCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		previousImage = ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS))
 		mainFrame.previousImage = previousImage
 		prevImgCanvas.create_image(0,0,anchor=NW, image=previousImage)
 		prevImgCanvas.pack_forget()
+
+		# #Live View -- display = 11	(5th in mainArea list)
+		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
+		liveImg = self.get_colorMap_image()
+		mainFrame.liveImg = liveImg
+		liveViewCanvas.create_image(0,0,anchor=NW, image=imgColor)
+		liveViewCanvas.pack_forget()
 
 
 		self.menuFrame = tk.Frame(mainFrame, bg='green')
@@ -689,6 +700,7 @@ class Application(tk.Frame):
 		if self.get_mode() == 0:            #capture
 			print("TOGGLE LIVE VIEW")
 			self.toggle_live_view()
+			self.update_display()
 		else:                           
 			self.EXP_short_pressed()
 
