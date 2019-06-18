@@ -765,6 +765,7 @@ class Application(tk.Frame):
 		metaFile = fileLocation+"_meta.txt"
 		self.writeImageMetaFile(metaFile)
 		writer.writerow([self.numPreviousImages, returnedFileName, metaFile])
+		self.numPreviousImages +=1
 		
 		csvFile.close()
 
