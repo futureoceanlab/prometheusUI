@@ -11,6 +11,7 @@ import numpy as np
 import uiFunctionCalls
 import camera_power
 from datetime import datetime
+import csv
 
 BUTTON_LONGPRESS_TIME = 1
 EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
@@ -188,7 +189,6 @@ class Application(tk.Frame):
 
 		#previous image settings
 		self.viewingPreviousImages = False
-		self.currentPreviousImage = 0
 		self.dimensionMode = 0
 
 		#frame areas of the UI
@@ -203,12 +203,12 @@ class Application(tk.Frame):
 		self.menu_tree = MenuTree(MENUTREE)
 		self.temp_menu_tree = MenuTree(TEMP_MENUTREE)
 		self.previousImage = 'ocean.jpg'
-		self.previousImages = ['ocean.jpg','reef.jpg']
 		self.currentSelectionButton = None
 		self.currentSelectionNode = None
 		self.nodeToButtonDict = {}
 		self.I2Cdata = {'direction': None, 'temperature': None, 'pressure':None}
 		self.currentLogFile = ""
+		self.currentCSVFile = ""
 
 		#button information
 		self.MENU_BTN = gpio.Button(21, pull_up=True)
@@ -229,6 +229,9 @@ class Application(tk.Frame):
 
 		#create the initial UI
 		self.createMainLog()
+		self.createMainCSV()
+		self.previousImages = ['ocean.jpg','reef.jpg'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
+		self.currentPreviousImage = len(self.previousImages)-1
 		self._geom = '200x200+0+0'
 		master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(), master.winfo_screenheight()))
 		master.bind('<Escape>',lambda e: master.quit())
@@ -332,10 +335,26 @@ class Application(tk.Frame):
 		newFile.close()
 		self.currentLogFile = newFile.name
 
-	def updateMainLog(msg):
+	def updateMainLog(self, msg):
 		logFile = open(self.currentLogFile, 'a')
 		logFile.write(msg)
 		logFile.close()
+
+	def createMainCSV(self):
+		#on startup, check if the main csv exists
+		#if it does, populate the previous images
+		#otherwise, create a new one
+
+		if os.path("./mainCSV.csv"):
+			file = open('./mainCSV.csv', 'r')
+			reader = csv.reader(file, delimiter=',')
+			for row in reader:
+				self.previousImages.append(row[1])	#appending the image file location
+				#the most recent previous image is at the end
+		else:
+			file = open("./mainCSV.csv", "wb")
+			self.previousImages = []
+		file.close()
 
 	def get_mode(self):
 		return self.mode
@@ -633,7 +652,7 @@ class Application(tk.Frame):
 				if self.viewingPreviousImages:
 					#get the next previous image
 					self.setPreviousImage(self.get_previousImage(self.currentPreviousImage))
-					self.currentPreviousImage = (1 + self.currentPreviousImage)%len(self.previousImages)
+					self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
 					self.update_display()
 				else:
 					self.change_display()
@@ -643,7 +662,7 @@ class Application(tk.Frame):
 			self.selectUp(self.currentSelectionNode)
 
 	def DISP_long_pressed(self):
-		self.currentPreviousImage = 0
+		self.currentPreviousImage = len(self.previousImages)-1
 		self.setPreviousImage(self.get_previousImage(self.currentPreviousImage))
 		if self.get_mode() == 0 and not self.get_video_state():  
 			#capture mode and not taking video
@@ -694,7 +713,7 @@ class Application(tk.Frame):
 		return numFolders, numFiles
 
 	def writeImageMetaFile(self, path):
-		newFile = open(path+"meta.txt", 'w+')
+		newFile = open(path, 'w+')
 		#time 
 		newFile.write(datetime.utcnow().strftime("%m%d%H%M%S"))
 
@@ -707,7 +726,7 @@ class Application(tk.Frame):
 			newFile.write(str(data) + ":" + str(self.mainImportantData[data])+'\n')
 		newFile.close()
 
-	def writeVideoMetaFile(self, path):
+	def writeVideoMetaFile(self, path, start, end):
 		newFile = open(path+"meta.txt", 'w+')
 		
 		#timeStart
@@ -715,12 +734,15 @@ class Application(tk.Frame):
 		#numberofframes
 		#camsettings
 
+		newFile.write(start + '\n' + end + '\n' + numFrames + '\n')
+
 
 		newFile.close()
 
-	def take_photo():
-		numFolders, numFiles = self.directoryCounter("./previousImages")
-		elementLocation = "./previousImages/"+str(numFolders)+"/"
+	def take_photo(self):
+
+
+		elementLocation = "./images/"
 		fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S"))
 		if not self.dimensionMode:		#2d
 			# returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
@@ -728,8 +750,31 @@ class Application(tk.Frame):
 		else:
 			# returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
 			returnedFile = [] #TEMP
-		self.previousImages = returnedFile + self.previousImages
-		self.writeImageMetaFile(elementLocation)
+		self.previousImages = self.previousImages + returnedFile
+
+		#update CSV
+		numImages = len(csv.reader(self.currentCSVFile))
+		csvFile = open(self.currentCSVFile, 'wb')
+		writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+		#CSV FORMAT
+		#index, imageLocation, metadataLocation
+		metaFile = fileLocation+"_meta.txt"
+		self.writeImageMetaFile(metaFile)
+		writer.writerow([numImages, returnedFile, metaFile])
+		
+		csvFile.close()
+
+	def capture_video(self):
+		print("TAKE VIDEO")
+		numFolders, numFiles = self.directoryCounter("./images")
+
+		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
+		while self.isTakingVideo:
+			self.take_photo()
+		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
+
+		self.writeVideoMetaFile(elementLocation, timeStart, timeEnd)
+
 
 	def change_mode(self):
 		self.mode = 1 - self.mode
@@ -758,15 +803,6 @@ class Application(tk.Frame):
 			# uiFunctionCalls.change2dExposure(self.exposure2d)
 			print("EXP2D: ", self.exposure2d)
 		self.update_display()
-
-	def capture_video(self):
-		print("TAKE VIDEO")
-		numFolders, numFiles = self.directoryCounter("./previousImages")
-		elementLocation = "./previousImages/"+str(numFolders)+"/"
-		self.writeVideoMetaFile(elementLocation)
-		# videoImages = uiFunctionCalls.getABunchOfImages############################################################
-		# for image in videoImages:
-		# 	self.writeImageMetaFile(elementLocation+"videoImages/"+str(videoImages.index(image))+"/")
 
 
 	def change_title(self, newTitle):
