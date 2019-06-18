@@ -749,45 +749,11 @@ class Application(tk.Frame):
 			self.ACTN_short_pressed()
 
 	def rapidFireUpdate(self):
-		tempCounter = 0
-		sleeptime = 0.1
-		# while self.showingLiveView:
-		# time.sleep(sleeptime)
 		r = randint(0,1)
 		img = self.get_live_image_temp(r)
 		self.setLiveImage(img)
-		# self.buttonCheck()
-		# tempCounter +=1
 
-		self.after(25, self.rapidFireUpdate)
-
-		# print("B", tempCounter)
-		# time.sleep(sleeptime)
-		# img = self.get_live_image_temp(tempCounter)
-		# self.setLiveImage(img)
-		# # self.buttonCheck()
-		# tempCounter +=1
-
-		# print("C")
-		# time.sleep(sleeptime)
-		# img = self.get_live_image_temp(tempCounter)
-		# self.setLiveImage(img)
-		# self.buttonCheck()
-		# tempCounter +=1
-
-		# print("D")
-		# time.sleep(sleeptime)
-		# img = self.get_live_image_temp(tempCounter)
-		# self.setLiveImage(img)
-		# self.buttonCheck()
-		# tempCounter +=1
-
-		# print("E")
-		# time.sleep(sleeptime)
-		# img = self.get_live_image_temp(tempCounter)
-		# self.setLiveImage(img)
-		# self.buttonCheck()
-		# tempCounter +=1
+		self.after(15, self.rapidFireUpdate)
 
 	def directoryCounter(self, path):
 
