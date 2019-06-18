@@ -315,9 +315,9 @@ class Application(tk.Frame):
 				lengthOfPress = time.time() - self.actnHeldStart
 				if lengthOfPress > BUTTON_LONGPRESS_TIME:
 					#long press
-					self.ACTN_long_pressed()
 					self.actnBtnState = 0
 					self.actnSinceLongheld = time.time()
+					self.ACTN_long_pressed()
 
 		# This allows for the button checker to run continously, 
 		# alongside the mainloop
