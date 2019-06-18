@@ -405,10 +405,10 @@ class Application(tk.Frame):
 		return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((600,450),Image.ANTIALIAS))
 
 	def get_colorMap_image(self):
-		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((800,480),Image.ANTIALIAS))
+		return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
 
 	def get_live_image(self):
-		return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
+		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((800,480),Image.ANTIALIAS))
 		
 	def get_richData_string(self):
 		s = ''
