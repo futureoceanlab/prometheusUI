@@ -457,16 +457,20 @@ class Application(tk.Frame):
 		self.menuFrame.grid_forget()
 		for i in [0,1,2,3,4,5]:
 			self.mainArea.winfo_children()[i].pack_forget()
+			print("III", i)
 
 		if display == -1 or display == 2 or display == 7 or self.showingLiveView:
 			#erase the data grid
 			self.winfo_children()[2].grid_forget()
+			print("AAAAA")
 
 		#now display things we want
 		if display == -1:
 			self.mainArea.winfo_children()[6].grid()
+			print("HERE")
 		else:
 			self.mainArea.winfo_children()[min(5, display)].pack()
+			print("THERE")
 
 		if display == 0:
 			self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S)
@@ -672,9 +676,6 @@ class Application(tk.Frame):
 				#not taking video
 				if self.viewingPreviousImages:
 					#get the next previous image
-					print("CURRENT PREV IMG: ", self.currentPreviousImage)
-					print(self.previousImages)
-					print(self.get_previousImage(self.currentPreviousImage).filename)
 					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
 					self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
 
