@@ -212,7 +212,6 @@ class Application(tk.Frame):
 		self.nodeToButtonDict = {}
 		self.I2Cdata = {'direction': None, 'temperature': None, 'pressure':None}
 		self.currentLogFile = ""
-		self.currentCSVFile = ""
 
 		#button information
 		self.MENU_BTN = gpio.Button(21, pull_up=True)
@@ -345,14 +344,15 @@ class Application(tk.Frame):
 		#on startup, check if the main csv exists
 		#if it does, populate the previous images
 		#otherwise, create a new one
+		self.currentCSVFile = "./mainCSV.csv"
 		try:
-			file = open('./mainCSV.csv', 'r')
+			file = open(self.currentCSVFile, 'r')
 			reader = csv.reader(file, delimiter=',')
 			for row in reader:
 				self.previousImages.append(row[1])	#appending the image file location
 				#the most recent previous image is at the end
 		except FileNotFoundError:
-			file = open("./mainCSV.csv", "wb")
+			file = open(self.currentCSVFile, "wb")
 			self.previousImages = []
 		file.close()
 
