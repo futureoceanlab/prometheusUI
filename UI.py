@@ -352,7 +352,7 @@ class Application(tk.Frame):
 				self.previousImages.append(row[1])	#appending the image file location
 				#the most recent previous image is at the end
 		except FileNotFoundError:
-			file = open(self.currentCSVFile, "wb")
+			file = open(self.currentCSVFile, "w")
 			self.previousImages = []
 		file.close()
 
@@ -756,7 +756,7 @@ class Application(tk.Frame):
 
 		#update CSV
 		numImages = sum(1 for row in csv.reader(self.currentCSVFile))
-		csvFile = open(self.currentCSVFile, 'wb')
+		csvFile = open(self.currentCSVFile, 'w')
 		writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
 		#CSV FORMAT
 		#index, imageLocation, metadataLocation
