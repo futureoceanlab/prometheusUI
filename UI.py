@@ -181,16 +181,15 @@ class Application(tk.Frame):
 		self.display = 0    
 		# DISPLAY INDEXES
 		# There are 4 main displays in capture mode (0,1,2,3)
-		# The 'show previous image' display is 7 because (7+1)%4=0 
-		# 	so it goes back to display 0 (see change_display())
-		# The 'menu display' is -1 because it is the last display in the
-		# menu list self.mainArea.winfo_children and (-1+1)%4 = 0 
+		# The additional displays are viewing the previous image and live view
+		# The four main displays rotate through by single clicks
+		# The two extra displays can be accessed at any time through long clicks
 		# 0  --  4x DCS images  
 		# 1  --  point cloud
 		# 2  --  'rich data' - state of the system
 		# 3  --  color map image
-		# 7  --  previous image
-		# 11 -- live view 
+		# 4  --  previous image
+		# 5  -- live view 
 		# -1 --  menu display
 
 		#previous image settings
@@ -427,17 +426,17 @@ class Application(tk.Frame):
 
 	def toggle_live_view(self):
 		self.showingLiveView = not self.showingLiveView
-		if self.display == 11:
+		if self.display == 5:
 			self.display = 0
 		else:
-			self.display = 11
+			self.display = 5
 
 	def toggle_prev_image(self):
 		self.viewingPreviousImages = not self.viewingPreviousImages
-		if self.display == 7:
+		if self.display == 4:
 			self.display = 0
 		else:
-			self.display = 7
+			self.display = 4
 
 	def toggle_video_state(self):
 		self.isTakingVideo = not self.isTakingVideo
@@ -463,7 +462,7 @@ class Application(tk.Frame):
 		for i in [0,1,2,3,4,5]:
 			self.mainArea.winfo_children()[i].pack_forget()
 
-		if display == -1 or display == 2 or display == 7 or display == 11:
+		if display in [-1,2,4,5]:
 			#erase the data grid
 			self.winfo_children()[2].grid_forget()
 
@@ -471,7 +470,7 @@ class Application(tk.Frame):
 		if display == -1:
 			self.mainArea.winfo_children()[6].grid()
 		else:
-			self.mainArea.winfo_children()[min(5, display)].pack()
+			self.mainArea.winfo_children()[display].pack()
 
 		if display == 0:
 			self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S)
@@ -544,14 +543,14 @@ class Application(tk.Frame):
 		colorMapCanvas.create_image(0,0,anchor=NW, image=imgColor)
 		colorMapCanvas.pack_forget()
 
-		# #PreviousImg -- display = 7	(4th in mainArea list)
+		# #PreviousImg -- display = 4
 		prevImgCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		previousImage = ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS))
 		mainFrame.previousImage = previousImage
 		prevImgCanvas.create_image(0,0,anchor=NW, image=previousImage)
 		prevImgCanvas.pack_forget()
 
-		# #Live View -- display = 11	(5th in mainArea list)
+		# #Live View -- display = 5
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		liveImg = self.get_live_image()
 		mainFrame.liveImg = liveImg
