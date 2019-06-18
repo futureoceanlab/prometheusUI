@@ -752,7 +752,7 @@ class Application(tk.Frame):
 			self.setLiveImage(img)
 			self.buttonCheck()
 			tempCounter +=1
-			time.pause(1)
+			time.sleep(1)
 
 	def directoryCounter(self, path):
 
