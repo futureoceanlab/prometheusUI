@@ -405,6 +405,9 @@ class Application(tk.Frame):
 		return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((600,450),Image.ANTIALIAS))
 
 	def get_colorMap_image(self):
+		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((800,480),Image.ANTIALIAS))
+
+	def get_live_image(self):
 		return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
 		
 	def get_richData_string(self):
@@ -551,7 +554,7 @@ class Application(tk.Frame):
 
 		# #Live View -- display = 11	(5th in mainArea list)
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		liveImg = './whale.jpg'
+		liveImg = './whale.jpg'ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
 		mainFrame.liveImg = liveImg
 		liveViewCanvas.create_image(0,0,anchor=NW, image=liveImg)
 		liveViewCanvas.pack_forget()
