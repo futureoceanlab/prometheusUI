@@ -751,6 +751,8 @@ class Application(tk.Frame):
 			# returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
 			returnedFile = [] #TEMP
 		self.previousImages = self.previousImages + returnedFile
+		# returnedFileName = str(returnedFile[0])
+		returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
 
 		#update CSV
 		numImages = sum(1 for row in csv.reader(self.currentCSVFile))
