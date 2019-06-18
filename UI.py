@@ -754,7 +754,7 @@ class Application(tk.Frame):
 		self.setLiveImage(img)
 		print('rapidlyfiring')
 
-		self.after(500, self.rapidFireUpdate)	
+		self.after(50, self.rapidFireUpdate)	
 		#absolute  ^ minimum delay is 3ms, below that it drops frames
 		#keep high until we need to push it
 
@@ -831,13 +831,17 @@ class Application(tk.Frame):
 		# self.after(50, self.capture_video)
 
 
-		self.EXP_long_pressed() #turn on live view
+		self.toggle_live_view()
+		self.update_display()#turn on live view
 
 		if not self.dispBtnState:
 			while self.isTakingVideo:
 				self.take_photo()
 				frameCounter +=1
 				self.buttonCheck()
+				r = randint(0,1)
+				img = self.get_live_image_temp(r)
+				self.setLiveImage(img)
 		else:
 			while self.isTakingVideo:
 				self.doHDRtest([],[],[])
