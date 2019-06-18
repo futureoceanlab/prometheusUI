@@ -458,7 +458,7 @@ class Application(tk.Frame):
 		for i in [0,1,2,3,4,5]:
 			self.mainArea.winfo_children()[i].pack_forget()
 
-		if display == -1 or display == 2 or self.viewingPreviousImages or self.showingLiveView:
+		if display == -1 or display == 2 or display == 7 or self.showingLiveView:
 			#erase the data grid
 			self.winfo_children()[2].grid_forget()
 
