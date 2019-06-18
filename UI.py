@@ -754,14 +754,14 @@ class Application(tk.Frame):
 		time.sleep(sleeptime)
 		img = self.get_live_image_temp(tempCounter)
 		self.setLiveImage(img)
-		self.buttonCheck()
+		# self.buttonCheck()
 		tempCounter +=1
 
 		print("B")
 		time.sleep(sleeptime)
 		img = self.get_live_image_temp(tempCounter)
 		self.setLiveImage(img)
-		self.buttonCheck()
+		# self.buttonCheck()
 		tempCounter +=1
 
 		print("C")
