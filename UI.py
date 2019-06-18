@@ -759,7 +759,7 @@ class Application(tk.Frame):
 		# self.buttonCheck()
 		# tempCounter +=1
 
-		self.after(1, self.rapidFireUpdate)
+		self.after(50, self.rapidFireUpdate)
 
 		# print("B", tempCounter)
 		# time.sleep(sleeptime)
