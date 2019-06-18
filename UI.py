@@ -753,7 +753,7 @@ class Application(tk.Frame):
 		img = self.get_live_image_temp(r)
 		self.setLiveImage(img)
 
-		self.after(5, self.rapidFireUpdate)
+		self.after(3, self.rapidFireUpdate)
 
 	def directoryCounter(self, path):
 
