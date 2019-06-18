@@ -551,7 +551,7 @@ class Application(tk.Frame):
 
 		# #Live View -- display = 11	(5th in mainArea list)
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		liveImg = 'whale.jpg'
+		liveImg = './whale.jpg'
 		mainFrame.liveImg = liveImg
 		liveViewCanvas.create_image(0,0,anchor=NW, image=liveImg)
 		liveViewCanvas.pack_forget()
