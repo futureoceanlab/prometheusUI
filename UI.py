@@ -755,8 +755,8 @@ class Application(tk.Frame):
 		returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
 
 		#update CSV
-		numImages = len(list(csv.reader(self.currentCSVFile)))
 		csvFile = open(self.currentCSVFile, 'w')
+		numImages = len(list(csv.reader(csvFile)))
 		writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
 		#CSV FORMAT
 		#index, imageLocation, metadataLocation
