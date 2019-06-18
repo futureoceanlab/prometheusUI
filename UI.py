@@ -321,7 +321,7 @@ class Application(tk.Frame):
 
 		# This allows for the button checker to run continously, 
 		# alongside the mainloop
-		self.master.after(50, self.buttonCheck)
+		self.master.after(1, self.buttonCheck)
 
 	def checkBeagle(self):
 		camera_power.connect_both_cameras()
@@ -776,10 +776,9 @@ class Application(tk.Frame):
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
 		while self.isTakingVideo:
 			self.take_photo()
-			self.buttonCheck()
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
-		self.writeVideoMetaFile(elementLocation, timeStart, timeEnd)
+		self.writeVideoMetaFile("./images/", timeStart, timeEnd)
 
 
 	def change_mode(self):
