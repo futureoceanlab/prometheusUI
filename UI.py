@@ -776,6 +776,7 @@ class Application(tk.Frame):
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
 		while self.isTakingVideo:
 			self.take_photo()
+			self.buttonCheck()
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
 		self.writeVideoMetaFile(elementLocation, timeStart, timeEnd)
