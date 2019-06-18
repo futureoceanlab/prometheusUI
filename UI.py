@@ -389,7 +389,7 @@ class Application(tk.Frame):
 		return self.showingLiveView()
 
 	def get_previousImage(self, x):
-		return Image.open(self.previousImages[x])
+		return Image.open(self.previousImages[x%len(self.previousImages)])
 
 	def get_previousImageIndex(self, offset=0):
 		return (self.currentPreviousImage+offset)%len(self.previousImages)
@@ -672,8 +672,11 @@ class Application(tk.Frame):
 				#not taking video
 				if self.viewingPreviousImages:
 					#get the next previous image
+					print("CURRENT PREV IMG: ", self.currentPreviousImage)
+					print(self.previousImages)
 					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
 					self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
+
 					self.update_display()
 				else:
 					self.change_display()
