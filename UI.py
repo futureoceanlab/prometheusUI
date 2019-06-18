@@ -455,21 +455,19 @@ class Application(tk.Frame):
 
 		#erase everything that goes in main area
 		self.menuFrame.grid_forget()
-		for i in [0,1,2,3,4]:
+		for i in [0,1,2,3,4,5]:
 			self.mainArea.winfo_children()[i].pack_forget()
-			print("III", i)
 
-		if display == -1 or display == 2 or display == 7 or display == 11:
+		if display == -1 or display == 2 or display == 7:# or display == 11:
 			#erase the data grid
 			self.winfo_children()[2].grid_forget()
-			print("DISPLAY: ", display)
 
 		#now display things we want
 		if display == -1:
-			self.mainArea.winfo_children()[6].grid()
+			self.mainArea.winfo_children()[5].grid()
 			print("HERE")
 		else:
-			self.mainArea.winfo_children()[min(5, display)].pack()
+			self.mainArea.winfo_children()[min(4, display)].pack()
 			print("THERE")
 
 		if display == 0:
@@ -551,11 +549,11 @@ class Application(tk.Frame):
 		prevImgCanvas.pack_forget()
 
 		# #Live View -- display = 11	(5th in mainArea list)
-		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		liveImg = self.get_colorMap_image()
-		mainFrame.liveImg = liveImg
-		liveViewCanvas.create_image(0,0,anchor=NW, image=imgColor)
-		liveViewCanvas.pack_forget()
+		# liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
+		# liveImg = self.get_colorMap_image()
+		# mainFrame.liveImg = liveImg
+		# liveViewCanvas.create_image(0,0,anchor=NW, image=imgColor)
+		# liveViewCanvas.pack_forget()
 
 
 		self.menuFrame = tk.Frame(mainFrame, bg='green')
