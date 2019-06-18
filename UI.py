@@ -231,6 +231,7 @@ class Application(tk.Frame):
 		#create the initial UI
 		self.createMainLog()
 		self.createMainCSV()
+		print("PREVIOUS: ", self.previousImages)
 		self.previousImages = ['ocean.jpg','reef.jpg'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
 		self.currentPreviousImage = len(self.previousImages)-1
 		self._geom = '200x200+0+0'
