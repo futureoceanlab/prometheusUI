@@ -729,13 +729,13 @@ class Application(tk.Frame):
 			newFile.write(str(data) + ":" + str(self.mainImportantData[data])+'\n')
 		newFile.close()
 
-	def writeVideoMetaFile(self, path, start, end):
+	def writeVideoMetaFile(self, path, start, end, numFrames):
 		newFile = open(path+"meta.txt", 'w+')
 		
 		#timeStart
 		#timeEnd
 		#numberofframes
-		#camsettings
+		#camsettings 
 
 		newFile.write(start + '\n' + end + '\n' + numFrames + '\n')
 
@@ -774,12 +774,15 @@ class Application(tk.Frame):
 		numFolders, numFiles = self.directoryCounter("./images")
 
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
+		frameCounter = 0
 		while self.isTakingVideo:
 			self.take_photo()
+			frameCounter +=1
 			self.buttonCheck()
+
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
-		self.writeVideoMetaFile("./images/", timeStart, timeEnd)
+		self.writeVideoMetaFile("./images/", timeStart, timeEnd, frameCounter)
 
 
 	def change_mode(self):
