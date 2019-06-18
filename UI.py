@@ -265,9 +265,9 @@ class Application(tk.Frame):
 				lengthOfPress = time.time() - self.dispHeldStart
 				if lengthOfPress > BUTTON_LONGPRESS_TIME:
 					#long press
-					self.DISP_long_pressed()
 					self.dispBtnState = 0
 					self.dispSinceLongheld = time.time()
+					self.DISP_long_pressed()
 
 
 		# EXPOSURE BUTTON
@@ -290,9 +290,9 @@ class Application(tk.Frame):
 				lengthOfPress = time.time() - self.expoHeldStart
 				if lengthOfPress > BUTTON_LONGPRESS_TIME:
 					#long press
-					self.EXP_long_pressed()
 					self.expoBtnState = 0
 					self.expoSinceLongheld = time.time()
+					self.EXP_long_pressed()
 
 
 		#ACTION BUTTON
