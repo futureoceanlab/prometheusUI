@@ -462,7 +462,7 @@ class Application(tk.Frame):
 		if display == -1 or display == 2 or display == 7 or display == 11:
 			#erase the data grid
 			self.winfo_children()[2].grid_forget()
-			print("AAAAA")
+			print("DISPLAY: ", display)
 
 		#now display things we want
 		if display == -1:
