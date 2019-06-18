@@ -173,7 +173,7 @@ class Application(tk.Frame):
 		self.modFreq = 0 
 		self.piDelay = 0 
 		self.enableCapture = 0 
-		self.HDRmode = 1
+		self.HDRmode = 0
 		
 		#states
 		self.isTakingVideo = False
@@ -816,38 +816,36 @@ class Application(tk.Frame):
 		
 		csvFile.close()
 
-	def capture_video(self):
+	def capture_video(self, frameCounter):
 		print("TAKE VIDEO")
 		numFolders, numFiles = self.directoryCounter("./images")
 
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
-		frameCounter = 0
+		frameCounter +=1
 
-		# if self.HDRmode:
-		# 	self.doHDRtest([],[],[])
-		# else:
-		# 	self.take_photo()
-
-		# self.after(50, self.capture_video)
-
-
-		self.toggle_live_view()
-		self.update_display()#turn on live view
-
-		if not self.dispBtnState:
-			while self.isTakingVideo:
-				self.take_photo()
-				frameCounter +=1
-				self.buttonCheck()
-				r = randint(0,1)
-				img = self.get_live_image_temp(r)
-				self.setLiveImage(img)
+		if self.HDRmode:
+			self.doHDRtest([],[],[])
 		else:
-			while self.isTakingVideo:
-				self.doHDRtest([],[],[])
-				frameCounter +=1
-				self.buttonCheck()
+			self.take_photo()
 
+		self.after(50, self.capture_video, frameCounter)
+
+
+		# self.toggle_live_view()
+		# self.update_display()#turn on live view
+
+		# if not self.dispBtnState:
+		# 	while self.isTakingVideo:
+		# 		self.take_photo()
+		# 		frameCounter +=1
+		# 		self.buttonCheck()
+		# else:
+		# 	while self.isTakingVideo:
+		# 		self.doHDRtest([],[],[])
+		# 		frameCounter +=1
+		# 		self.buttonCheck()
+
+		print("IT GOT HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
 		self.writeVideoMetaFile("./images/", timeStart, timeEnd, frameCounter)
