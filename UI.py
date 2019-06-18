@@ -413,7 +413,8 @@ class Application(tk.Frame):
 	def get_live_image_temp(self, x):
 		if x%2==0:
 			img = Image.open('small1.jpg').resize((800,480),Image.ANTIALIAS)
-		img = Image.open('small2.jpg').resize((800,480),Image.ANTIALIAS)
+		else:
+			img = Image.open('small2.jpg').resize((800,480),Image.ANTIALIAS)
 		return ImageTk.PhotoImage(img)
 		
 	def get_richData_string(self):
@@ -754,7 +755,6 @@ class Application(tk.Frame):
 		print("A")
 		# time.sleep(sleeptime)
 		r = randint(0,1)
-		print(r)
 		img = self.get_live_image_temp(r)
 		self.setLiveImage(img)
 		# self.buttonCheck()
