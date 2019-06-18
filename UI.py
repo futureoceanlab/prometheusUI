@@ -353,7 +353,6 @@ class Application(tk.Frame):
 				self.previousImages.append(row[1])	#appending the image file location
 				self.numPreviousImages +=1
 				#the most recent previous image is at the end
-			print("HERE: ", self.numPreviousImages)
 		except FileNotFoundError:
 			file = open(self.currentCSVFile, "w")
 			self.previousImages = []
