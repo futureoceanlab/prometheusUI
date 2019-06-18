@@ -19,6 +19,7 @@ PI_DELAY_OPTIONS = [0,1]
 MOD_FREQ_OPTIONS = [0,1]
 NUM_EXPOSURES = len(EXPOSURE_OPTIONS)
 MODE_OPTIONS = ["CAPTURE", "MENU"]
+HDR_OPTIONS = {1:[[],[],[]]}
 MENUTREE = {'root':{
 							'Camera Settings': {'CamSubsetting1': 'f22',
 												'CamSubsetting2': '1/250',
@@ -170,7 +171,8 @@ class Application(tk.Frame):
 		self.modFreq = 0 
 		self.piDelay = 0 
 		self.enableCapture = 0 
-
+		self.HDRmode = 1
+		
 		#states
 		self.isTakingVideo = False
 		self.showingLiveView = False
@@ -269,7 +271,11 @@ class Application(tk.Frame):
 					#long press
 					self.dispBtnState = 0
 					self.dispSinceLongheld = time.time()
-					self.DISP_long_pressed()
+					if self.actnBtnState:
+						#the actn btn is pressed while the display button is held
+						self.doHDRtest([],[],[])
+					else: 
+						self.DISP_long_pressed()
 
 
 		# EXPOSURE BUTTON
@@ -820,17 +826,25 @@ class Application(tk.Frame):
 		self.dimensionMode = 1 - self.dimensionMode
 		# uiFunctionCalls.toggle2d3dMode(self.dimensionMode)
 
-	def setModulationFrequency(self):
+	def toggleModulationFrequency(self):
 		self.modFreq = 1 - self.modFreq
+		# uiFunctionCalls.setModulationFrequency(self.modFreq)
+
+	def setModulationFrequency(self, x):
+		self.modFreq = x
 		# uiFunctionCalls.setModulationFrequency(self.modFreq)
 
 	def toggleEnablePiDelay(self):
 		self.piDelay = 1 - self.piDelay
 		# uiFunctionCalls.enablePiDelay(self.piDelay)
 
+	def setPiDelay(self, x):
+		self.piDelay = x
+		# uiFunctionCalls.enablePiDelay(self.piDelay)
+
 	def toggleEnableCapture(self):
 		self.enableCapture = 1 - self.enableCapture
-		# uiFunctionCalls.enablePiDelay(self.enableCapture)
+		# uiFunctionCalls.enableCapture(self.enableCapture)
 
 	def toggle_geom(self,event):
 		geom=self.master.winfo_geometry()
@@ -843,20 +857,8 @@ class Application(tk.Frame):
 		self.I2Cdata["temperature"] = t 
 		self.I2Cdata["pressure"] = p 
 
-	def doHDRtest(self, doExp, doPiDelay, doModFreq):
+	def doHDRtest(self, expOptions, piOptions, modFreqOptions):
 		print("DOING HDR TEST")
-
-		expOptions = [30]
-		piOptions = [0]
-		modFreqOptions = [0]
-
-		if doExp:
-			expOptions = EXPOSURE_OPTIONS
-		if doPiDelay:
-			piOptions = PI_DELAY_OPTIONS
-		if doModFreq:
-			modFreqOptions = MOD_FREQ_OPTIONS
-
 
 		self.dimensionMode = 1
 		for dimMode in [0,1]:			#2d and 3d mode
@@ -864,9 +866,9 @@ class Application(tk.Frame):
 			for exp in expOptions:
 				self.change_exposure(self.dimensionMode)
 				for pi in piOptions:
-					self.toggleEnablePiDelay()
+					self.setPiDelay(pi)
 					for freq in modFreqOptions:
-						self.setModulationFrequency()
+						self.setModulationFrequency(freq)
 						self.take_photo()
 
 
