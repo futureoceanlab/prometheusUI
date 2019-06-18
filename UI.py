@@ -831,8 +831,8 @@ class Application(tk.Frame):
 		# self.after(50, self.capture_video, frameCounter)
 
 
-		self.toggle_live_view()
-		self.update_display()#turn on live view
+		# self.toggle_live_view()
+		# self.update_display()#turn on live view
 
 		if not self.dispBtnState:
 			while self.isTakingVideo:
