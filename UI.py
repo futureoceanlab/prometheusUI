@@ -408,6 +408,11 @@ class Application(tk.Frame):
 
 	def get_live_image(self):
 		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((800,480),Image.ANTIALIAS))
+
+	def get_live_image_temp(self, x):
+		if x%2==0:
+			return ImageTk.PhotoImage(Image.open('whale.jpg').resize((800,480),Image.ANTIALIAS))
+		return ImageTk.PhotoImage(Image.open('diver.jpg').resize((800,480),Image.ANTIALIAS))
 		
 	def get_richData_string(self):
 		s = ''
@@ -635,6 +640,11 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[4].create_image(0,0,anchor=NW, image=img)
 		self.mainArea.winfo_children()[4].pack()
 
+	def setLiveImage(self, img):
+		self.mainArea.liveImg = img
+		self.mainArea.winfo_children()[5].create_image(0,0,anchor=NW, image=img)
+		self.mainArea.winfo_children()[5].pack()
+
 	# def openChildMenu(self, node):
 
 	def selectUp(self, currentSelectionNode):
@@ -732,6 +742,14 @@ class Application(tk.Frame):
 		else:                               
 			#else is same as short press
 			self.ACTN_short_pressed()
+
+	def rapidFireUpdate(self):
+		tempCounter = 0
+		while self.showingLiveView:
+			img = self.get_live_image_temp(tempCounter)
+			self.setLiveImage(img)
+			self.buttonCheck()
+			tempCounter +=1
 
 	def directoryCounter(self, path):
 
