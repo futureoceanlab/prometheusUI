@@ -469,10 +469,8 @@ class Application(tk.Frame):
 		#now display things we want
 		if display == -1:
 			self.mainArea.winfo_children()[6].grid()
-			print("HERE")
 		else:
 			self.mainArea.winfo_children()[min(5, display)].pack()
-			print("THERE")
 
 		if display == 0:
 			self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S)
