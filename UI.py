@@ -554,7 +554,7 @@ class Application(tk.Frame):
 
 		# #Live View -- display = 11	(5th in mainArea list)
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		liveImg = './whale.jpg'ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
+		liveImg = self.get_live_image()
 		mainFrame.liveImg = liveImg
 		liveViewCanvas.create_image(0,0,anchor=NW, image=liveImg)
 		liveViewCanvas.pack_forget()
