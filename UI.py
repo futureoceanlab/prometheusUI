@@ -749,7 +749,7 @@ class Application(tk.Frame):
 		newFile.close()
 
 	def take_photo(self):
-
+		print("TAKE PHOTO")
 		elementLocation = "./images/"
 		fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
 		if not self.dimensionMode:		#2d
