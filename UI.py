@@ -751,9 +751,7 @@ class Application(tk.Frame):
 		while self.showingLiveView:
 			img = self.get_live_image_temp(tempCounter)
 			self.setLiveImage(img)
-			
-			time.sleep(1)
-			self.buttonCheck()
+			# self.buttonCheck()
 			tempCounter +=1
 
 	def directoryCounter(self, path):
