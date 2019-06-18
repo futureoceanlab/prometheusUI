@@ -821,7 +821,7 @@ class Application(tk.Frame):
 		numFolders, numFiles = self.directoryCounter("./images")
 
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
-		frameCounter +=1
+		frameCounter =0
 
 		# if self.HDRmode:
 		# 	self.doHDRtest([],[],[])
