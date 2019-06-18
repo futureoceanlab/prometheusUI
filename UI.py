@@ -455,7 +455,7 @@ class Application(tk.Frame):
 
 		#erase everything that goes in main area
 		self.menuFrame.grid_forget()
-		for i in [0,1,2,3,4,5]:
+		for i in [0,1,2,3,4]:
 			self.mainArea.winfo_children()[i].pack_forget()
 			print("III", i)
 
