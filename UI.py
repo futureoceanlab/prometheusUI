@@ -753,7 +753,7 @@ class Application(tk.Frame):
 		img = self.get_live_image_temp(r)
 		self.setLiveImage(img)
 
-		self.after(25, self.rapidFireUpdate)	
+		self.after(100, self.rapidFireUpdate)	
 		#absolute  ^ minimum delay is 3ms, below that it drops frames
 		#keep high until we need to push it
 
