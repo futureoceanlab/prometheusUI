@@ -20,6 +20,7 @@ MOD_FREQ_OPTIONS = [0,1]
 NUM_EXPOSURES = len(EXPOSURE_OPTIONS)
 MODE_OPTIONS = ["CAPTURE", "MENU"]
 HDR_OPTIONS = {1:[[],[],[]]}
+TEMP_LIVEVIEW = ['diver.jpg','whale.jpg']
 MENUTREE = {'root':{
 							'Camera Settings': {'CamSubsetting1': 'f22',
 												'CamSubsetting2': '1/250',
@@ -458,16 +459,16 @@ class Application(tk.Frame):
 		for i in [0,1,2,3,4,5]:
 			self.mainArea.winfo_children()[i].pack_forget()
 
-		if display == -1 or display == 2 or display == 7:# or display == 11:
+		if display == -1 or display == 2 or display == 7 or display == 11:
 			#erase the data grid
 			self.winfo_children()[2].grid_forget()
 
 		#now display things we want
 		if display == -1:
-			self.mainArea.winfo_children()[5].grid()
+			self.mainArea.winfo_children()[6].grid()
 			print("HERE")
 		else:
-			self.mainArea.winfo_children()[min(4, display)].pack()
+			self.mainArea.winfo_children()[min(5, display)].pack()
 			print("THERE")
 
 		if display == 0:
@@ -549,11 +550,11 @@ class Application(tk.Frame):
 		prevImgCanvas.pack_forget()
 
 		# #Live View -- display = 11	(5th in mainArea list)
-		# liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		# liveImg = self.get_colorMap_image()
-		# mainFrame.liveImg = liveImg
-		# liveViewCanvas.create_image(0,0,anchor=NW, image=imgColor)
-		# liveViewCanvas.pack_forget()
+		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
+		liveImg = 'whale.jpg'
+		mainFrame.liveImg = liveImg
+		liveViewCanvas.create_image(0,0,anchor=NW, image=liveImg)
+		liveViewCanvas.pack_forget()
 
 
 		self.menuFrame = tk.Frame(mainFrame, bg='green')
