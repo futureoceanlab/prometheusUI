@@ -752,6 +752,7 @@ class Application(tk.Frame):
 		r = randint(0,1)
 		img = self.get_live_image_temp(r)
 		self.setLiveImage(img)
+		print('rapidlyfiring')
 
 		self.after(500, self.rapidFireUpdate)	
 		#absolute  ^ minimum delay is 3ms, below that it drops frames
