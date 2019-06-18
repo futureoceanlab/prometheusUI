@@ -15,6 +15,8 @@ import csv
 
 BUTTON_LONGPRESS_TIME = 1
 EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
+PI_DELAY_OPTIONS = [0,1]
+MOD_FREQ_OPTIONS = [0,1]
 NUM_EXPOSURES = len(EXPOSURE_OPTIONS)
 MODE_OPTIONS = ["CAPTURE", "MENU"]
 MENUTREE = {'root':{
@@ -386,17 +388,20 @@ class Application(tk.Frame):
 	def get_previousImage(self, x):
 		return ImageTk.PhotoImage(Image.open(self.previousImages[x]).resize((600,450),Image.ANTIALIAS))
 
+	def get_previousImageIndex():
+		return (self.currentPreviousImage)%len(self.previousImages)
+
 	def get_four_DCS_images(self):
-		return [ImageTk.PhotoImage(Image.open(self.previousImage).resize((300,225),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(Image.open(self.previousImage).resize((300,225),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(Image.open(self.previousImage).resize((300,225),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(Image.open(self.previousImage).resize((300,225),Image.ANTIALIAS))]
+		return [ImageTk.PhotoImage(Image.open(self.get_previousImage(self.get_previousImageIndex())).resize((300,225),Image.ANTIALIAS)),
+				ImageTk.PhotoImage(Image.open(self.get_previousImage(self.get_previousImageIndex()-1)).resize((300,225),Image.ANTIALIAS)),
+				ImageTk.PhotoImage(Image.open(self.get_previousImage(self.get_previousImageIndex()-2)).resize((300,225),Image.ANTIALIAS)),
+				ImageTk.PhotoImage(Image.open(self.get_previousImage(self.get_previousImageIndex()-3)).resize((300,225),Image.ANTIALIAS))]
 
 	def get_PC_image(self):
-		return ImageTk.PhotoImage(Image.open(self.previousImage).resize((600,450),Image.ANTIALIAS))
+		return ImageTk.PhotoImage(Image.open(self.get_previousImage(self.get_previousImageIndex())).resize((600,450),Image.ANTIALIAS))
 
 	def get_colorMap_image(self):
-		return ImageTk.PhotoImage(Image.open(self.previousImage).resize((800,480),Image.ANTIALIAS))
+		return ImageTk.PhotoImage(Image.open(self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
 		
 	def get_richData_string(self):
 		s = ''
@@ -732,18 +737,12 @@ class Application(tk.Frame):
 	def writeVideoMetaFile(self, path, start, end, numFrames):
 		newFile = open(path+"meta.txt", 'w+')
 		
-		#timeStart
-		#timeEnd
-		#numberofframes
-		#camsettings 
+		#timeStart, timeEnd, number of frames, camera settings
 
 		newFile.write(start + '\n' + end + '\n' + str(numFrames) + '\n')
-
-
 		newFile.close()
 
 	def take_photo(self):
-
 
 		elementLocation = "./images/"
 		fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
@@ -844,14 +843,31 @@ class Application(tk.Frame):
 		self.I2Cdata["temperature"] = t 
 		self.I2Cdata["pressure"] = p 
 
-	def doHDRtest(self):
+	def doHDRtest(self, doExp, doPiDelay, doModFreq):
 		print("DOING HDR TEST")
+
+		expOptions = [30]
+		piOptions = [0]
+		modFreqOptions = [0]
+
+		if doExp:
+			expOptions = EXPOSURE_OPTIONS
+		if doPiDelay:
+			piOptions = PI_DELAY_OPTIONS
+		if doModFreq:
+			modFreqOptions = MOD_FREQ_OPTIONS
+
+
 		self.dimensionMode = 1
 		for dimMode in [0,1]:			#2d and 3d mode
 			self.toggle_2d3d()
-			for exp in EXPOSURE_OPTIONS:
+			for exp in expOptions:
 				self.change_exposure(self.dimensionMode)
-				self.take_photo()
+				for pi in piOptions:
+					self.toggleEnablePiDelay()
+					for freq in modFreqOptions:
+						self.setModulationFrequency()
+						self.take_photo()
 
 
 
