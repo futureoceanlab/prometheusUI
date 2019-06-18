@@ -753,7 +753,9 @@ class Application(tk.Frame):
 		img = self.get_live_image_temp(r)
 		self.setLiveImage(img)
 
-		self.after(2, self.rapidFireUpdate)
+		self.after(25, self.rapidFireUpdate)	
+		#absolute  ^ minimum delay is 3ms, below that it drops frames
+		#keep high until we need to push it
 
 	def directoryCounter(self, path):
 
@@ -819,6 +821,21 @@ class Application(tk.Frame):
 
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
 		frameCounter = 0
+
+		# if self.HDRmode:
+		# 	self.doHDRtest([],[],[])
+		# else:
+		# 	self.take_photo()
+
+		# self.after(50, self.capture_video)
+
+
+		self.display = 5 			#turn on live view
+		self.toggle_live_view()
+		self.update_display()
+		if self.showingLiveView:
+			self.rapidFireUpdate()
+
 		if not self.dispBtnState:
 			while self.isTakingVideo:
 				self.take_photo()
