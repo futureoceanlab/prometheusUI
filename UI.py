@@ -718,7 +718,8 @@ class Application(tk.Frame):
 			print("TOGGLE LIVE VIEW")
 			self.toggle_live_view()
 			self.update_display()
-			self.rapidFireUpdate()
+			if self.showingLiveView:
+				self.rapidFireUpdate()
 		else:                           
 			self.EXP_short_pressed()
 
