@@ -461,7 +461,6 @@ class Application(tk.Frame):
 		#the display below is the display that the screen is CHANGING TO
 		#not the one that it is coming from
 		display = self.get_display()
-		print("DISPLAY ", display)
 
 		#erase everything that goes in main area
 		self.menuFrame.grid_forget()
@@ -749,7 +748,7 @@ class Application(tk.Frame):
 
 	def rapidFireUpdate(self):
 		tempCounter = 0
-		sleeptime = 0.5
+		sleeptime = 0.1
 		# while self.showingLiveView:
 		print("A")
 		time.sleep(sleeptime)
