@@ -674,7 +674,7 @@ class Application(tk.Frame):
 					#get the next previous image
 					print("CURRENT PREV IMG: ", self.currentPreviousImage)
 					print(self.previousImages)
-					print(self.get_previousImage(self.currentPreviousImage))
+					print(self.get_previousImage(self.currentPreviousImage).filename)
 					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
 					self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
 
