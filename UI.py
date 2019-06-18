@@ -456,6 +456,7 @@ class Application(tk.Frame):
 		#the display below is the display that the screen is CHANGING TO
 		#not the one that it is coming from
 		display = self.get_display()
+		print("DISPLAY ", display)
 
 		#erase everything that goes in main area
 		self.menuFrame.grid_forget()
@@ -689,8 +690,6 @@ class Application(tk.Frame):
 
 	def DISP_long_pressed(self):
 		self.currentPreviousImage = len(self.previousImages)-1
-		print("A:", self.currentPreviousImage)
-		print("B:", self.get_previousImage(self.currentPreviousImage).filename)
 		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
 		if self.get_mode() == 0 and not self.get_video_state():  
 			#capture mode and not taking video
