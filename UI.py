@@ -750,30 +750,35 @@ class Application(tk.Frame):
 		tempCounter = 0
 		sleeptime = 0.5
 		# while self.showingLiveView:
+		print("A")
 		time.sleep(sleeptime)
 		img = self.get_live_image_temp(tempCounter)
 		self.setLiveImage(img)
 		self.buttonCheck()
 		tempCounter +=1
 
+		print("B")
 		time.sleep(sleeptime)
 		img = self.get_live_image_temp(tempCounter)
 		self.setLiveImage(img)
 		self.buttonCheck()
 		tempCounter +=1
 
+		print("C")
 		time.sleep(sleeptime)
 		img = self.get_live_image_temp(tempCounter)
 		self.setLiveImage(img)
 		self.buttonCheck()
 		tempCounter +=1
 
+		print("D")
 		time.sleep(sleeptime)
 		img = self.get_live_image_temp(tempCounter)
 		self.setLiveImage(img)
 		self.buttonCheck()
 		tempCounter +=1
 
+		print("E")
 		time.sleep(sleeptime)
 		img = self.get_live_image_temp(tempCounter)
 		self.setLiveImage(img)
