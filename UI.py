@@ -679,6 +679,8 @@ class Application(tk.Frame):
 	def MENU_pressed(self):
 		if self.get_mode() == 0:            #capture
 			self.change_mode()
+			self.set_live_view(False)
+			self.viewingPreviousImages = False
 		else:
 			print("AT ROOT: ", self.menu_tree.isAtTempRoot())
 			if self.menu_tree.isAtTempRoot():
