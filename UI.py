@@ -34,8 +34,7 @@ MENUTREE = {'root':{
 							'Light Settings':{ 'lightSetting1': 4,
 												'lightSetting2': 5,
 												'lightSetting3': 6
-											} ,
-							'Key1': 'val1'
+											}
 
 							}
 						}
@@ -579,8 +578,8 @@ class Application(tk.Frame):
 		# self.menuFrame.pack()
 		self.menuFrame.rowconfigure(0,weight=1)
 		self.menuFrame.columnconfigure(0,weight=1)
-		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
-		self.createTempMenu()
+		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
+		# self.createTempMenu()
 		self.menuFrame.grid_forget()
 
 	def createMenu(self, previousMenu, clickedNode, atRoot):
