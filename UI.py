@@ -244,6 +244,85 @@ class Application(tk.Frame):
 		master.bind('<Escape>',lambda e: master.quit())
 		self.create_layout()
 
+
+	def nonRecursiveButtonCheck(self):
+		# The function that continuously checks the state of the buttons
+
+		#MENU BUTTON is just short press so it is handled in __init__
+
+		# DISPLAY BUTTON
+		if (time.time() - self.dispSinceLongheld)>1:
+			if self.DISP_BTN.is_pressed and not self.dispBtnState:
+				#button is being pressed down 
+				self.dispBtnState = 1
+				self.dispHeldStart = time.time()
+
+			if not self.DISP_BTN.is_pressed and self.dispBtnState:
+				#button is being released
+				self.dispBtnState = 0
+				lengthOfPress = time.time() - self.dispHeldStart 
+				if lengthOfPress < BUTTON_LONGPRESS_TIME:
+					#it was a short press
+					self.DISP_short_pressed()
+
+			if self.dispBtnState:
+				#check if it is longpress yet
+				lengthOfPress = time.time() - self.dispHeldStart
+				if lengthOfPress > BUTTON_LONGPRESS_TIME:
+					#long press
+					self.dispBtnState = 0
+					self.dispSinceLongheld = time.time()
+					self.DISP_long_pressed()
+
+
+		# EXPOSURE BUTTON
+		if (time.time() - self.expoSinceLongheld)>1:
+			if self.EXPO_BTN.is_pressed and not self.expoBtnState:
+				#button is being pressed down 
+				self.expoBtnState = 1
+				self.expoHeldStart = time.time()
+
+			if not self.EXPO_BTN.is_pressed and self.expoBtnState:
+				#button is being released
+				self.expoBtnState = 0
+				lengthOfPress = time.time() - self.expoHeldStart 
+				if lengthOfPress < BUTTON_LONGPRESS_TIME:
+					#it was a short press
+					self.EXP_short_pressed()
+
+			if self.expoBtnState:
+				#check if it is longpress yet
+				lengthOfPress = time.time() - self.expoHeldStart
+				if lengthOfPress > BUTTON_LONGPRESS_TIME:
+					#long press
+					self.expoBtnState = 0
+					self.expoSinceLongheld = time.time()
+					self.EXP_long_pressed()
+
+
+		#ACTION BUTTON
+		if (time.time() - self.actnSinceLongheld)>1:
+			if self.ACTN_BTN.is_pressed and not self.actnBtnState:
+				#button is being pressed down 
+				self.actnBtnState = 1
+				self.actnHeldStart = time.time()
+
+			if not self.ACTN_BTN.is_pressed and self.actnBtnState:
+				#button is being released
+				self.actnBtnState = 0
+				lengthOfPress = time.time() - self.actnHeldStart 
+				if lengthOfPress < BUTTON_LONGPRESS_TIME:
+					#it was a short press
+					self.ACTN_short_pressed()
+
+			if self.actnBtnState:
+				#check if it is longpress yet
+				lengthOfPress = time.time() - self.actnHeldStart
+				if lengthOfPress > BUTTON_LONGPRESS_TIME:
+					#long press
+					self.actnBtnState = 0
+					self.actnSinceLongheld = time.time()
+					self.ACTN_long_pressed()
 	
 
 	def buttonCheck(self):
@@ -846,7 +925,7 @@ class Application(tk.Frame):
 			for i in range(0, 20):
 				self.take_photo()
 				frameCounter +=1
-				# self.buttonCheck()
+				self.nonRecursiveButtonCheck()
 		else:
 			while self.isTakingVideo:
 				self.doHDRtest([],[],[])
