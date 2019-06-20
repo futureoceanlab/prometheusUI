@@ -444,6 +444,7 @@ class Application(tk.Frame):
 
 	def toggle_prev_image(self):
 		self.viewingPreviousImages = not self.viewingPreviousImages
+		print("VPI: ", self.viewingPreviousImages)
 		if self.display == 4:
 			self.display = 0
 		else:
@@ -708,7 +709,9 @@ class Application(tk.Frame):
 
 	def DISP_long_pressed(self):
 		self.currentPreviousImage = len(self.previousImages)-1
+		print("CPI: ", self.currentPreviousImage)
 		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
+		print("img: ", self.get_previousImage(self.currentPreviousImage).filename)
 		if self.get_mode() == 0 and not self.get_video_state():  
 			#capture mode and not taking video
 			self.toggle_prev_image()
