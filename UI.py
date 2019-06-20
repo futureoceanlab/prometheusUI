@@ -734,11 +734,11 @@ class Application(tk.Frame):
 	def ACTN_short_pressed(self):
 		if self.get_mode() == 0:            #capture
 			if not self.get_video_state():  #ready to take photo
-				if self.dispBtnState:
-					#display button is pushed WHILE action button pressed
-					self.doHDRtest([],[],[])
-				else:
-					self.take_photo()
+				if not self.viewingPreviousImages:
+					if self.dispBtnState:	#display button is pushed WHILE action button pressed TEMP
+						self.doHDRtest([],[],[])
+					else:
+						self.take_photo()
 			else:
 				print("END VIDEO")          #currently taking video
 				self.toggle_video_state()
@@ -747,7 +747,7 @@ class Application(tk.Frame):
 
 
 	def ACTN_long_pressed(self):
-		if not self.get_mode() and not self.get_video_state():  
+		if not self.get_mode() and not self.get_video_state() and not self.viewingPreviousImages:  
 			#capture mode and ready to take video
 			self.toggle_video_state()
 			self.capture_video()
