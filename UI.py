@@ -580,7 +580,7 @@ class Application(tk.Frame):
 		# self.menuFrame.columnconfigure(0,weight=1)
 		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
 		# self.createTempMenu()
-		self.createMenu2()
+		self.createMenu2(self.menuFrame)
 
 		# self.menuFrame.grid_forget()
 
