@@ -719,8 +719,7 @@ class Application(tk.Frame):
 			print("TOGGLE LIVE VIEW")
 			self.toggle_live_view()
 			self.update_display()
-			if self.showingLiveView:
-				self.rapidFireUpdate()
+			self.rapidFireUpdate()
 		else:                           
 			self.EXP_short_pressed()
 
@@ -750,11 +749,12 @@ class Application(tk.Frame):
 
 	def rapidFireUpdate(self):
 		r = randint(0,1)
-		img = self.get_live_image_temp(r)
-		self.setLiveImage(img)
-		print('rapidlyfiring')
+		if self.showingLiveView:
+			img = self.get_live_image_temp(r)
+			self.setLiveImage(img)
+			print('rapidlyfiring')
 
-		self.after(50, self.rapidFireUpdate)	
+			self.after(50, self.rapidFireUpdate)	
 		#absolute  ^ minimum delay is 3ms, below that it drops frames
 		#keep high until we need to push it
 
