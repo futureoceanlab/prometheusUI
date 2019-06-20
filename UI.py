@@ -608,7 +608,7 @@ class Application(tk.Frame):
 
 
 	def createMenu2(self,frame):
-		mnu = self.makemenu(frame)
+		mnu = self.makeMenu(frame)
 		mnu.config(bd=2, relief=RAISED)
 		frm.pack(expand=YES, fill=BOTH)
 		Label(frm, bg='black', height=5, width=15).pack(expand=YES, fill=BOTH)
