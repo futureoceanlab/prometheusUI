@@ -611,7 +611,7 @@ class Application(tk.Frame):
 		mnu = self.makeMenu(frame)
 		mnu.config(bd=2, relief=RAISED)
 		frame.pack(expand=YES, fill=BOTH)
-		Label(frm, bg='black', height=5, width=15).pack(expand=YES, fill=BOTH)
+		Label(frame, bg='black', height=5, width=15).pack(expand=YES, fill=BOTH)
 	def notdone(self):
 		return
 
