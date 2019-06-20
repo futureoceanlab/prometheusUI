@@ -723,6 +723,7 @@ class Application(tk.Frame):
 		if self.get_mode() == 0:            #capture
 			print("TOGGLE LIVE VIEW")
 			self.toggle_live_view()
+			self.viewingPreviousImages = False
 			self.update_display()
 			self.rapidFireUpdate()
 		else:                           
