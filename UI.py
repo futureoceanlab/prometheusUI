@@ -603,10 +603,7 @@ class Application(tk.Frame):
 				settingCategory.grid(row=rowNumber, column=0)
 				self.nodeToButtonDict[child] = (settingCategory, None)
 			rowNumber +=1
-			if rowNumber == 0:
-				self.currentSelectionButton = settingKey
-				self.currentSelectionNode = child
-		self.makeSelectedButtonColored(self.currentSelectionButton)
+			
 
 	def createTempMenu(self):
 
