@@ -579,8 +579,8 @@ class Application(tk.Frame):
 		# self.menuFrame.pack()
 		self.menuFrame.rowconfigure(0,weight=1)
 		self.menuFrame.columnconfigure(0,weight=1)
-		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
-		# self.createTempMenu()
+		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
+		self.createTempMenu()
 		self.menuFrame.grid_forget()
 
 	def createMenu(self, previousMenu, clickedNode, atRoot):
@@ -713,7 +713,7 @@ class Application(tk.Frame):
 
 	def DISP_long_pressed(self):
 		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
-		if self.get_mode() == 0 and not self.get_video_state():  
+		if not self.get_mode() and not self.get_video_state():  
 			#capture mode and not taking video
 			self.toggle_prev_image()
 			self.set_live_view(False)
@@ -751,9 +751,6 @@ class Application(tk.Frame):
 
 
 	def ACTN_long_pressed(self):
-		print("MODE:     ", self.get_mode())
-		print("VIDState: ", self.get_video_state())
-		print("VPI:      ", self.viewingPreviousImages)
 		if not self.get_mode() and not self.get_video_state() and not self.viewingPreviousImages:  
 			#capture mode and ready to take video
 			self.toggle_video_state()
@@ -767,8 +764,6 @@ class Application(tk.Frame):
 		if self.showingLiveView:
 			img = self.get_live_image_temp(r)
 			self.setLiveImage(img)
-			print('rapidlyfiring')
-
 			self.after(50, self.rapidFireUpdate)	
 		#absolute  ^ minimum delay is 3ms, below that it drops frames
 		#keep high until we need to push it
