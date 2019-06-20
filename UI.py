@@ -466,6 +466,7 @@ class Application(tk.Frame):
 		#the display below is the display that the screen is CHANGING TO
 		#not the one that it is coming from
 		display = self.get_display()
+		print("DISPLAY: ", display)
 
 		#erase everything that goes in main area
 		self.menuFrame.grid_forget()
