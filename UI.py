@@ -921,8 +921,8 @@ class Application(tk.Frame):
 		# self.update_display()#turn on live view
 
 		if not self.dispBtnState:
-			# while self.isTakingVideo:
-			for i in range(0, 20):
+			while self.isTakingVideo:
+			# for i in range(0, 20):
 				self.take_photo()
 				frameCounter +=1
 				self.nonRecursiveButtonCheck()
