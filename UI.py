@@ -576,11 +576,13 @@ class Application(tk.Frame):
 		self.menuFrame = tk.Frame(mainFrame, bg='green')
 		# labelName = Label(self.menuFrame, text="TEMPORARY TEXT")
 		# self.menuFrame.pack()
-		self.menuFrame.rowconfigure(0,weight=1)
-		self.menuFrame.columnconfigure(0,weight=1)
-		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
+		# self.menuFrame.rowconfigure(0,weight=1)
+		# self.menuFrame.columnconfigure(0,weight=1)
+		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
 		# self.createTempMenu()
-		self.menuFrame.grid_forget()
+		self.createMenu2()
+
+		# self.menuFrame.grid_forget()
 
 	def createMenu(self, previousMenu, clickedNode, atRoot):
 
@@ -603,7 +605,40 @@ class Application(tk.Frame):
 				settingCategory.grid(row=rowNumber, column=0)
 				self.nodeToButtonDict[child] = (settingCategory, None)
 			rowNumber +=1
-			
+
+
+	def createMenu2(self,frame):
+		mnu = self.makemenu(frame)
+	    mnu.config(bd=2, relief=RAISED)
+	    frm.pack(expand=YES, fill=BOTH)
+	    Label(frm, bg='black', height=5, width=15).pack(expand=YES, fill=BOTH)
+
+	def makeMenu(self,parent):
+		menubar = Frame(parent)                        
+	    menubar.pack(side=TOP, fill=X)
+	    
+	    fbutton = Menubutton(menubar, text='File', underline=0)
+	    fbutton.pack(side=LEFT)
+	    file = Menu(fbutton)
+	    file.add_command(label='New...',  command=notdone,     underline=0)
+	    file.add_command(label='Open...', command=notdone,     underline=0)
+	    file.add_command(label='Quit',    command=parent.quit, underline=0)
+	    fbutton.config(menu=file)
+	     
+	    ebutton = Menubutton(menubar, text='Edit', underline=0)
+	    ebutton.pack(side=LEFT)
+	    edit = Menu(ebutton, tearoff=0)
+	    edit.add_command(label='Cut',     command=notdone,     underline=0)
+	    edit.add_command(label='Paste',   command=notdone,     underline=0)
+	    edit.add_separator()
+	    ebutton.config(menu=edit)
+	     
+	    submenu = Menu(edit, tearoff=0)
+	    submenu.add_command(label='Spam', command=parent.quit, underline=0)
+	    submenu.add_command(label='Eggs', command=notdone,     underline=0)
+	    edit.add_cascade(label='Stuff',   menu=submenu,        underline=0)
+	    return menubar
+
 
 	def createTempMenu(self):
 
