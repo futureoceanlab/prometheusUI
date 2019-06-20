@@ -439,6 +439,9 @@ class Application(tk.Frame):
 		else:
 			self.display = 5
 
+	def set_live_view(self, x):
+		self.showingLiveView = x
+
 	def toggle_prev_image(self):
 		self.viewingPreviousImages = not self.viewingPreviousImages
 		if self.display == 4:
@@ -706,6 +709,7 @@ class Application(tk.Frame):
 		if self.get_mode() == 0 and not self.get_video_state():  
 			#capture mode and not taking video
 			self.toggle_prev_image()
+			self.set_live_view(False)
 			self.update_display()
 
 	def EXP_short_pressed(self):
