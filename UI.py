@@ -636,7 +636,7 @@ class Application(tk.Frame):
 		if clickedNode.name == "DIMENSION MODE":
 			self.toggle_2d3d()
 		elif clickedNode.name == "MODULATION FREQ":
-			self.setModulationFrequency()
+			self.toggleModulationFrequency()
 		elif clickedNode.name == "ENABLE PI DELAY":
 			self.toggleEnablePiDelay()
 
