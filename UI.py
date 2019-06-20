@@ -451,7 +451,6 @@ class Application(tk.Frame):
 
 	def toggle_video_state(self):
 		self.isTakingVideo = not self.isTakingVideo
-		print("Is taking video: ", self.isTakingVideo)
 
 	def update_display(self):
 		# function that is called after every button push to update
@@ -809,6 +808,7 @@ class Application(tk.Frame):
 			# returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
 			returnedFile = [] #TEMP
 		self.previousImages = self.previousImages + returnedFile
+		print("PREV: ", self.previousImages)
 		# returnedFileName = str(returnedFile[0])
 		returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
 
