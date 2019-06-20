@@ -808,7 +808,6 @@ class Application(tk.Frame):
 			# returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
 			returnedFile = [] #TEMP
 		self.previousImages = self.previousImages + returnedFile
-		print("PREV: ", self.previousImages)
 		# returnedFileName = str(returnedFile[0])
 		returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
 
@@ -843,10 +842,11 @@ class Application(tk.Frame):
 		# self.update_display()#turn on live view
 
 		if not self.dispBtnState:
-			while self.isTakingVideo:
+			# while self.isTakingVideo:
+			for i in range(0, 20):
 				self.take_photo()
 				frameCounter +=1
-				self.buttonCheck()
+				# self.buttonCheck()
 		else:
 			while self.isTakingVideo:
 				self.doHDRtest([],[],[])
