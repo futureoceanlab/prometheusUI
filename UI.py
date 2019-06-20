@@ -751,6 +751,9 @@ class Application(tk.Frame):
 
 
 	def ACTN_long_pressed(self):
+		print("MODE:     ", self.get_mode())
+		print("VIDState: ", self.get_video_state())
+		print("VPI:      ", self.viewingPreviousImages)
 		if not self.get_mode() and not self.get_video_state() and not self.viewingPreviousImages:  
 			#capture mode and ready to take video
 			self.toggle_video_state()
@@ -835,17 +838,6 @@ class Application(tk.Frame):
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
 		frameCounter =0
 
-		# if self.HDRmode:
-		# 	self.doHDRtest([],[],[])
-		# else:
-		# 	self.take_photo()
-
-		# self.after(50, self.capture_video, frameCounter)
-
-
-		# self.toggle_live_view()
-		# self.update_display()#turn on live view
-
 		if not self.dispBtnState:
 			while self.isTakingVideo:
 			# for i in range(0, 20):
@@ -856,9 +848,8 @@ class Application(tk.Frame):
 			while self.isTakingVideo:
 				self.doHDRtest([],[],[])
 				frameCounter +=1
-				self.buttonCheck()
+				self.nonRecursiveButtonCheck()
 
-		print("IT GOT HEREEEEEEEEEEEEEEEEEEEEEEEEEEEEEE")
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
 		self.writeVideoMetaFile("./images/", timeStart, timeEnd, frameCounter)
