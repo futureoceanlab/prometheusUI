@@ -57,7 +57,8 @@ def twos_comp(val, bits):
 def read_temp():
 
     # Read temperature registers
-    val = bus.read_i2c_block_data(i2c_address, reg_temp, 2)
+    val = bus.read_i2c_block_data(i2c_address, reg_temp, 16)
+    print(val)
     temp_c = (val[0] << 4) | (val[1] >> 5)
 
     # Convert to 2s complement (temperatures can be negative)
