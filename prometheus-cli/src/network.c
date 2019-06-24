@@ -1,4 +1,5 @@
 #include "network.h"
+#include <errno.h>
 
 int connectToNode(const char *hostname, uint16_t portno) {
 
@@ -54,7 +55,13 @@ uint32_t recv_lengthPrefixed(int sock, unsigned char **buf_pp) {
 
     // read response
     *buf_pp = (unsigned char *) malloc(responseLength);
-    recv(sock, *buf_pp, responseLength, 0);
+    int receivedLength;
+    receivedLength = recv(sock, *buf_pp, responseLength, MSG_WAITALL);
+//    if (receivedLength = recv(sock, *buf_pp, responseLength, MSG_WAITALL) == -1) {
+//	printf("ERROR: %s\n", strerror(errno));
+//}   else {
+//	printf("Received: %d bytes\n", receivedLength);
+//}
     // todo: while(received < responseLength) {recv()}
 
     return responseLength;
