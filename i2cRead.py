@@ -57,6 +57,10 @@ def twos_comp(val, bits):
 def read_temp():
 
     # Read temperature registers
+    a = bus.read_byte(i2c_address, 0)
+    print a
+
+
     val = bus.read_i2c_block_data(i2c_address, reg_temp, 2)
     temp_c = (val[0] << 4) | (val[1] >> 5)
     print(val)
