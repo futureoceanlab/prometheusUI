@@ -41,7 +41,7 @@ import smbus
 i2c_ch = 1
 
 # TMP102 address on the I2C bus
-i2c_address = 0x18
+i2c_address = 0x48
 
 # Register addresses
 reg_temp = 0x00
