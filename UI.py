@@ -574,13 +574,13 @@ class Application(tk.Frame):
 
 
 		self.menuFrame = tk.Frame(mainFrame, bg='green')
-		# labelName = Label(self.menuFrame, text="TEMPORARY TEXT")
-		# self.menuFrame.pack()
-		# self.menuFrame.rowconfigure(0,weight=1)
-		# self.menuFrame.columnconfigure(0,weight=1)
+		labelName = Label(self.menuFrame, text="TEMPORARY TEXT")
+		self.menuFrame.pack()
+		self.menuFrame.rowconfigure(0,weight=1)
+		self.menuFrame.columnconfigure(0,weight=1)
 		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
-		# self.createTempMenu()
-		self.createMenu2(self.menuFrame)
+		self.createTempMenu()
+		# self.createMenu2(self.menuFrame)
 
 		# self.menuFrame.grid_forget()
 
@@ -649,7 +649,7 @@ class Application(tk.Frame):
 		 
 		submenu = Menu(physBut, tearoff=0)
 		submenu.add_command(label='Depth', command=parent.quit)
-		submenu.add_command(label='Temperature', command=self.notdone)
+		submenu.add_command(label='Eggs', command=self.notdone)
 		physBut.add_cascade(label='More Physical Settings',   menu=submenu)
 		return menubar
 
