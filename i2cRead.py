@@ -58,7 +58,7 @@ def read_temp():
 
     # Read temperature registers
 
-    val = bus.read_i2c_block_data(i2c_address, reg_temp, 2)
+    val = bus.read_i2c_word_data(i2c_address, reg_temp)
     temp_c = (val[0] << 4) | (val[1] >> 5)
     print(val)
 
@@ -70,23 +70,6 @@ def read_temp():
 
     return temp_c
 
-# Initialize I2C (SMBus)
-bus = smbus.SMBus(i2c_ch)
-
-# Read the CONFIG register (2 bytes)
-val = bus.read_i2c_block_data(i2c_address, reg_config, 2)
-print("Old CONFIG:", val)
-
-# Set to 4 Hz sampling (CR1, CR0 = 0b10)
-val[1] = val[1] & 0b00111111
-val[1] = val[1] | (0b10 << 6)
-
-# Write 4 Hz sampling back to CONFIG
-bus.write_i2c_block_data(i2c_address, reg_config, val)
-
-# Read CONFIG to verify that we changed it
-val = bus.read_i2c_block_data(i2c_address, reg_config, 2)
-print("New CONFIG:", val)
 
 # Print out temperature every second
 while True:
