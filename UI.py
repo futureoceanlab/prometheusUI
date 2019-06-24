@@ -647,7 +647,7 @@ class Application(tk.Frame):
 		physBut.add_separator()
 		button3.config(menu=physBut)
 		 
-		submenu = Menu(edit, tearoff=0)
+		submenu = Menu(physBut, tearoff=0)
 		submenu.add_command(label='Spam', command=parent.quit, underline=0)
 		submenu.add_command(label='Eggs', command=self.notdone,     underline=0)
 		physBut.add_cascade(label='Stuff',   menu=submenu,        underline=0)
