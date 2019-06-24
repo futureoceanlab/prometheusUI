@@ -11,11 +11,17 @@ import numpy as np
 import uiFunctionCalls
 import camera_power
 from datetime import datetime
+import csv
+from random import randint
 
 BUTTON_LONGPRESS_TIME = 1
 EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
+PI_DELAY_OPTIONS = [0,1]
+MOD_FREQ_OPTIONS = [0,1]
 NUM_EXPOSURES = len(EXPOSURE_OPTIONS)
 MODE_OPTIONS = ["CAPTURE", "MENU"]
+HDR_OPTIONS = {1:[[],[],[]]}
+TEMP_LIVEVIEW = ['diver.jpg','whale.jpg']
 MENUTREE = {'root':{
 							'Camera Settings': {'CamSubsetting1': 'f22',
 												'CamSubsetting2': '1/250',
@@ -28,8 +34,7 @@ MENUTREE = {'root':{
 							'Light Settings':{ 'lightSetting1': 4,
 												'lightSetting2': 5,
 												'lightSetting3': 6
-											} ,
-							'Key1': 'val1'
+											}
 
 							}
 						}
@@ -167,7 +172,8 @@ class Application(tk.Frame):
 		self.modFreq = 0 
 		self.piDelay = 0 
 		self.enableCapture = 0 
-
+		self.HDRmode = 0
+		
 		#states
 		self.isTakingVideo = False
 		self.showingLiveView = False
@@ -175,20 +181,24 @@ class Application(tk.Frame):
 		self.display = 0    
 		# DISPLAY INDEXES
 		# There are 4 main displays in capture mode (0,1,2,3)
-		# The 'show previous image' display is 7 because (7+1)%4=0 
-		# 	so it goes back to display 0 (see change_display())
-		# The 'menu display' is -1 because it is the last display in the
-		# menu list self.mainArea.winfo_children and (-1+1)%4 = 0 
+		# The additional displays are viewing the previous image and live view
+		# The four main displays rotate through by single clicks
+		# The two extra displays can be accessed at any time through long clicks
 		# 0  --  4x DCS images  
 		# 1  --  point cloud
 		# 2  --  'rich data' - state of the system
 		# 3  --  color map image
-		# 7  --  previous image 
+		# 4  --  previous image
+		# 5  -- live view 
 		# -1 --  menu display
 
 		#previous image settings
 		self.viewingPreviousImages = False
-		self.currentPreviousImage = 0
+		self.previousImages = []
+		self.numPreviousImages = 0
+		self.createMainCSV()	
+		self.previousImages = ['ocean.jpg','reef.jpg'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
+		self.currentPreviousImage = len(self.previousImages)-1
 		self.dimensionMode = 0
 
 		#frame areas of the UI
@@ -203,10 +213,11 @@ class Application(tk.Frame):
 		self.menu_tree = MenuTree(MENUTREE)
 		self.temp_menu_tree = MenuTree(TEMP_MENUTREE)
 		self.previousImage = 'ocean.jpg'
-		self.previousImages = ['ocean.jpg','reef.jpg']
 		self.currentSelectionButton = None
 		self.currentSelectionNode = None
 		self.nodeToButtonDict = {}
+		self.I2Cdata = {'direction': None, 'temperature': None, 'pressure':None}
+		self.currentLogFile = ""
 
 		#button information
 		self.MENU_BTN = gpio.Button(21, pull_up=True)
@@ -226,14 +237,14 @@ class Application(tk.Frame):
 		self.buttonColor = 'white'
 
 		#create the initial UI
+		self.createMainLog()
 		self._geom = '200x200+0+0'
 		master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(), master.winfo_screenheight()))
-		master.bind('<Escape>',self.toggle_geom)
+		master.bind('<Escape>',lambda e: master.quit())
 		self.create_layout()
 
-	
 
-	def buttonCheck(self):
+	def nonRecursivbutton2Check(self):
 		# The function that continuously checks the state of the buttons
 
 		#MENU BUTTON is just short press so it is handled in __init__
@@ -258,9 +269,9 @@ class Application(tk.Frame):
 				lengthOfPress = time.time() - self.dispHeldStart
 				if lengthOfPress > BUTTON_LONGPRESS_TIME:
 					#long press
-					self.DISP_long_pressed()
 					self.dispBtnState = 0
 					self.dispSinceLongheld = time.time()
+					self.DISP_long_pressed()
 
 
 		# EXPOSURE BUTTON
@@ -283,9 +294,9 @@ class Application(tk.Frame):
 				lengthOfPress = time.time() - self.expoHeldStart
 				if lengthOfPress > BUTTON_LONGPRESS_TIME:
 					#long press
-					self.EXP_long_pressed()
 					self.expoBtnState = 0
 					self.expoSinceLongheld = time.time()
+					self.EXP_long_pressed()
 
 
 		#ACTION BUTTON
@@ -308,19 +319,55 @@ class Application(tk.Frame):
 				lengthOfPress = time.time() - self.actnHeldStart
 				if lengthOfPress > BUTTON_LONGPRESS_TIME:
 					#long press
-					self.ACTN_long_pressed()
 					self.actnBtnState = 0
 					self.actnSinceLongheld = time.time()
+					self.ACTN_long_pressed()
+	
+
+	def buttonCheck(self):
+		# The function that continuously checks the state of the buttons
+
+		self.nonRecursivbutton2Check()
 
 		# This allows for the button checker to run continously, 
 		# alongside the mainloop
-		self.master.after(50, self.buttonCheck)
+		self.master.after(1, self.buttonCheck)
 
 	def checkBeagle(self):
 		camera_power.connect_both_cameras()
 		#camera_power.turn_on_BBBx(0)
 		#camera_power.turn_on_BBBx(1)
 		self.master.after(10000, self.buttonCheck)
+
+	def createMainLog(self):
+		numFolders, numFiles = self.directoryCounter("./logs")
+		newFile = open("./logs/"+"log_"+str(numFiles)+".txt", "w+")
+		newFile.write("START TIME: "+str(datetime.utcnow().strftime("%m%d%H%M%S")))
+		newFile.close()
+		self.currentLogFile = newFile.name
+
+	def updateMainLog(self, msg):
+		logFile = open(self.currentLogFile, 'a')
+		logFile.write(msg)
+		logFile.close()
+
+	def createMainCSV(self):
+		#on startup, check if the main csv exists
+		#if it does, populate the previous images
+		#otherwise, create a new one
+		self.currentCSVFile = "./mainCSV.csv"
+		try:
+			file = open(self.currentCSVFile, 'r')
+			reader = csv.reader(file, delimiter=',')
+			for row in reader:
+				self.previousImages.append(row[1])	#appending the image file location
+				self.numPreviousImages +=1
+				#the most recent previous image is at the end
+		except FileNotFoundError:
+			file = open(self.currentCSVFile, "w")
+			self.previousImages = []
+			self.numPreviousImages = 0
+		file.close()
 
 	def get_mode(self):
 		return self.mode
@@ -347,19 +394,32 @@ class Application(tk.Frame):
 		return self.showingLiveView()
 
 	def get_previousImage(self, x):
-		return ImageTk.PhotoImage(Image.open(self.previousImages[x]).resize((600,450),Image.ANTIALIAS))
+		return Image.open(self.previousImages[x%len(self.previousImages)])
+
+	def get_previousImageIndex(self, offset=0):
+		return (self.currentPreviousImage+offset)%len(self.previousImages)
 
 	def get_four_DCS_images(self):
-		return [ImageTk.PhotoImage(Image.open(self.previousImage).resize((300,225),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(Image.open(self.previousImage).resize((300,225),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(Image.open(self.previousImage).resize((300,225),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(Image.open(self.previousImage).resize((300,225),Image.ANTIALIAS))]
+		return [ImageTk.PhotoImage(self.get_previousImage(self.get_previousImageIndex()).resize((300,225),Image.ANTIALIAS)),
+				ImageTk.PhotoImage(self.get_previousImage(self.get_previousImageIndex(-1)).resize((300,225),Image.ANTIALIAS)),
+				ImageTk.PhotoImage(self.get_previousImage(self.get_previousImageIndex(-2)).resize((300,225),Image.ANTIALIAS)),
+				ImageTk.PhotoImage(self.get_previousImage(self.get_previousImageIndex(-3)).resize((300,225),Image.ANTIALIAS))]
 
 	def get_PC_image(self):
-		return ImageTk.PhotoImage(Image.open(self.previousImage).resize((600,450),Image.ANTIALIAS))
+		return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((600,450),Image.ANTIALIAS))
 
 	def get_colorMap_image(self):
-		return ImageTk.PhotoImage(Image.open(self.previousImage).resize((800,480),Image.ANTIALIAS))
+		return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
+
+	def get_live_image(self):
+		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((800,480),Image.ANTIALIAS))
+
+	def get_live_image_temp(self, x):
+		if x%2==0:
+			img = Image.open('small1.jpg').resize((800,480),Image.ANTIALIAS)
+		else:
+			img = Image.open('small2.jpg').resize((800,480),Image.ANTIALIAS)
+		return ImageTk.PhotoImage(img)
 		
 	def get_richData_string(self):
 		s = ''
@@ -378,14 +438,20 @@ class Application(tk.Frame):
 
 	def toggle_live_view(self):
 		self.showingLiveView = not self.showingLiveView
+		if self.display == 5:
+			self.display = 0
+		else:
+			self.display = 5
+
+	def set_live_view(self, x):
+		self.showingLiveView = x
 
 	def toggle_prev_image(self):
-		if self.display == 7:
+		self.viewingPreviousImages = not self.viewingPreviousImages
+		if self.display == 4:
 			self.display = 0
-			self.viewingPreviousImages = False
 		else:
-			self.display = 7
-			self.viewingPreviousImages = True
+			self.display = 4
 
 	def toggle_video_state(self):
 		self.isTakingVideo = not self.isTakingVideo
@@ -404,21 +470,22 @@ class Application(tk.Frame):
 		#the display below is the display that the screen is CHANGING TO
 		#not the one that it is coming from
 		display = self.get_display()
+		print("DISPLAY: ", display)
 
 		#erase everything that goes in main area
 		self.menuFrame.grid_forget()
-		for i in [0,1,2,3,4]:
+		for i in [0,1,2,3,4,5]:
 			self.mainArea.winfo_children()[i].pack_forget()
 
-		if display == -1 or display == 7 or display == 2:
+		if display in [-1,2,4,5]:
 			#erase the data grid
 			self.winfo_children()[2].grid_forget()
 
 		#now display things we want
 		if display == -1:
-			self.mainArea.winfo_children()[5].grid()
+			self.mainArea.winfo_children()[6].grid()
 		else:
-			self.mainArea.winfo_children()[min(4, display)].pack()
+			self.mainArea.winfo_children()[display].pack()
 
 		if display == 0:
 			self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S)
@@ -491,22 +558,31 @@ class Application(tk.Frame):
 		colorMapCanvas.create_image(0,0,anchor=NW, image=imgColor)
 		colorMapCanvas.pack_forget()
 
-		# #PreviousImg -- display = 7
+		# #PreviousImg -- display = 4
 		prevImgCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		previousImage = self.get_previousImage(self.currentPreviousImage)
+		previousImage = ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS))
 		mainFrame.previousImage = previousImage
 		prevImgCanvas.create_image(0,0,anchor=NW, image=previousImage)
 		prevImgCanvas.pack_forget()
+
+		# #Live View -- display = 5
+		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
+		liveImg = self.get_live_image()
+		mainFrame.liveImg = liveImg
+		liveViewCanvas.create_image(0,0,anchor=NW, image=liveImg)
+		liveViewCanvas.pack_forget()
 
 
 		self.menuFrame = tk.Frame(mainFrame, bg='green')
 		# labelName = Label(self.menuFrame, text="TEMPORARY TEXT")
 		# self.menuFrame.pack()
-		self.menuFrame.rowconfigure(0,weight=1)
-		self.menuFrame.columnconfigure(0,weight=1)
-		self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
+		# self.menuFrame.rowconfigure(0,weight=1)
+		# self.menuFrame.columnconfigure(0,weight=1)
+		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
 		# self.createTempMenu()
-		self.menuFrame.grid_forget()
+		self.createMenu2(self.menuFrame)
+
+		# self.menuFrame.grid_forget()
 
 	def createMenu(self, previousMenu, clickedNode, atRoot):
 
@@ -514,22 +590,69 @@ class Application(tk.Frame):
 			previousMenu.grid_forget()
 		newMenu = tk.Frame(self.menuFrame, bg='red', width=750, height=400)
 		level = self.menu_tree.getSelectionLevel(clickedNode)
-		levelSize =len(level)
-		newMenu.columnconfigure(0,weight=1)
-		for i in range(0,levelSize):
-			newMenu.rowconfigure(i,weight=1)
+
 		self.menu_tree.traverseDownToSelectionLevel(clickedNode)
 		rowNumber = 0 
 		for child in level:
 			if child.isLeaf():
-				settingKey = Button(newMenu, text=str('Change ')+child.name)
-				settingKey.grid(row=rowNumber, column=0)
-				settingValue = Label(newMenu, text=child.value)
+				settingName = Button(previousMenu, text=str('Change ')+child.name)
+				settingName.grid(row=rowNumber, column=0)
+				settingValue = Label(previousMenu, text=child.value)
 				settingValue.grid(row=rowNumber, column=1)
+				self.nodeToButtonDict[child] = (settingName, settingValue)
 			else:
-				setting = Button(previousMenu, text=child.name, command=lambda : self.createMenu(self.menuFrame,child,False))
-				setting.grid(row=rowNumber, column=0)
+				settingCategory = Button(previousMenu, text=child.name, command=lambda : self.createMenu(self.menuFrame,child,False))
+				settingCategory.grid(row=rowNumber, column=0)
+				self.nodeToButtonDict[child] = (settingCategory, None)
 			rowNumber +=1
+
+
+	def createMenu2(self,frame):
+		mnu = self.makeMenu(frame)
+		mnu.config(bd=2, relief=RAISED)
+		frame.pack(expand=YES, fill=BOTH)
+		Label(frame, bg='black', height=5, width=15).pack(expand=YES, fill=BOTH)
+
+	def notdone(self):
+		return
+
+	def makeMenu(self,parent):
+		menubar = Frame(parent)                        
+		menubar.pack(side=TOP, fill=X)
+
+
+
+		
+		button1 = Menubutton(menubar, text='Camera Settings')
+		button1.pack(side=LEFT)
+		cam = Menu(button1)
+		cam.add_command(label='ISO',  command=self.notdone)
+		cam.add_command(label='Aperture', command=self.notdone)
+		cam.add_command(label='Shutter Speed',    command=parent.quit)
+		button1.config(menu=cam)
+		 
+		button2 = Menubutton(menubar, text='Light Settings')
+		button2.pack(side=LEFT)
+		lightBtn = Menu(button2, tearoff=0)
+		lightBtn.add_command(label='Brightness',     command=self.notdone)
+		lightBtn.add_command(label='Speed',   command=self.notdone)
+		lightBtn.add_separator()
+		button2.config(menu=lightBtn)
+
+		button3 = Menubutton(menubar, text='Physical Settings')
+		button3.pack(side=LEFT)
+		physBut = Menu(button3, tearoff=0)
+		physBut.add_command(label='Position',     command=self.notdone)
+		physBut.add_command(label='Focal Length',   command=self.notdone)
+		physBut.add_separator()
+		button3.config(menu=physBut)
+		 
+		submenu = Menu(physBut, tearoff=0)
+		submenu.add_command(label='Depth', command=parent.quit)
+		submenu.add_command(label='Temperature', command=self.notdone)
+		physBut.add_cascade(label='More Physical Settings',   menu=submenu)
+		return menubar
+
 
 	def createTempMenu(self):
 
@@ -562,14 +685,14 @@ class Application(tk.Frame):
 		if clickedNode.name == "DIMENSION MODE":
 			self.toggle_2d3d()
 		elif clickedNode.name == "MODULATION FREQ":
-			self.setModulationFrequency()
+			self.toggleModulationFrequency()
 		elif clickedNode.name == "ENABLE PI DELAY":
 			self.toggleEnablePiDelay()
 
 	def makeSelectedButtonColored(self, button):
 		button['bg'] = '#9ee3ff'
 
-	def makeButtonWhite(self, button):
+	def makbutton2White(self, button):
 		button['bg'] = self.buttonColor
 
 	def setPreviousImage(self,img):
@@ -577,13 +700,19 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[4].create_image(0,0,anchor=NW, image=img)
 		self.mainArea.winfo_children()[4].pack()
 
+	def setLiveImage(self, img):
+		self.mainArea.liveImg = img
+		self.mainArea.winfo_children()[5].pack_forget()
+		self.mainArea.winfo_children()[5].create_image(0,0,anchor=NW, image=img)
+		self.mainArea.winfo_children()[5].pack()
+
 	# def openChildMenu(self, node):
 
 	def selectUp(self, currentSelectionNode):
 		currentSelectionIndex = self.menu_tree.currentLevel.index(currentSelectionNode)
 		newIndex = max(0, currentSelectionIndex - 1)
 		newNodeSelection = self.menu_tree.currentLevel[newIndex]
-		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
+		self.makbutton2White(self.nodeToButtonDict[currentSelectionNode][0])
 		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.currentSelectionNode = newNodeSelection
 		self.currentSelectionButton = self.nodeToButtonDict[newNodeSelection][0]
@@ -592,7 +721,7 @@ class Application(tk.Frame):
 		currentSelectionIndex = self.menu_tree.currentLevel.index(currentSelectionNode)
 		newIndex = min(len(self.menu_tree.currentLevel)-1, currentSelectionIndex + 1)
 		newNodeSelection = self.menu_tree.currentLevel[newIndex]
-		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
+		self.makbutton2White(self.nodeToButtonDict[currentSelectionNode][0])
 		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.currentSelectionNode = newNodeSelection
 		self.currentSelectionButton = self.nodeToButtonDict[newNodeSelection][0]
@@ -604,6 +733,8 @@ class Application(tk.Frame):
 	def MENU_pressed(self):
 		if self.get_mode() == 0:            #capture
 			self.change_mode()
+			self.set_live_view(False)
+			self.viewingPreviousImages = False
 		else:
 			print("AT ROOT: ", self.menu_tree.isAtTempRoot())
 			if self.menu_tree.isAtTempRoot():
@@ -618,8 +749,9 @@ class Application(tk.Frame):
 				#not taking video
 				if self.viewingPreviousImages:
 					#get the next previous image
-					self.setPreviousImage(self.get_previousImage(self.currentPreviousImage))
-					self.currentPreviousImage = (1 + self.currentPreviousImage)%len(self.previousImages)
+					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
+					self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
+
 					self.update_display()
 				else:
 					self.change_display()
@@ -629,21 +761,16 @@ class Application(tk.Frame):
 			self.selectUp(self.currentSelectionNode)
 
 	def DISP_long_pressed(self):
-		self.currentPreviousImage = 0
-		self.setPreviousImage(self.get_previousImage(self.currentPreviousImage))
-		if self.get_mode() == 0 and not self.get_video_state():  
+		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
+		if not self.get_mode() and not self.get_video_state():  
 			#capture mode and not taking video
 			self.toggle_prev_image()
+			self.set_live_view(False)
 			self.update_display()
 
 	def EXP_short_pressed(self):
 		if self.get_mode() == 0:            #capture
-			if not self.dimensionMode:		#2d
-				self.change_exposure2d()
-				# uiFunctionCalls.change2dExposure(self.exposure2d)
-			else:
-				self.change_exposure3d()
-				# uiFunctionCalls.change3dExposure(self.exposure3d)
+			self.change_exposure(self.dimensionMode)
 		else:                               #menu mode
 			self.selectDown(self.currentSelectionNode)
 
@@ -651,20 +778,20 @@ class Application(tk.Frame):
 		if self.get_mode() == 0:            #capture
 			print("TOGGLE LIVE VIEW")
 			self.toggle_live_view()
+			self.viewingPreviousImages = False
+			self.update_display()
+			self.rapidFireUpdate()
 		else:                           
 			self.EXP_short_pressed()
 
 	def ACTN_short_pressed(self):
 		if self.get_mode() == 0:            #capture
 			if not self.get_video_state():  #ready to take photo
-				fileLocation = "./captureImages/"+str(datetime.utcnow().strftime("%m%d%H%M%S"))
-				if not self.dimensionMode:		#2d
-					# returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
-					returnedFile = [] #TEMP
-				else:
-					# returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
-					returnedFile = [] #TEMP
-				self.previousImages = returnedFile + self.previousImages
+				if not self.viewingPreviousImages:
+					if self.dispBtnState:	#display button is pushed WHILE action button pressed TEMP
+						self.doHDRtest([],[],[])
+					else:
+						self.take_photo()
 			else:
 				print("END VIDEO")          #currently taking video
 				self.toggle_video_state()
@@ -673,13 +800,104 @@ class Application(tk.Frame):
 
 
 	def ACTN_long_pressed(self):
-		if not self.get_mode() and not self.get_video_state():  
+		if not self.get_mode() and not self.get_video_state() and not self.viewingPreviousImages:  
 			#capture mode and ready to take video
 			self.toggle_video_state()
 			self.capture_video()
 		else:                               
 			#else is same as short press
 			self.ACTN_short_pressed()
+
+	def rapidFireUpdate(self):
+		r = randint(0,1)
+		if self.showingLiveView:
+			img = self.get_live_image_temp(r)
+			self.setLiveImage(img)
+			self.after(50, self.rapidFireUpdate)	
+		#absolute  ^ minimum delay is 3ms, below that it drops frames
+		#keep high until we need to push it
+
+	def directoryCounter(self, path):
+
+		numFolders = 0
+		numFiles = 0
+		for _, folderNames, fileNames in os.walk(path):
+			numFolders+=len(folderNames)
+			numFiles +=len(fileNames)
+
+		return numFolders, numFiles
+
+	def writeImageMetaFile(self, path):
+		newFile = open(path, 'w+')
+		#time 
+		newFile.write(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
+
+		#i2c data
+		for data in self.I2Cdata:
+			newFile.write(str(data) + ":" + str(self.I2Cdata[data])+'\n')
+
+		#cam settings
+		for data in self.mainImportantData:
+			newFile.write(str(data) + ":" + str(self.mainImportantData[data])+'\n')
+		newFile.close()
+
+	def writeVideoMetaFile(self, path, start, end, numFrames):
+		newFile = open(path+"meta.txt", 'w+')
+		
+		#timeStart, timeEnd, number of frames, camera settings
+
+		newFile.write(start + '\n' + end + '\n' + str(numFrames) + '\n')
+		newFile.close()
+
+	def take_photo(self):
+		print("TAKE PHOTO")
+		elementLocation = "./images/"
+		fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
+		if not self.dimensionMode:		#2d
+			# returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
+			returnedFile = [] #TEMP
+		else:
+			# returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
+			returnedFile = [] #TEMP
+		self.previousImages = self.previousImages + returnedFile
+		# returnedFileName = str(returnedFile[0])
+		returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
+
+		#update CSV
+		csvFile = open(self.currentCSVFile, 'a')
+		writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+		#CSV FORMAT
+		#index, imageLocation, metadataLocation
+		metaFile = fileLocation+"_meta.txt"
+		self.writeImageMetaFile(metaFile)
+		writer.writerow([self.numPreviousImages, returnedFileName, metaFile])
+		self.numPreviousImages +=1
+		
+		csvFile.close()
+
+	def capture_video(self):
+		print("TAKE VIDEO")
+		numFolders, numFiles = self.directoryCounter("./images")
+
+		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
+		frameCounter =0
+
+		if not self.dispBtnState:
+			while self.isTakingVideo:
+			# for i in range(0, 20):
+				self.take_photo()
+				frameCounter +=1
+				self.nonRecursivbutton2Check()
+		else:
+			while self.isTakingVideo:
+				self.doHDRtest([],[],[])
+				frameCounter +=1
+				self.nonRecursivbutton2Check()
+
+		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
+
+		self.writeVideoMetaFile("./images/", timeStart, timeEnd, frameCounter)
+
 
 	def change_mode(self):
 		self.mode = 1 - self.mode
@@ -692,22 +910,23 @@ class Application(tk.Frame):
 		print("DISP: ",self.display)
 		self.update_display()
 
-	def change_exposure2d(self):
-		exposureIndex = EXPOSURE_OPTIONS.index(self.exposure2d)
-		self.exposure2d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
-		self.mainImportantData['EXP 2D'] = self.exposure2d
+	def change_exposure(self, mode):
+		if mode:
+			#3d
+			exposureIndex = EXPOSURE_OPTIONS.index(self.exposure3d)
+			self.exposure3d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
+			self.mainImportantData['EXP 3D'] = self.exposure3d
+			# uiFunctionCalls.change3dExposure(self.exposure3d)
+			print("EXP3D: ", self.exposure3d)
+		else:
+			#2d
+			exposureIndex = EXPOSURE_OPTIONS.index(self.exposure2d)
+			self.exposure2d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
+			self.mainImportantData['EXP 2D'] = self.exposure2d
+			# uiFunctionCalls.change2dExposure(self.exposure2d)
+			print("EXP2D: ", self.exposure2d)
 		self.update_display()
-		print("EXP2D: ", self.exposure2d)
 
-	def change_exposure3d(self):
-		exposureIndex = EXPOSURE_OPTIONS.index(self.exposure3d)
-		self.exposure3d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
-		self.mainImportantData['EXP 3D'] = self.exposure3d
-		self.update_display()
-		print("EXP3D: ", self.exposure3d)
-
-	def capture_video(self):
-		print("TAKE VIDEO")
 
 	def change_title(self, newTitle):
 		self.title = newTitle 
@@ -716,23 +935,53 @@ class Application(tk.Frame):
 		self.dimensionMode = 1 - self.dimensionMode
 		# uiFunctionCalls.toggle2d3dMode(self.dimensionMode)
 
-	def setModulationFrequency(self):
+	def toggleModulationFrequency(self):
 		self.modFreq = 1 - self.modFreq
+		# uiFunctionCalls.setModulationFrequency(self.modFreq)
+
+	def setModulationFrequency(self, x):
+		self.modFreq = x
 		# uiFunctionCalls.setModulationFrequency(self.modFreq)
 
 	def toggleEnablePiDelay(self):
 		self.piDelay = 1 - self.piDelay
 		# uiFunctionCalls.enablePiDelay(self.piDelay)
 
+	def setPiDelay(self, x):
+		self.piDelay = x
+		# uiFunctionCalls.enablePiDelay(self.piDelay)
+
 	def toggleEnableCapture(self):
 		self.enableCapture = 1 - self.enableCapture
-		# uiFunctionCalls.enablePiDelay(self.enableCapture)
+		# uiFunctionCalls.enableCapture(self.enableCapture)
 
 	def toggle_geom(self,event):
 		geom=self.master.winfo_geometry()
 		self.master.overrideredirect(False)
 		self.master.geometry(self._geom)
 		self._geom=geom
+
+	def updateI2Cdata(self, d,t,p):
+		self.I2Cdata["direction"] = d
+		self.I2Cdata["temperature"] = t 
+		self.I2Cdata["pressure"] = p 
+
+	def doHDRtest(self, expOptions, piOptions, modFreqOptions):
+		print("DOING HDR TEST")
+
+		self.dimensionMode = 1
+		for dimMode in [0,1]:			#2d and 3d mode
+			self.toggle_2d3d()
+			for exp in expOptions:
+				self.change_exposure(self.dimensionMode)
+				for pi in piOptions:
+					self.setPiDelay(pi)
+					for freq in modFreqOptions:
+						self.setModulationFrequency(freq)
+						self.take_photo()
+
+
+
 
 
 
@@ -741,7 +990,7 @@ def main():
 	#camera_power.turn_on_BBBx(0)
 	#camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
-	root.overrideredirect(True)		#for debugging turn this to False (allows to press ESCAPE)
+	root.overrideredirect(False)		#for debugging turn this to False (allows to press ESCAPE)
 	app = Application(master=root)
 	app.buttonCheck()
 	app.mainloop()
