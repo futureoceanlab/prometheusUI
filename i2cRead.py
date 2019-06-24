@@ -3,7 +3,7 @@
 # address = 0x18
 # reg_temp = 0x00
 # i2c_ch = 1
-# bus = smbus.SMBus(i2c_ch)
+bus = smbus.SMBus(i2c_ch)
 
 # def twos_comp(val, bits):
 #     if (val & (1 << (bits - 1))) != 0:
@@ -41,7 +41,7 @@ import smbus
 i2c_ch = 1
 
 # TMP102 address on the I2C bus
-i2c_address = 0x48
+i2c_address = 0x18
 
 # Register addresses
 reg_temp = 0x00
