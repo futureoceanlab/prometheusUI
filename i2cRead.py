@@ -66,7 +66,7 @@ class MCP9808(object):
 			temp -= 256.0
 		return temp
 
-sensor = MCP9808.MCP9808()
+sensor = MCP9808()
 
 # Optionally you can override the address and/or bus number:
 #sensor = MCP9808.MCP9808(address=0x20, busnum=2)
