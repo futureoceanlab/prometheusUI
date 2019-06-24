@@ -59,14 +59,14 @@ def read_temp():
     # Read temperature registers
 
     val = bus.read_word_data(i2c_address, reg_temp)
-    temp_c = (val[0] << 4) | (val[1] >> 5)
+    # temp_c = (val[0] << 4) | (val[1] >> 5)
     print(val)
 
     # Convert to 2s complement (temperatures can be negative)
-    temp_c = twos_comp(temp_c, 12)
+    # temp_c = twos_comp(temp_c, 12)
 
-    # Convert registers value to temperature (C)
-    temp_c = temp_c * 0.0625
+    # # Convert registers value to temperature (C)
+    # temp_c = temp_c * 0.0625
 
     return temp_c
 
