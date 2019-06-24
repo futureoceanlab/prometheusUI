@@ -1,34 +1,20 @@
-import Adafruit_PureIO.smbus as smbus
-
-# address = 0x18
-# reg_temp = 0x00
-i2c_ch = 1
-bus = smbus.SMBus(i2c_ch)
-
-
 import time
-# import smbus
 
-i2c_ch = 1
+import Adafruit_MCP9808.MCP9808 as MCP9808
 
-# TMP102 address on the I2C bus
-i2c_address = 0x18
+sensor = MCP9808.MCP9808()
 
-# Register addresses
-reg_temp = 0x00
-reg_config = 0x01
+# Optionally you can override the address and/or bus number:
+#sensor = MCP9808.MCP9808(address=0x20, busnum=2)
+
+# Initialize communication with the sensor.
+sensor.begin()
+
+temp = sensor.readTempC()
 
 
-# Read temperature registers and calculate Celsius
-def read_temp():
 
-    # Read temperature registers
-    val = bus.readS16BE(i2c_address)
-    print("a ", val)
-    val = ((val << 8) & 0xFF00) + (val >> 8)
-    print("b ", val)
-# Print out temperature every second
 while True:
-    temperature = read_temp()
-    print(temperature, "C")
-    time.sleep(1)
+	temp = sensor.readTempC()
+	print(temp)
+	time.sleep(1)
