@@ -59,6 +59,7 @@ def read_temp():
     # Read temperature registers
 
     val = bus.read_word_data(i2c_address, reg_temp) & 0xFFFF
+    val = ((val << 8) & 0xFF00) + (val >> 8)
     # temp_c = (val[0] << 4) | (val[1] >> 5)
     print(val)
 
