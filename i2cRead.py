@@ -2,7 +2,7 @@ import smbus
 
 # address = 0x18
 # reg_temp = 0x00
-# i2c_ch = 1
+i2c_ch = 1
 bus = smbus.SMBus(i2c_ch)
 
 # def twos_comp(val, bits):
