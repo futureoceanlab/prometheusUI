@@ -41,7 +41,7 @@ import smbus
 i2c_ch = 1
 
 # TMP102 address on the I2C bus
-i2c_address = 0x48
+i2c_address = 0x18
 
 # Register addresses
 reg_temp = 0x00
@@ -59,6 +59,7 @@ def read_temp():
     # Read temperature registers
     val = bus.read_i2c_block_data(i2c_address, reg_temp, 2)
     temp_c = (val[0] << 4) | (val[1] >> 5)
+    print(val)
 
     # Convert to 2s complement (temperatures can be negative)
     temp_c = twos_comp(temp_c, 12)
