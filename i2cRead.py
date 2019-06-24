@@ -8,7 +8,8 @@ bus = smbus.SMBus(i2c_ch)
 def read_temp():
 	print('testinnnnggg')
 	value = bus.read_i2c_block_data(address, reg_temp, 2)
-	return
+	return value
 
 if __name__ =='__main__':
-	read_temp()
+	while True:
+		print(read_temp())
