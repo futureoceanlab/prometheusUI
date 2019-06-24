@@ -244,7 +244,7 @@ class Application(tk.Frame):
 		self.create_layout()
 
 
-	def nonRecursiveButtonCheck(self):
+	def nonRecursivbutton2Check(self):
 		# The function that continuously checks the state of the buttons
 
 		#MENU BUTTON is just short press so it is handled in __init__
@@ -327,7 +327,7 @@ class Application(tk.Frame):
 	def buttonCheck(self):
 		# The function that continuously checks the state of the buttons
 
-		self.nonRecursiveButtonCheck()
+		self.nonRecursivbutton2Check()
 
 		# This allows for the button checker to run continously, 
 		# alongside the mainloop
@@ -612,33 +612,45 @@ class Application(tk.Frame):
 		mnu.config(bd=2, relief=RAISED)
 		frame.pack(expand=YES, fill=BOTH)
 		Label(frame, bg='black', height=5, width=15).pack(expand=YES, fill=BOTH)
+
 	def notdone(self):
 		return
 
 	def makeMenu(self,parent):
 		menubar = Frame(parent)                        
 		menubar.pack(side=TOP, fill=X)
+
+
+
 		
-		fbutton = Menubutton(menubar, text='File', underline=0)
-		fbutton.pack(side=LEFT)
-		file = Menu(fbutton)
-		file.add_command(label='New...',  command=self.notdone,     underline=0)
-		file.add_command(label='Open...', command=self.notdone,     underline=0)
-		file.add_command(label='Quit',    command=parent.quit, underline=0)
-		fbutton.config(menu=file)
+		button1 = Menubutton(menubar, text='Camera Settings')
+		button1.pack(side=LEFT)
+		cam = Menu(button1)
+		cam.add_command(label='ISO',  command=self.notdone,     underline=0)
+		cam.add_command(label='Aperture', command=self.notdone,     underline=0)
+		cam.add_command(label='Shutter Speed',    command=parent.quit, underline=0)
+		button1.config(menu=cam)
 		 
-		ebutton = Menubutton(menubar, text='Edit', underline=0)
-		ebutton.pack(side=LEFT)
-		edit = Menu(ebutton, tearoff=0)
-		edit.add_command(label='Cut',     command=self.notdone,     underline=0)
-		edit.add_command(label='Paste',   command=self.notdone,     underline=0)
-		edit.add_separator()
-		ebutton.config(menu=edit)
+		button2 = Menubutton(menubar, text='Light Settings', underline=0)
+		button2.pack(side=LEFT)
+		lightBtn = Menu(button2, tearoff=0)
+		lightBtn.add_command(label='Brightness',     command=self.notdone,     underline=0)
+		lightBtn.add_command(label='Speed',   command=self.notdone,     underline=0)
+		lightBtn.add_separator()
+		button2.config(menu=lightBtn)
+
+		button3 = Menubutton(menubar, text='Physical Settings', underline=0)
+		button3.pack(side=LEFT)
+		physBut = Menu(button3, tearoff=0)
+		physBut.add_command(label='Cut',     command=self.notdone,     underline=0)
+		physBut.add_command(label='Paste',   command=self.notdone,     underline=0)
+		physBut.add_separator()
+		button3.config(menu=physBut)
 		 
 		submenu = Menu(edit, tearoff=0)
 		submenu.add_command(label='Spam', command=parent.quit, underline=0)
 		submenu.add_command(label='Eggs', command=self.notdone,     underline=0)
-		edit.add_cascade(label='Stuff',   menu=submenu,        underline=0)
+		physBut.add_cascade(label='Stuff',   menu=submenu,        underline=0)
 		return menubar
 
 
@@ -680,7 +692,7 @@ class Application(tk.Frame):
 	def makeSelectedButtonColored(self, button):
 		button['bg'] = '#9ee3ff'
 
-	def makeButtonWhite(self, button):
+	def makbutton2White(self, button):
 		button['bg'] = self.buttonColor
 
 	def setPreviousImage(self,img):
@@ -700,7 +712,7 @@ class Application(tk.Frame):
 		currentSelectionIndex = self.menu_tree.currentLevel.index(currentSelectionNode)
 		newIndex = max(0, currentSelectionIndex - 1)
 		newNodeSelection = self.menu_tree.currentLevel[newIndex]
-		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
+		self.makbutton2White(self.nodeToButtonDict[currentSelectionNode][0])
 		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.currentSelectionNode = newNodeSelection
 		self.currentSelectionButton = self.nodeToButtonDict[newNodeSelection][0]
@@ -709,7 +721,7 @@ class Application(tk.Frame):
 		currentSelectionIndex = self.menu_tree.currentLevel.index(currentSelectionNode)
 		newIndex = min(len(self.menu_tree.currentLevel)-1, currentSelectionIndex + 1)
 		newNodeSelection = self.menu_tree.currentLevel[newIndex]
-		self.makeButtonWhite(self.nodeToButtonDict[currentSelectionNode][0])
+		self.makbutton2White(self.nodeToButtonDict[currentSelectionNode][0])
 		self.makeSelectedButtonColored(self.nodeToButtonDict[newNodeSelection][0])
 		self.currentSelectionNode = newNodeSelection
 		self.currentSelectionButton = self.nodeToButtonDict[newNodeSelection][0]
@@ -875,12 +887,12 @@ class Application(tk.Frame):
 			# for i in range(0, 20):
 				self.take_photo()
 				frameCounter +=1
-				self.nonRecursiveButtonCheck()
+				self.nonRecursivbutton2Check()
 		else:
 			while self.isTakingVideo:
 				self.doHDRtest([],[],[])
 				frameCounter +=1
-				self.nonRecursiveButtonCheck()
+				self.nonRecursivbutton2Check()
 
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
