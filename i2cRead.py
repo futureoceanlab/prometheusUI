@@ -44,7 +44,7 @@ i2c_ch = 1
 i2c_address = 0x18
 
 # Register addresses
-reg_temp = 0x00
+reg_temp = 0x04
 reg_config = 0x01
 
 # Calculate the 2's complement of a number
