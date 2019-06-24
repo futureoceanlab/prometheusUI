@@ -1,4 +1,4 @@
-# import smbus
+import smbus
 
 address = 0x18
 reg_temp = 0x00
