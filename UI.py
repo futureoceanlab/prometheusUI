@@ -13,7 +13,7 @@ import camera_power
 from datetime import datetime
 import csv
 from random import randint
-import i2cRead
+import i2cRead as i2c
 
 BUTTON_LONGPRESS_TIME = 1
 EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
