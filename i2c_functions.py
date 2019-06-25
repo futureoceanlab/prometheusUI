@@ -1,6 +1,9 @@
 import time
 import logging
 import math
+import board
+import busio
+import adafruit_si5351
 
 
 # Default I2C address for device.
@@ -14,17 +17,6 @@ MCP9808_REG_CRIT_TEMP          = 0x04
 MCP9808_REG_AMBIENT_TEMP       = 0x05
 MCP9808_REG_MANUF_ID           = 0x06
 MCP9808_REG_DEVICE_ID          = 0x07
-
-# Configuration register values.
-MCP9808_REG_CONFIG_SHUTDOWN    = 0x0100
-MCP9808_REG_CONFIG_CRITLOCKED  = 0x0080
-MCP9808_REG_CONFIG_WINLOCKED   = 0x0040
-MCP9808_REG_CONFIG_INTCLR      = 0x0020
-MCP9808_REG_CONFIG_ALERTSTAT   = 0x0010
-MCP9808_REG_CONFIG_ALERTCTRL   = 0x0008
-MCP9808_REG_CONFIG_ALERTSEL    = 0x0002
-MCP9808_REG_CONFIG_ALERTPOL    = 0x0002
-MCP9808_REG_CONFIG_ALERTMODE   = 0x0001
 
 
 class MCP9808(object):
@@ -66,19 +58,42 @@ class MCP9808(object):
 			temp -= 256.0
 		return temp
 
-sensor = MCP9808()
-
-# Optionally you can override the address and/or bus number:
-#sensor = MCP9808.MCP9808(address=0x20, busnum=2)
-
-# Initialize communication with the sensor.
-sensor.begin()
-
-temp = sensor.readTempC()
 
 
+def getTemperature():
+	sensor = MCP9808()
+	sensor.begin()
+	return sensor.readTempC()
 
-while True:
-	temp = sensor.readTempC()
-	print(temp)
-	time.sleep(1)
+def writeClock():
+	i2c = busio.I2C(board.SCL, board.SDA)
+ 
+	# Initialize SI5351.
+	si5351 = adafruit_si5351.SI5351(i2c)
+
+	si5351.pll_a.configure_integer(36)  # Multiply 25mhz by 36
+	print('PLL A frequency: {0}mhz'.format(si5351.pll_a.frequency/1000000))
+	 
+	
+	si5351.pll_b.configure_fractional(24, 2, 3)  # Multiply 25mhz by 24.667 (24 2/3)
+	print('PLL B frequency: {0}mhz'.format(si5351.pll_b.frequency/1000000))
+	 
+	
+	si5351.clock_0.configure_integer(si5351.pll_a, 8)
+	print('Clock 0: {0}mhz'.format(si5351.clock_0.frequency/1000000))
+	 
+
+	si5351.clock_1.configure_fractional(si5351.pll_b, 45, 1, 2) # Divide by 45.5 (45 1/2)
+	print('Clock 1: {0}mhz'.format(si5351.clock_1.frequency/1000000))
+	 
+	
+	si5351.clock_2.configure_integer(si5351.pll_b, 900)
+
+	si5351.clock_2.r_divider = adafruit_si5351.R_DIV_64
+	print('Clock 2: {0}khz'.format(si5351.clock_2.frequency/1000))
+	 
+	# After configuring PLLs and clocks, enable the outputs.
+	si5351.outputs_enabled = True
+	# You can disable them by setting false.
+
+
