@@ -121,7 +121,7 @@ class TreeNode():
 
 		if type(childrenOrValue)==list:
 			#a node has children
-			self.children = childrenOrValue
+			self.children = sorted(childrenOrValue)
 			self.value = None
 		else:
 			#or it is a leaf
@@ -663,7 +663,7 @@ class Application(tk.Frame):
 		level = self.menu_tree.getSelectionLevel(self.temp_menu_tree.tree[0])
 		self.menu_tree.traverseDownToSelectionLevel(self.temp_menu_tree.tree[0])
 		rowNumber = 0
-		for child in level.sort(): 
+		for child in level: 
 			
 			settingValue = Label(self.menuFrame, text=child.value[0])
 			settingValue.grid(row=rowNumber, column=1)
