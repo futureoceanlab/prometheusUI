@@ -958,7 +958,7 @@ class Application(tk.Frame):
 
 	def toggleClockSource(self):
 		self.clockSource = 1 - self.clockSource
-		# uiFunctionCalls.changeClockSource(self.clockSource)
+		uiFunctionCalls.changeClockSource(self.clockSource)
 
 	def setClock(self, x):
 		self.clockSource = x
