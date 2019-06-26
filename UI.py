@@ -44,6 +44,7 @@ TEMP_MENUTREE ={'root': {
 						"DIMENSION MODE": ('2D', ['2D','3D']),
 						"MODULATION FREQ": (0, [0,1]),
 						"ENABLE PI DELAY": (0, [0,1]),
+						"CLOCK":		   ('EXT', ['EXT','INT'])
 
 }
 	
@@ -174,6 +175,7 @@ class Application(tk.Frame):
 		self.piDelay = 0 
 		self.enableCapture = 0 
 		self.HDRmode = 0
+		self.clockSource = 0	#0 external; 1 internal
 		
 		#states
 		self.isTakingVideo = False
@@ -689,6 +691,8 @@ class Application(tk.Frame):
 			self.toggleModulationFrequency()
 		elif clickedNode.name == "ENABLE PI DELAY":
 			self.toggleEnablePiDelay()
+		elif clickedNode.name == "CLOCK":
+			self.toggleClockSource()
 
 	def makeSelectedButtonColored(self, button):
 		button['bg'] = '#9ee3ff'
@@ -951,6 +955,14 @@ class Application(tk.Frame):
 	def setPiDelay(self, x):
 		self.piDelay = x
 		# uiFunctionCalls.enablePiDelay(self.piDelay)
+
+	def toggleClockSource(self):
+		self.clockSource = 1 - self.clockSource
+		# uiFunctionCalls.changeClockSource(self.clockSource)
+
+	def setClock(self, x):
+		self.clockSource = x
+		# uiFunctionCalls.changeClockSource(self.clockSource)
 
 	def toggleEnableCapture(self):
 		self.enableCapture = 1 - self.enableCapture

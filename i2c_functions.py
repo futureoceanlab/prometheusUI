@@ -65,32 +65,32 @@ def getTemperature():
 	sensor.begin()
 	return sensor.readTempC()
 
-def writeClock():
+def writeClock(freq_mult, divisor):
 	i2c = busio.I2C(board.SCL, board.SDA)
  
 	# Initialize SI5351.
 	si5351 = adafruit_si5351.SI5351(i2c)
 
-	si5351.pll_a.configure_integer(36)  # Multiply 25mhz by 36
+	si5351.pll_a.configure_integer(freq_mult) 
 	print('PLL A frequency: {0}mhz'.format(si5351.pll_a.frequency/1000000))
 	 
 	
-	si5351.pll_b.configure_fractional(24, 2, 3)  # Multiply 25mhz by 24.667 (24 2/3)
-	print('PLL B frequency: {0}mhz'.format(si5351.pll_b.frequency/1000000))
+	# si5351.pll_b.configure_fractional(24, 2, 3)  # Multiply 25mhz by 24.667 (24 2/3)
+	# print('PLL B frequency: {0}mhz'.format(si5351.pll_b.frequency/1000000))
 	 
 	
-	si5351.clock_0.configure_integer(si5351.pll_a, 8)
+	si5351.clock_0.configure_integer(si5351.pll_a, divisor)
 	print('Clock 0: {0}mhz'.format(si5351.clock_0.frequency/1000000))
 	 
 
-	si5351.clock_1.configure_fractional(si5351.pll_b, 45, 1, 2) # Divide by 45.5 (45 1/2)
-	print('Clock 1: {0}mhz'.format(si5351.clock_1.frequency/1000000))
+	# si5351.clock_1.configure_fractional(si5351.pll_b, 45, 1, 2) # Divide by 45.5 (45 1/2)
+	# print('Clock 1: {0}mhz'.format(si5351.clock_1.frequency/1000000))
 	 
 	
-	si5351.clock_2.configure_integer(si5351.pll_b, 900)
+	# si5351.clock_2.configure_integer(si5351.pll_b, 900)
 
-	si5351.clock_2.r_divider = adafruit_si5351.R_DIV_64
-	print('Clock 2: {0}khz'.format(si5351.clock_2.frequency/1000))
+	# si5351.clock_2.r_divider = adafruit_si5351.R_DIV_64
+	# print('Clock 2: {0}khz'.format(si5351.clock_2.frequency/1000))
 	 
 	# After configuring PLLs and clocks, enable the outputs.
 	si5351.outputs_enabled = True

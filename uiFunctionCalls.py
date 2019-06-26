@@ -141,3 +141,24 @@ def enableCapture(enable):
         os.system(prom_cli1)
     else:
         print("Invalid input to enable imaging")
+
+def changeClockSource(source):
+    # -sanity check of power may be required
+    if (source == 0 or source==1):
+        if source:
+            #internal clock
+            clock_value = '3f'
+        else:
+            #external clock
+            clock_value = '7f'
+        cwd = os.getcwd()
+        prom_cli = os.path.join(cwd, "prometheus-cli", "build", "prom-cli")
+        cmd = " -a \"write 80 %d.\"" %(clock_value)
+        prom_cli0 = prom_cli + cmd + " -i 0 | hexdump"
+        prom_cli1 = prom_cli + cmd + " -i 1 | hexdump"
+        # Timer may be required
+        os.system(prom_cli0)
+        os.system(prom_cli1)
+    else:
+        print("Invalid input to enable imaging")
+
