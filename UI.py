@@ -176,6 +176,7 @@ class Application(tk.Frame):
 		self.enableCapture = 0 
 		self.HDRmode = 0
 		self.clockSource = 1	#0 internal; 1 external
+		self.setClock(self.clockSource)
 		
 		#states
 		self.isTakingVideo = False
@@ -240,7 +241,6 @@ class Application(tk.Frame):
 		self.buttonColor = 'white'
 
 		#create the initial UI
-		self.setClock(self.clockSource)
 		self.createMainLog()
 		self._geom = '200x200+0+0'
 		master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(), master.winfo_screenheight()))
