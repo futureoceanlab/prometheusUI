@@ -243,13 +243,8 @@ class Application(tk.Frame):
 		#create the initial UI
 		self.createMainLog()
 		master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(), master.winfo_screenheight()))
-		master.bind('<Escape>',lambda e: self.asdf())
+		master.bind('<Escape>',lambda e: master.quit())
 		self.create_layout()
-
-	def asdf(self):
-		print('wassasdfasdfasdfasdfasdf')
-		self.master.quit()
-
 
 	def nonRecursivbutton2Check(self):
 		# The function that continuously checks the state of the buttons
