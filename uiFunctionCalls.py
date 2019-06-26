@@ -146,11 +146,11 @@ def changeClockSource(source):
     # -sanity check of power may be required
     if (source == 0 or source==1):
         if source:
-            #internal clock
-            clock_value = '3f'
-        else:
             #external clock
             clock_value = '7f'
+        else:
+            #internal clock
+            clock_value = '3f'
         cwd = os.getcwd()
         prom_cli = os.path.join(cwd, "prometheus-cli", "build", "prom-cli")
         cmd = " -a \"write 80 %d.\"" %(clock_value)
