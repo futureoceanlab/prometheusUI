@@ -242,7 +242,6 @@ class Application(tk.Frame):
 
 		#create the initial UI
 		self.createMainLog()
-		self._geom = '200x200+0+0'
 		# master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(), master.winfo_screenheight()))
 		master.bind('<Escape>',lambda e: master.quit())
 		self.create_layout()
@@ -969,12 +968,6 @@ class Application(tk.Frame):
 		self.enableCapture = 1 - self.enableCapture
 		# uiFunctionCalls.enableCapture(self.enableCapture)
 
-	def toggle_geom(self,event):
-		geom=self.master.winfo_geometry()
-		self.master.overrideredirect(False)
-		self.master.geometry(self._geom)
-		self._geom=geom
-
 	def updateI2Cdata(self, d,t,p):
 		self.I2Cdata["direction"] = d
 		self.I2Cdata["temperature"] = t 
@@ -1004,7 +997,7 @@ def main():
 	#camera_power.turn_on_BBBx(0)
 	#camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
-	root.overrideredirect(False)		#for debugging turn this to False (allows to press ESCAPE)
+	root.overrideredirect(True)		#for debugging turn this to False (allows to press ESCAPE)
 	app = Application(master=root)
 	app.buttonCheck()
 	app.mainloop()
