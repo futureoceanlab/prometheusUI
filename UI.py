@@ -963,7 +963,7 @@ class Application(tk.Frame):
 
 	def setClock(self, x):
 		self.clockSource = x
-		# uiFunctionCalls.changeClockSource(self.clockSource)
+		uiFunctionCalls.changeClockSource(self.clockSource)
 
 	def toggleEnableCapture(self):
 		self.enableCapture = 1 - self.enableCapture
