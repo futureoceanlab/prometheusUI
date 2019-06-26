@@ -996,7 +996,7 @@ def main():
 	#camera_power.turn_on_BBBx(0)
 	#camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
-	root.overrideredirect(True)		#for debugging turn this to False (allows to press ESCAPE)
+	root.overrideredirect(False)		#for debugging turn this to False (allows to press ESCAPE)
 	app = Application(master=root)
 	app.buttonCheck()
 	app.mainloop()
