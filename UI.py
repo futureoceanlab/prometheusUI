@@ -240,6 +240,7 @@ class Application(tk.Frame):
 		self.buttonColor = 'white'
 
 		#create the initial UI
+		self.setClock(self.clockSource)
 		self.createMainLog()
 		self._geom = '200x200+0+0'
 		master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(), master.winfo_screenheight()))
