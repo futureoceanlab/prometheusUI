@@ -121,7 +121,7 @@ class TreeNode():
 
 		if type(childrenOrValue)==list:
 			#a node has children
-			self.children = sorted(childrenOrValue)
+			self.children = sorted(childrenOrValue, key=lambda x: x.name)
 			self.value = None
 		else:
 			#or it is a leaf
