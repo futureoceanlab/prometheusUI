@@ -144,6 +144,7 @@ def enableCapture(enable):
 
 def changeClockSource(source):
     # -sanity check of power may be required
+    print("SOURCE: ", source)
     if (source == 0 or source==1):
         if source:
             #external clock
