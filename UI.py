@@ -175,7 +175,7 @@ class Application(tk.Frame):
 		self.piDelay = 0 
 		self.enableCapture = 0 
 		self.HDRmode = 0
-		self.clockSource = 0	#0 external; 1 internal
+		self.clockSource = 1	#0 internal; 1 external
 		
 		#states
 		self.isTakingVideo = False
