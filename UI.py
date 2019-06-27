@@ -43,11 +43,12 @@ MENUTREE = {'root':{
 						}
 
 TEMP_MENUTREE ={'root': {
-						"DIMENSION MODE": ('2D', ['2D','3D']),
+						"DIMENSION MODE" : ('2D', ['2D','3D']),
 						"MODULATION FREQ": (0, [0,1]),
 						"ENABLE PI DELAY": (0, [0,1]),
 						"CLOCK":		   ('EXT', ['EXT','INT']),
-						"_RESTART BBB_":   (' ',[' ','restarting'])
+						"CLOCK FREQ"	 : ('6 Hz', ['6 Hz', '12 Hz', '24 Hz']),
+						"_RESTART BBB_"  : (' ',[' ','restarting'])
 
 }
 	
