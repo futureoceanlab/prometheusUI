@@ -526,7 +526,6 @@ class Application(tk.Frame):
 		canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
 		canvas.draw()
 		canvas.get_tk_widget().pack()
-		# canvas = FigureCanvasAgg(fig,mainFrame)
 
 
 		# DCSgrid = tk.Canvas(mainFrame, width=600, height=450)
@@ -593,7 +592,7 @@ class Application(tk.Frame):
 		self.createTempMenu()
 		# self.createMenu2(self.menuFrame)
 
-		# self.menuFrame.grid_forget()
+		self.menuFrame.grid_forget()
 
 	def createMenu(self, previousMenu, clickedNode, atRoot):
 
