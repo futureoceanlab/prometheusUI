@@ -27,7 +27,7 @@ def readDCSimage(img):
 	with open(img, 'r') as file:
 		data = np.fromfile(file, dtype=np.uint16)
 		dcsData = data.reshape(320,240,4, order='F')
-		fig = plt.figure()
+		fig = plt.figure(figsize=(7.5,5.625, dpi=80))
 
 		for i in range(0,4):
 			image = dcsData[:,:,i]
