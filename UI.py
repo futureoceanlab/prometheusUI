@@ -253,6 +253,7 @@ class Application(tk.Frame):
 	def toggleFullScreen(self):
 		print("YYUUUUPPP")
 		self.fullScreen = not self.fullScreen
+		self.master.attributes('-fullscreen', False)
 		# self.master.overrideredirect(self.fullScreen)
 
 	def nonRecursiveButtonCheck(self):
