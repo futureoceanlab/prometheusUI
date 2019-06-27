@@ -181,6 +181,7 @@ class Application(tk.Frame):
 		self.HDRmode = 0
 		self.clockSource = 1	#0 internal; 1 external
 		self.setClock(self.clockSource)
+		self.clockFreq = 6
 		
 		#states
 		self.isTakingVideo = False
@@ -233,7 +234,9 @@ class Application(tk.Frame):
 		self.DISP_BTN = gpio.Button(20, pull_up=True)
 		self.EXPO_BTN = gpio.Button(16, pull_up=True)
 		self.ACTN_BTN = gpio.Button(12, pull_up=True)
+		# self.HDR_BTN =  gpio.Button(X, pull_up=True)
 		self.MENU_BTN.when_pressed = self.MENU_pressed
+		self.HDR_BTN.when_pressed  = self.HDR_pressed
 		self.dispBtnState = 0
 		self.expoBtnState = 0
 		self.actnBtnState = 0
@@ -712,6 +715,8 @@ class Application(tk.Frame):
 			self.toggleEnablePiDelay()
 		elif clickedNode.name == "CLOCK":
 			self.toggleClockSource()
+		elif clickedNode.name == "CLOCK FREQ":
+			self.toggleClockFreq()
 		elif clickedNode.name == "_RESTART BBB_":
 			self.restartBBB()
 
@@ -769,6 +774,9 @@ class Application(tk.Frame):
 			else:
 				self.menu_tree.goUpLevel(self.menu_tree.currentLevel)
 
+	def HDR_pressed(self):
+		self.HDRmode = 1 - self.HDRmode
+
 	def DISP_short_pressed(self):
 		if self.get_mode() == 0:
 			#capture mode
@@ -815,7 +823,7 @@ class Application(tk.Frame):
 		if self.get_mode() == 0:            #capture
 			if not self.get_video_state():  #ready to take photo
 				if not self.viewingPreviousImages:
-					if self.dispBtnState:	#display button is pushed WHILE action button pressed TEMP
+					if self.HDRmode:
 						self.doHDRtest([],[],[])
 					else:
 						self.take_photo()
@@ -860,6 +868,7 @@ class Application(tk.Frame):
 		newFile.write(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
 
 		#i2c data
+		self.updateI2Cdata(0, i2c_functions.getTemperature(),0)
 		for data in self.I2Cdata:
 			newFile.write(str(data) + ":" + str(self.I2Cdata[data])+'\n')
 
@@ -909,15 +918,15 @@ class Application(tk.Frame):
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
 		frameCounter =0
 
-		if not self.dispBtnState:
-			while self.isTakingVideo:
-			# for i in range(0, 20):
-				self.take_photo()
-				frameCounter +=1
-				self.nonRecursiveButtonCheck()
-		else:
+		if self.HDRmode:
 			while self.isTakingVideo:
 				self.doHDRtest([],[],[])
+				frameCounter +=1
+				self.nonRecursiveButtonCheck()
+				
+		else:
+			while self.isTakingVideo:
+				self.take_photo()
 				frameCounter +=1
 				self.nonRecursiveButtonCheck()
 
@@ -984,6 +993,19 @@ class Application(tk.Frame):
 	def setClock(self, x):
 		self.clockSource = x
 		# uiFunctionCalls.changeClockSource(self.clockSource)
+
+	def toggleClockFreq(self):
+		self.clockFreq = (2*self.clockFreq)%42	#rotates between 6,12,24
+		mult = self.clockFreq*4
+		div = 25*4
+		i2c_functions.writeClock(mult, div)
+
+	def setClockFreq(self, x):
+		self.clockFreq = x
+		mult = self.clockFreq*4
+		div = 25*4
+		i2c_functions.writeClock(mult, div)
+
 
 	def toggleEnableCapture(self):
 		self.enableCapture = 1 - self.enableCapture
