@@ -47,7 +47,7 @@ TEMP_MENUTREE ={'root': {
 						"MODULATION FREQ": (0, [0,1]),
 						"ENABLE PI DELAY": (0, [0,1]),
 						"CLOCK":		   ('EXT', ['EXT','INT']),
-						"_RESTART BBB_":   ()
+						"_RESTART BBB_":   ('xxx',['xxx'])
 
 }
 	
@@ -673,19 +673,23 @@ class Application(tk.Frame):
 		rowNumber = 0
 		for child in level: 
 
-			settingValue = Label(self.menuFrame, text=child.value[0])
-			settingValue.grid(row=rowNumber, column=1)
-			settingKey = Button(self.menuFrame, text=str('Change ')+child.name, command=lambda: self.changeMenuValue(child, settingValue))
-			self.buttonColor = settingKey.cget('bg')
-			settingKey.grid(row=rowNumber, column=0)
-			self.nodeToButtonDict[child] = (settingKey, settingValue)
+			if 'BBB' in child.name:
+				#its a button
+				settingKey = Button(self.menuFrame, text=child.name, command=self.restartBBB())
+				settingKey.grid(row=rowNumber, column=0)
+			else:
+				settingValue = Label(self.menuFrame, text=child.value[0])
+				settingValue.grid(row=rowNumber, column=1)
+				settingKey = Button(self.menuFrame, text=str('Change ')+child.name, command=lambda: self.changeMenuValue(child, settingValue))
+				settingKey.grid(row=rowNumber, column=0)
+				self.nodeToButtonDict[child] = (settingKey, settingValue)
+
 			if rowNumber == 0:
 				self.currentSelectionButton = settingKey
 				self.currentSelectionNode = child
 			rowNumber+=1
-			if 'BBB' in child.name:
-				#its a button
-				commandButton = Button(self.menuFrame, text=child.name, command=self.restartBBB())
+			self.buttonColor = settingKey.cget('bg')
+			
 
 		self.makeSelectedButtonColored(self.currentSelectionButton)
 
