@@ -477,20 +477,19 @@ class Application(tk.Frame):
 		print("DISPLAY: ", display)
 
 		#erase everything that goes in main area
-		self.menuFrame.grid_forget()
+		# self.menuFrame.grid_forget()
 		for i in [0,1,2,3,4,5]:
 			self.mainArea.winfo_children()[i].pack_forget()
-		print("DISPLAY: ", display)
+			
 		if display in [-1,2,4,5]:
 			#erase the data grid
 			self.winfo_children()[2].grid_forget()
-		print("DISPLAY: ", display)
+
 		#now display things we want
 		if display == -1:
 			self.mainArea.winfo_children()[6].grid()
 		else:
 			self.mainArea.winfo_children()[display].pack()
-		print("DISPLAY: ", display)
 
 		if display == 0:
 			self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S)
