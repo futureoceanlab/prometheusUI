@@ -248,7 +248,7 @@ class Application(tk.Frame):
 		master.bind('<Escape>',lambda e: master.quit())
 		self.create_layout()
 
-	def nonRecursivbutton2Check(self):
+	def nonRecursiveButtonCheck(self):
 		# The function that continuously checks the state of the buttons
 
 		#MENU BUTTON is just short press so it is handled in __init__
@@ -331,7 +331,7 @@ class Application(tk.Frame):
 	def buttonCheck(self):
 		# The function that continuously checks the state of the buttons
 
-		self.nonRecursivbutton2Check()
+		self.nonRecursiveButtonCheck()
 
 		# This allows for the button checker to run continously, 
 		# alongside the mainloop
@@ -477,10 +477,10 @@ class Application(tk.Frame):
 		print("DISPLAY: ", display)
 
 		#erase everything that goes in main area
-		# self.menuFrame.grid_forget()
+		self.menuFrame.grid_forget()
 		for i in [0,1,2,3,4,5]:
 			self.mainArea.winfo_children()[i].pack_forget()
-			
+
 		if display in [-1,2,4,5]:
 			#erase the data grid
 			self.winfo_children()[2].grid_forget()
@@ -899,12 +899,12 @@ class Application(tk.Frame):
 			# for i in range(0, 20):
 				self.take_photo()
 				frameCounter +=1
-				self.nonRecursivbutton2Check()
+				self.nonRecursiveButtonCheck()
 		else:
 			while self.isTakingVideo:
 				self.doHDRtest([],[],[])
 				frameCounter +=1
-				self.nonRecursivbutton2Check()
+				self.nonRecursiveButtonCheck()
 
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
