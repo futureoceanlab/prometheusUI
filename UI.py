@@ -1082,7 +1082,7 @@ class Application(tk.Frame):
 		# camera_power.turn_on_BBBx(0)
 		# camera_power.turn_on_BBBx(1)
 
-	def shutdownBBB():
+	def shutdownBBB(self):
 		print("AYYO TIME TO SHUTDOWN")
 		# camera_power.connect_both_cameras()
 		# camera_power.turn_on_BBBx(0)
