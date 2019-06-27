@@ -3,15 +3,12 @@ from PIL import ImageTk,Image
 import os
 import numpy as np
 import sys
+import numpy as np
 
 def readBinaryFile(filepath):
-	print(filepath)
 	numBytes = os.path.getsize(filepath)	#size in bytes
-	print(numBytes)
 	numPixels = int(numBytes/2)
-	print(numPixels)
 	numFrames = int(numPixels/(320*240))
-	print(numFrames)
 	numPixelsPerFrame = int((numPixels/numFrames))
 	file = open(filepath, 'r')
 	fname = os.path.basename(filepath).split('.')[0]
@@ -25,6 +22,25 @@ def readBinaryFile(filepath):
 		img_names.append(img_name)
 	return img_names
 
-if __name__ == '__main__':
-	#readBinaryFile(sys.argv[1])
-    readBinaryFile(sys.argv[1])
+def readDCSimage(img):
+	with open(img, 'r') as file:
+		data = np.fromfile(file, dtype=np.uint16)
+		dcsData = data.reshape(320,240,4, order='F')
+		fig = plt.figure()
+
+		for i in range(0,4):
+			image = dcsData[:,:,i]
+			fig.add_subplot(2,2,i+1)
+			plt.imshow(image)
+		plt.savefig('dcs.png')
+
+def readSingleImage(img):
+	with open(img, 'r') as file:
+		data = np.fromfile(file, dtype=np.uint16)
+		dcsData = data.reshape(320,240,1, order='F')
+		fig = plt.figure()
+
+		image = dcsData[:,:,0]
+		fig.add_subplot(1,1,1)
+		plt.imshow(image)
+		plt.savefig('singleImage.png')

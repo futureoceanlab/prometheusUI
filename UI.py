@@ -14,6 +14,7 @@ from datetime import datetime
 import csv
 from random import randint
 import i2c_functions as i2c
+import readBinary
 
 BUTTON_LONGPRESS_TIME = 1
 EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
@@ -520,19 +521,25 @@ class Application(tk.Frame):
 		self.dataArea = dataLabel
 
 		#DCS grid -- display = 0
-		DCSgrid = tk.Canvas(mainFrame, width=600, height=450)
-		DCSgrid.pack()
-		imgs = self.get_four_DCS_images()
+		dcsFigure = readBinary.readDCSimage('DCS08.bin')
+		canvas = FigureCanvasTkAgg(dcsFigure, master=self.master)
+		canvas.draw()
+		canvas.get_tk_widget().pack()
 
-		mainFrame.a = a = imgs[0]
-		mainFrame.b = b = imgs[1]
-		mainFrame.c = c = imgs[2]
-		mainFrame.d = d = imgs[3]
 
-		DCSgrid.create_image(0,0, anchor=NW, image=a)
-		DCSgrid.create_image(300,0,anchor=NW, image=b)
-		DCSgrid.create_image(0,225,anchor=NW, image=c)
-		DCSgrid.create_image(300,225,anchor=NW, image=d)
+		# DCSgrid = tk.Canvas(mainFrame, width=600, height=450)
+		# DCSgrid.pack()
+		# imgs = self.get_four_DCS_images()
+
+		# mainFrame.a = a = imgs[0]
+		# mainFrame.b = b = imgs[1]
+		# mainFrame.c = c = imgs[2]
+		# mainFrame.d = d = imgs[3]
+
+		# DCSgrid.create_image(0,0, anchor=NW, image=a)
+		# DCSgrid.create_image(300,0,anchor=NW, image=b)
+		# DCSgrid.create_image(0,225,anchor=NW, image=c)
+		# DCSgrid.create_image(300,225,anchor=NW, image=d)
 
 
 		#Point Cloud -- display = 1
