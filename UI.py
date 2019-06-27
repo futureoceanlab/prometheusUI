@@ -593,6 +593,7 @@ class Application(tk.Frame):
 		# self.createMenu2(self.menuFrame)
 
 		# self.menuFrame.grid_forget()
+		self.menuFrame.pack_forget()
 
 	def createMenu(self, previousMenu, clickedNode, atRoot):
 
