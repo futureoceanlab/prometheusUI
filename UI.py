@@ -522,7 +522,7 @@ class Application(tk.Frame):
 
 		#DCS grid -- display = 0
 		dcsFigure = readBinary.readDCSimage('DCS08.bin')
-		canvas = FigureCanvasTkAgg(dcsFigure, master=self.master)
+		canvas = FigureCanvasTkAgg(dcsFigure, mainFrame, master=self.master)
 		canvas.draw()
 		canvas.get_tk_widget().pack()
 
