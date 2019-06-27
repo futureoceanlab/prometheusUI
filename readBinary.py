@@ -4,6 +4,7 @@ import os
 import numpy as np
 import sys
 import numpy as np
+import matplotlib as plt
 
 def readBinaryFile(filepath):
 	numBytes = os.path.getsize(filepath)	#size in bytes
@@ -33,6 +34,7 @@ def readDCSimage(img):
 			fig.add_subplot(2,2,i+1)
 			plt.imshow(image)
 		plt.savefig('dcs.png')
+	return fig
 
 def readSingleImage(img):
 	with open(img, 'r') as file:
