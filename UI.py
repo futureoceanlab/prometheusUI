@@ -523,24 +523,24 @@ class Application(tk.Frame):
 
 		#DCS grid -- display = 0
 		dcsFigure = readBinary.readDCSimage('DCS08.bin')
-		canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
-		canvas.draw()
-		canvas.get_tk_widget().pack()
+		# canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
+		# canvas.draw()
+		# canvas.get_tk_widget().pack()
 
 
-		# DCSgrid = tk.Canvas(mainFrame, width=600, height=450)
-		# DCSgrid.pack()
-		# imgs = self.get_four_DCS_images()
+		DCSgrid = tk.Canvas(mainFrame, width=600, height=450)
+		DCSgrid.pack()
+		imgs = self.get_four_DCS_images()
 
-		# mainFrame.a = a = imgs[0]
-		# mainFrame.b = b = imgs[1]
-		# mainFrame.c = c = imgs[2]
-		# mainFrame.d = d = imgs[3]
+		mainFrame.a = a = imgs[0]
+		mainFrame.b = b = imgs[1]
+		mainFrame.c = c = imgs[2]
+		mainFrame.d = d = imgs[3]
 
-		# DCSgrid.create_image(0,0, anchor=NW, image=a)
-		# DCSgrid.create_image(300,0,anchor=NW, image=b)
-		# DCSgrid.create_image(0,225,anchor=NW, image=c)
-		# DCSgrid.create_image(300,225,anchor=NW, image=d)
+		DCSgrid.create_image(0,0, anchor=NW, image=a)
+		DCSgrid.create_image(300,0,anchor=NW, image=b)
+		DCSgrid.create_image(0,225,anchor=NW, image=c)
+		DCSgrid.create_image(300,225,anchor=NW, image=d)
 
 
 		#Point Cloud -- display = 1
