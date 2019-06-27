@@ -671,7 +671,7 @@ class Application(tk.Frame):
 		self.menu_tree.traverseDownToSelectionLevel(self.temp_menu_tree.tree[0])
 		rowNumber = 0
 		for child in level: 
-			
+			print("ISLEAF: ", child.isLeaf())
 			settingValue = Label(self.menuFrame, text=child.value[0])
 			settingValue.grid(row=rowNumber, column=1)
 			settingKey = Button(self.menuFrame, text=str('Change ')+child.name, command=lambda: self.changeMenuValue(child, settingValue))
@@ -682,6 +682,10 @@ class Application(tk.Frame):
 				self.currentSelectionButton = settingKey
 				self.currentSelectionNode = child
 			rowNumber+=1
+			if child.isLeaf():
+				#its a button
+				commandButton = Button(self.menuFrame, text=child.name, command=self.restartBBB())
+
 		self.makeSelectedButtonColored(self.currentSelectionButton)
 
 
@@ -993,6 +997,12 @@ class Application(tk.Frame):
 					for freq in modFreqOptions:
 						self.setModulationFrequency(freq)
 						self.take_photo()
+
+	def restartBBB(self):
+		print("YO IM RESTARTING THE BBB")
+		# camera_power.connect_both_cameras()
+		# camera_power.turn_on_BBBx(0)
+		# camera_power.turn_on_BBBx(1)
 
 
 
