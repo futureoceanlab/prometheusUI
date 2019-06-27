@@ -32,8 +32,9 @@ def readDCSimage(img):
 		for i in range(0,4):
 			image = dcsData[:,:,i]
 			fig.add_subplot(2,2,i+1)
+			plt.axis('off')
 			plt.imshow(image)
-		plt.axis('off')
+
 		plt.savefig('dcs.png')
 	return fig
 
