@@ -676,7 +676,7 @@ class Application(tk.Frame):
 			
 			settingValue = Label(self.menuFrame, text=child.value[0])
 			settingValue.grid(row=rowNumber, column=1)
-			settingKey = Button(self.menuFrame, text=str('Change ')+child.name, command=lambda: self.changeMenuValue(child, settingValue))
+			settingKey = Button(self.menuFrame, text=child.name, command=lambda: self.changeMenuValue(child, settingValue))
 			self.buttonColor = settingKey.cget('bg')
 			settingKey.grid(row=rowNumber, column=0)
 			self.nodeToButtonDict[child] = (settingKey, settingValue)
@@ -705,6 +705,9 @@ class Application(tk.Frame):
 			self.toggleEnablePiDelay()
 		elif clickedNode.name == "CLOCK":
 			self.toggleClockSource()
+		elif clickedNode.name == "_RESTART BBB_":
+			self.restartBBB()
+
 
 	def makeSelectedButtonColored(self, button):
 		button['bg'] = '#9ee3ff'
