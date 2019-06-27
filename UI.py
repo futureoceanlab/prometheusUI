@@ -50,6 +50,7 @@ TEMP_MENUTREE ={'root': {
 						"CLOCK":		   ('EXT' , ['EXT','INT']),
 						"CLOCK FREQ"	 : ('6 Hz', ['6 Hz', '12 Hz', '24 Hz']),
 						"_RESTART BBB_"  : (' '   , [' ','restarting']),
+						"_SHUTDOWN BBB_" : (' '   , [' ','BYE!']), 
 						"HDR SETTING"    : (0     , [0,1,2])
 
 }
@@ -725,6 +726,8 @@ class Application(tk.Frame):
 			self.toggleClockFreq()
 		elif clickedNode.name == "_RESTART BBB_":
 			self.restartBBB()
+		elif clickedNode.name == "_SHUTDOWN BBB_":
+			self.shutdownBBB()
 		elif clickedNode.name == "HDR SETTING":
 			self.toggleHDRSetting()
 
@@ -1075,6 +1078,12 @@ class Application(tk.Frame):
 
 	def restartBBB(self):
 		print("YO IM RESTARTING THE BBB")
+		# camera_power.connect_both_cameras()
+		# camera_power.turn_on_BBBx(0)
+		# camera_power.turn_on_BBBx(1)
+
+	def shutdownBBB():
+		print("AYYO TIME TO SHUTDOWN")
 		# camera_power.connect_both_cameras()
 		# camera_power.turn_on_BBBx(0)
 		# camera_power.turn_on_BBBx(1)
