@@ -875,7 +875,7 @@ class Application(tk.Frame):
 		newFile.write(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
 
 		#i2c data
-		self.updateI2Cdata(0, i2c_functions.getTemperature(),0)
+		self.updateI2Cdata(0, i2c.getTemperature(),0)
 		for data in self.I2Cdata:
 			newFile.write(str(data) + ":" + str(self.I2Cdata[data])+'\n')
 
@@ -1017,13 +1017,13 @@ class Application(tk.Frame):
 		self.clockFreq = (2*self.clockFreq)%42	#rotates between 6,12,24
 		mult = self.clockFreq*4
 		div = 25*4
-		i2c_functions.writeClock(mult, div)
+		i2c.writeClock(mult, div)
 
 	def setClockFreq(self, x):
 		self.clockFreq = x
 		mult = self.clockFreq*4
 		div = 25*4
-		i2c_functions.writeClock(mult, div)
+		i2c.writeClock(mult, div)
 
 
 	def toggleEnableCapture(self):
