@@ -480,16 +480,17 @@ class Application(tk.Frame):
 		self.menuFrame.grid_forget()
 		for i in [0,1,2,3,4,5]:
 			self.mainArea.winfo_children()[i].pack_forget()
-
+		print("DISPLAY: ", display)
 		if display in [-1,2,4,5]:
 			#erase the data grid
 			self.winfo_children()[2].grid_forget()
-
+		print("DISPLAY: ", display)
 		#now display things we want
 		if display == -1:
 			self.mainArea.winfo_children()[6].grid()
 		else:
 			self.mainArea.winfo_children()[display].pack()
+		print("DISPLAY: ", display)
 
 		if display == 0:
 			self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S)
@@ -522,25 +523,25 @@ class Application(tk.Frame):
 		self.dataArea = dataLabel
 
 		#DCS grid -- display = 0
-		# dcsFigure = readBinary.readDCSimage('DCS08.bin')
-		# canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
-		# canvas.draw()
-		# canvas.get_tk_widget().pack()
+		dcsFigure = readBinary.readDCSimage('DCS08.bin')
+		canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
+		canvas.draw()
+		canvas.get_tk_widget().pack()
 
 
-		DCSgrid = tk.Canvas(mainFrame, width=600, height=450)
-		DCSgrid.pack()
-		imgs = self.get_four_DCS_images()
+		# DCSgrid = tk.Canvas(mainFrame, width=600, height=450)
+		# DCSgrid.pack()
+		# imgs = self.get_four_DCS_images()
 
-		mainFrame.a = a = imgs[0]
-		mainFrame.b = b = imgs[1]
-		mainFrame.c = c = imgs[2]
-		mainFrame.d = d = imgs[3]
+		# mainFrame.a = a = imgs[0]
+		# mainFrame.b = b = imgs[1]
+		# mainFrame.c = c = imgs[2]
+		# mainFrame.d = d = imgs[3]
 
-		DCSgrid.create_image(0,0, anchor=NW, image=a)
-		DCSgrid.create_image(300,0,anchor=NW, image=b)
-		DCSgrid.create_image(0,225,anchor=NW, image=c)
-		DCSgrid.create_image(300,225,anchor=NW, image=d)
+		# DCSgrid.create_image(0,0, anchor=NW, image=a)
+		# DCSgrid.create_image(300,0,anchor=NW, image=b)
+		# DCSgrid.create_image(0,225,anchor=NW, image=c)
+		# DCSgrid.create_image(300,225,anchor=NW, image=d)
 
 
 		#Point Cloud -- display = 1
@@ -919,7 +920,6 @@ class Application(tk.Frame):
 
 	def change_display(self):
 		self.display = (self.display +1)%4
-		print("DISP: ",self.display)
 		self.update_display()
 
 	def change_exposure(self, mode):
