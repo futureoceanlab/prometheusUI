@@ -406,7 +406,7 @@ class Application(tk.Frame):
 		return self.isTakingVideo
 
 	def get_live_view_state():
-		return self.showingLiveView()
+		return self.showingLiveView
 
 	def get_previousImage(self, x):
 		return Image.open(self.previousImages[x%len(self.previousImages)])
@@ -426,8 +426,8 @@ class Application(tk.Frame):
 	def get_colorMap_image(self):
 		return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
 
-	def get_live_image(self):
-		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((800,480),Image.ANTIALIAS))
+	def get_live_image(self, path):
+		return ImageTk.PhotoImage(Image.open(path).resize((800,480),Image.ANTIALIAS))
 
 	def get_live_image_temp(self, x):
 		if x%2==0:
@@ -470,6 +470,9 @@ class Application(tk.Frame):
 
 	def toggle_video_state(self):
 		self.isTakingVideo = not self.isTakingVideo
+
+	def set_video_state(self, x):
+		self.isTakingVideo = x 
 
 	def update_display(self):
 		# function that is called after every button push to update
@@ -588,7 +591,7 @@ class Application(tk.Frame):
 
 		# #Live View -- display = 5
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		liveImg = self.get_live_image()
+		liveImg = self.get_live_image('whale.jpg')
 		mainFrame.liveImg = liveImg
 		liveViewCanvas.create_image(0,0,anchor=NW, image=liveImg)
 		liveViewCanvas.pack_forget()
@@ -780,18 +783,15 @@ class Application(tk.Frame):
 	def DISP_short_pressed(self):
 		if self.get_mode() == 0:
 			#capture mode
-			if not self.get_video_state():  #ready to take photo
+			if not self.isTakingVideo:  #ready to take photo
 				#not taking video
 				if self.viewingPreviousImages:
 					#get the next previous image
 					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
 					self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
-
 					self.update_display()
 				else:
 					self.change_display()
-			else:
-				print("TAKING VIDEO --> DOING NOTHING")
 		else:                           
 			self.selectUp(self.currentSelectionNode)
 
@@ -814,22 +814,25 @@ class Application(tk.Frame):
 			print("TOGGLE LIVE VIEW")
 			self.toggle_live_view()
 			self.viewingPreviousImages = False
+			self.set_video_state(False)
 			self.update_display()
-			self.rapidFireUpdate()
+			self.capture_video(True)
 		else:                           
 			self.EXP_short_pressed()
 
 	def ACTN_short_pressed(self):
 		if self.get_mode() == 0:            #capture
-			if not self.get_video_state():  #ready to take photo
+			if not self.isTakingVideo:  #ready to take photo
 				if not self.viewingPreviousImages:
-					if self.HDRmode:
-						self.doHDRtest([],[],[])
-					else:
-						self.take_photo()
+					if not self.showingLiveView:
+						if self.HDRmode:
+							self.doHDRtest([],[],[])
+						else:
+							self.take_photo(False)
 			else:
 				print("END VIDEO")          #currently taking video
-				self.toggle_video_state()
+				self.set_video_state(False)
+				self.set_live_view(False)
 		else:                               #menu mode
 			self.changeMenuValue(self.currentSelectionNode, self.nodeToButtonDict[self.currentSelectionNode][1])
 
@@ -837,18 +840,22 @@ class Application(tk.Frame):
 	def ACTN_long_pressed(self):
 		if not self.get_mode() and not self.get_video_state() and not self.viewingPreviousImages:  
 			#capture mode and ready to take video
-			self.toggle_video_state()
-			self.capture_video()
+
+			self.set_video_state(True)
+			self.set_live_view(True)
+			self.viewingPreviousImages = False
+			self.update_display()
+			self.capture_video(False)
 		else:                               
 			#else is same as short press
 			self.ACTN_short_pressed()
 
-	def rapidFireUpdate(self):
-		r = randint(0,1)
-		if self.showingLiveView:
-			img = self.get_live_image_temp(r)
-			self.setLiveImage(img)
-			self.after(50, self.rapidFireUpdate)	
+	# def rapidFireUpdate(self):
+	# 	r = randint(0,1)
+	# 	if self.showingLiveView:
+	# 		img = self.get_live_image_temp(r)
+	# 		self.setLiveImage(img)
+	# 		self.after(50, self.rapidFireUpdate)	
 		#absolute  ^ minimum delay is 3ms, below that it drops frames
 		#keep high until we need to push it
 
@@ -885,9 +892,14 @@ class Application(tk.Frame):
 		newFile.write(start + '\n' + end + '\n' + str(numFrames) + '\n')
 		newFile.close()
 
-	def take_photo(self):
+	def take_photo(self, write_to_temp):
 		print("TAKE PHOTO")
-		elementLocation = "./images/"
+
+		if write_to_temp:
+			elementLocation = "./live_view_temp/"
+		else:
+			elementLocation = "./images/"
+
 		fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
 		if not self.dimensionMode:		#2d
 			# returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
@@ -899,40 +911,47 @@ class Application(tk.Frame):
 		# returnedFileName = str(returnedFile[0])
 		returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
 
-		#update CSV
-		csvFile = open(self.currentCSVFile, 'a')
-		writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-		#CSV FORMAT
-		#index, imageLocation, metadataLocation
-		metaFile = fileLocation+"_meta.txt"
-		self.writeImageMetaFile(metaFile)
-		writer.writerow([self.numPreviousImages, returnedFileName, metaFile])
-		self.numPreviousImages +=1
+		if not write_to_temp:
+			#update CSV
+			csvFile = open(self.currentCSVFile, 'a')
+			writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+			#CSV FORMAT
+			#index, imageLocation, metadataLocation
+			metaFile = fileLocation+"_meta.txt"
+			self.writeImageMetaFile(metaFile)
+			writer.writerow([self.numPreviousImages, returnedFileName, metaFile])
+			self.numPreviousImages +=1
 		
-		csvFile.close()
+			csvFile.close()
+		return fileLocation
 
-	def capture_video(self):
+	def capture_video(self, write_to_temp = False):
+		#if we are taking a video, we write to a permanent location
+		#otherwise, we are in live view and want to write to a temporary location and delete later
 		print("TAKE VIDEO")
-		numFolders, numFiles = self.directoryCounter("./images")
+		# numFolders, numFiles = self.directoryCounter("./images")
 
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
 		frameCounter =0
 
 		if self.HDRmode:
-			while self.isTakingVideo:
+			while self.showingLiveView:
 				self.doHDRtest([],[],[])
 				frameCounter +=1
 				self.nonRecursiveButtonCheck()
 				
 		else:
-			while self.isTakingVideo:
-				self.take_photo()
+			while self.showingLiveView:
+				photoLocation = self.take_photo(write_to_temp)
+				img = self.get_live_image(photoLocation)
+				self.setLiveImage(img)
 				frameCounter +=1
 				self.nonRecursiveButtonCheck()
 
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
-		self.writeVideoMetaFile("./images/", timeStart, timeEnd, frameCounter)
+		if frameCounter > 0:
+			self.writeVideoMetaFile("./images/", timeStart, timeEnd, frameCounter)
 
 
 	def change_mode(self):
