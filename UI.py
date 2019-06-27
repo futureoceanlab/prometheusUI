@@ -1024,7 +1024,7 @@ def main():
 	#camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
 	root.overrideredirect(False)		#for debugging turn this to False (allows to press ESCAPE)
-	root.attributes('-fullScreen', True)
+	root.attributes('-fullscreen', True)
 	app = Application(master=root)
 	app.buttonCheck()
 	app.mainloop()
