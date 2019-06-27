@@ -33,7 +33,7 @@ def readDCSimage(img):
 
 		for i in range(0,4):
 			image = dcsData[:,:,i]
-			rotatedImg = ndimage(image, 90)
+			rotatedImg = ndimage.rotate(image, 90)
 			fig.add_subplot(2,2,i+1)
 			plt.axis('off')
 			plt.imshow(rotatedImg)
