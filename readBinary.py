@@ -4,7 +4,7 @@ import os
 import numpy as np
 import sys
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 
 def readBinaryFile(filepath):
 	numBytes = os.path.getsize(filepath)	#size in bytes
