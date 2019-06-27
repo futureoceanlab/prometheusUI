@@ -1015,14 +1015,16 @@ class Application(tk.Frame):
 
 	def toggleClockFreq(self):
 		self.clockFreq = (2*self.clockFreq)%42	#rotates between 6,12,24
-		mult = self.clockFreq*4
-		div = 25*4
+		mult = self.clockFreq*3
+		div = 25*3
 		i2c.writeClock(mult, div)
 
 	def setClockFreq(self, x):
 		self.clockFreq = x
-		mult = self.clockFreq*4
-		div = 25*4
+		mult = self.clockFreq*3
+		div = 25*3
+		#the 3 is necessary because the mult must be between 15 and 90
+		#our clockFreq options (6,12,24) so these values *3 are in this range
 		i2c.writeClock(mult, div)
 
 
