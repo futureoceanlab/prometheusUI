@@ -247,7 +247,7 @@ class Application(tk.Frame):
 		#create the initial UI
 		self.createMainLog()
 		master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(), master.winfo_screenheight()))
-		master.bind('<Escape>',lambda e: self.toggleFullScreen)
+		master.bind('<Escape>',lambda e: self.toggleFullScreen())
 		self.create_layout()
 
 	def toggleFullScreen(self):
