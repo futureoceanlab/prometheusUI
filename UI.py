@@ -23,7 +23,8 @@ PI_DELAY_OPTIONS = [0,1]
 MOD_FREQ_OPTIONS = [0,1]
 NUM_EXPOSURES = len(EXPOSURE_OPTIONS)
 MODE_OPTIONS = ["CAPTURE", "MENU"]
-HDR_OPTIONS = {1:[[],[],[]]}
+HDR_SETTINGS = {0:[[],[],[]],
+			   1:[[],[],[]]}
 TEMP_LIVEVIEW = ['diver.jpg','whale.jpg']
 MENUTREE = {'root':{
 							'Camera Settings': {'CamSubsetting1': 'f22',
@@ -43,12 +44,13 @@ MENUTREE = {'root':{
 						}
 
 TEMP_MENUTREE ={'root': {
-						"DIMENSION MODE" : ('2D', ['2D','3D']),
-						"MODULATION FREQ": (0, [0,1]),
-						"ENABLE PI DELAY": (0, [0,1]),
-						"CLOCK":		   ('EXT', ['EXT','INT']),
+						"DIMENSION MODE" : ('2D'  , ['2D','3D']),
+						"MODULATION FREQ": (0     , [0,1]),
+						"ENABLE PI DELAY": (0     , [0,1]),
+						"CLOCK":		   ('EXT' , ['EXT','INT']),
 						"CLOCK FREQ"	 : ('6 Hz', ['6 Hz', '12 Hz', '24 Hz']),
-						"_RESTART BBB_"  : (' ',[' ','restarting'])
+						"_RESTART BBB_"  : (' '   , [' ','restarting']),
+						"HDR SETTING"    : (0     , [0,1,2])
 
 }
 	
@@ -178,7 +180,8 @@ class Application(tk.Frame):
 		self.modFreq = 0 
 		self.piDelay = 0 
 		self.enableCapture = 0 
-		self.HDRmode = 0
+		self.HDRmode = 0		#is HDR enabled
+		self.HDRTestSetting = 0	#when taking HDR, what test should we run? see HDR_SETTINGS - the key to dictionary
 		self.clockSource = 1	#0 internal; 1 external
 		self.setClock(self.clockSource)
 		self.clockFreq = 6
@@ -722,6 +725,8 @@ class Application(tk.Frame):
 			self.toggleClockFreq()
 		elif clickedNode.name == "_RESTART BBB_":
 			self.restartBBB()
+		elif clickedNode.name == "HDR SETTING":
+			self.toggleHDRSetting()
 
 
 	def makeSelectedButtonColored(self, button):
@@ -826,7 +831,7 @@ class Application(tk.Frame):
 				if not self.viewingPreviousImages:
 					if not self.showingLiveView:
 						if self.HDRmode:
-							self.doHDRtest([],[],[])
+							self.HDRWrapper(1)
 						else:
 							self.take_photo(False)
 			else:
@@ -936,7 +941,7 @@ class Application(tk.Frame):
 
 		if self.HDRmode:
 			while self.showingLiveView:
-				self.doHDRtest([],[],[])
+				self.HDRWrapper(1)
 				frameCounter +=1
 				self.nonRecursiveButtonCheck()
 				
@@ -1027,6 +1032,9 @@ class Application(tk.Frame):
 		#our clockFreq options (6,12,24) so these values *3 are in this range
 		i2c.writeClock(mult, div)
 
+	def toggleHDRSetting(self):
+		self.HDRTestSetting = (self.HDRTestSetting + 1) % len(TEMP_MENUTREE['root']['HDR SETTING'][1])
+
 
 	def toggleEnableCapture(self):
 		self.enableCapture = 1 - self.enableCapture
@@ -1050,6 +1058,11 @@ class Application(tk.Frame):
 					for freq in modFreqOptions:
 						self.setModulationFrequency(freq)
 						self.take_photo()
+
+	def HDRWrapper(self, setting):
+		exp, pi, modfreq = HDR_SETTINGS[setting]
+		self.doHDRtest(exp,pi, modFreq)
+
 
 	def restartBBB(self):
 		print("YO IM RESTARTING THE BBB")
