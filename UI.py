@@ -253,7 +253,7 @@ class Application(tk.Frame):
 	def toggleFullScreen(self):
 		print("YYUUUUPPP")
 		self.fullScreen = not self.fullScreen
-		self.master.overrideredirect(self.fullScreen)
+		# self.master.overrideredirect(self.fullScreen)
 
 	def nonRecursiveButtonCheck(self):
 		# The function that continuously checks the state of the buttons
@@ -1024,6 +1024,7 @@ def main():
 	#camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
 	root.overrideredirect(False)		#for debugging turn this to False (allows to press ESCAPE)
+	root.attributes('-fullScreen', True)
 	app = Application(master=root)
 	app.buttonCheck()
 	app.mainloop()
