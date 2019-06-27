@@ -5,7 +5,7 @@ import numpy as np
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
-import scipy.ndimage
+from scipy import ndimage
 
 def readBinaryFile(filepath):
 	numBytes = os.path.getsize(filepath)	#size in bytes
@@ -33,7 +33,7 @@ def readDCSimage(img):
 
 		for i in range(0,4):
 			image = dcsData[:,:,i]
-			rotatedImg = scipy.ndimage(image, 90)
+			rotatedImg = ndimage(image, 90)
 			fig.add_subplot(2,2,i+1)
 			plt.axis('off')
 			plt.imshow(rotatedImg)
