@@ -831,7 +831,7 @@ class Application(tk.Frame):
 				if not self.viewingPreviousImages:
 					if not self.showingLiveView:
 						if self.HDRmode:
-							self.HDRWrapper(1)
+							self.HDRWrapper(self.HDRTestSetting)
 						else:
 							self.take_photo(False)
 			else:
@@ -939,9 +939,13 @@ class Application(tk.Frame):
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
 		frameCounter =0
 
+		#this looks awkward but we need two while loops because we don't want user to change
+		#HDR setting in the middle of a capture... that would be confusing
 		if self.HDRmode:
 			while self.showingLiveView:
-				self.HDRWrapper(1)
+				photoLocation = self.HDRWrapper(self.HDRTestSetting)
+				img = self.get_live_image(photoLocation)
+				self.setLiveImage(img)
 				frameCounter +=1
 				self.nonRecursiveButtonCheck()
 				
@@ -1057,11 +1061,16 @@ class Application(tk.Frame):
 					self.setPiDelay(pi)
 					for freq in modFreqOptions:
 						self.setModulationFrequency(freq)
-						self.take_photo()
+						singleRepresentativePhoto = self.take_photo(False)
+						#if you're doing an HDR test, you always want to store the image (ie temp write is False)
+		#an HDR test takes a LOT of images, but we only return one (doesn't matter which)
+		#to display to the user in the live view
+		#it might be really trippy to be baraded by images with different exposures
+		return singleRepresentativePhoto
 
 	def HDRWrapper(self, setting):
 		exp, pi, modfreq = HDR_SETTINGS[setting]
-		self.doHDRtest(exp,pi, modFreq)
+		return self.doHDRtest(exp,pi, modFreq)
 
 
 	def restartBBB(self):
