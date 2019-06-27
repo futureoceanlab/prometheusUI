@@ -236,7 +236,7 @@ class Application(tk.Frame):
 		self.ACTN_BTN = gpio.Button(12, pull_up=True)
 		# self.HDR_BTN =  gpio.Button(X, pull_up=True)
 		self.MENU_BTN.when_pressed = self.MENU_pressed
-		self.HDR_BTN.when_pressed  = self.HDR_pressed
+		# self.HDR_BTN.when_pressed  = self.HDR_pressed
 		self.dispBtnState = 0
 		self.expoBtnState = 0
 		self.actnBtnState = 0
