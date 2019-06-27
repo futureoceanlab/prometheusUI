@@ -525,6 +525,7 @@ class Application(tk.Frame):
 		canvas = FigureCanvasTkAgg(dcsFigure, mainFrame, master=self.master)
 		canvas.draw()
 		canvas.get_tk_widget().pack()
+		canvas = FigureCanvasAgg(fig,mainFrame)
 
 
 		# DCSgrid = tk.Canvas(mainFrame, width=600, height=450)
