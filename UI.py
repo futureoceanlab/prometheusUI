@@ -46,7 +46,8 @@ TEMP_MENUTREE ={'root': {
 						"DIMENSION MODE": ('2D', ['2D','3D']),
 						"MODULATION FREQ": (0, [0,1]),
 						"ENABLE PI DELAY": (0, [0,1]),
-						"CLOCK":		   ('EXT', ['EXT','INT'])
+						"CLOCK":		   ('EXT', ['EXT','INT']),
+						"_RESTART BBB_":   ()
 
 }
 	
@@ -671,7 +672,7 @@ class Application(tk.Frame):
 		self.menu_tree.traverseDownToSelectionLevel(self.temp_menu_tree.tree[0])
 		rowNumber = 0
 		for child in level: 
-			print("ISLEAF: ", child.isLeaf())
+
 			settingValue = Label(self.menuFrame, text=child.value[0])
 			settingValue.grid(row=rowNumber, column=1)
 			settingKey = Button(self.menuFrame, text=str('Change ')+child.name, command=lambda: self.changeMenuValue(child, settingValue))
@@ -682,7 +683,7 @@ class Application(tk.Frame):
 				self.currentSelectionButton = settingKey
 				self.currentSelectionNode = child
 			rowNumber+=1
-			if child.isLeaf():
+			if 'BBB' in child.name:
 				#its a button
 				commandButton = Button(self.menuFrame, text=child.name, command=self.restartBBB())
 
