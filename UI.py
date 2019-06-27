@@ -585,7 +585,8 @@ class Application(tk.Frame):
 
 		self.menuFrame = tk.Frame(mainFrame, bg='green')
 		labelName = Label(self.menuFrame, text="TEMPORARY TEXT")
-		self.menuFrame.pack()
+		# self.menuFrame.pack()
+		self.menuFrame.grid()
 		self.menuFrame.rowconfigure(0,weight=1)
 		self.menuFrame.columnconfigure(0,weight=1)
 		# self.createMenu(self.menuFrame, self.menu_tree.tree[0], True)
