@@ -15,6 +15,7 @@ import csv
 from random import randint
 import i2c_functions as i2c
 import readBinary
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 BUTTON_LONGPRESS_TIME = 1
 EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
@@ -525,7 +526,7 @@ class Application(tk.Frame):
 		canvas = FigureCanvasTkAgg(dcsFigure, mainFrame, master=self.master)
 		canvas.draw()
 		canvas.get_tk_widget().pack()
-		canvas = FigureCanvasAgg(fig,mainFrame)
+		# canvas = FigureCanvasAgg(fig,mainFrame)
 
 
 		# DCSgrid = tk.Canvas(mainFrame, width=600, height=450)
