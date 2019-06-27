@@ -522,7 +522,7 @@ class Application(tk.Frame):
 		self.dataArea = dataLabel
 
 		#DCS grid -- display = 0
-		dcsFigure = readBinary.readDCSimage('DCS08.bin')
+		# dcsFigure = readBinary.readDCSimage('DCS08.bin')
 		# canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
 		# canvas.draw()
 		# canvas.get_tk_widget().pack()
