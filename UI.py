@@ -213,6 +213,7 @@ class Application(tk.Frame):
 		self.mainArea = None
 		self.dataArea = None
 		self.menuFrame = None
+		self.fullScreen = True
 
 		#data contained in the UI 
 		self.mainImportantData = {'Battery': '50%', 'Mem': str(43.2)+'GB', 'S/N ratio': 0.6, 'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d} 
@@ -246,8 +247,12 @@ class Application(tk.Frame):
 		#create the initial UI
 		self.createMainLog()
 		master.geometry("{0}x{1}+0+0".format(master.winfo_screenwidth(), master.winfo_screenheight()))
-		master.bind('<Escape>',lambda e: master.quit())
+		master.bind('<Escape>',lambda e: self.toggleFullScreen)
 		self.create_layout()
+
+	def toggleFullScreen(self):
+		self.fullScreen = not self.fullScreen
+		self.master.overrideredirect(self.fullScreen)
 
 	def nonRecursiveButtonCheck(self):
 		# The function that continuously checks the state of the buttons
@@ -1017,7 +1022,7 @@ def main():
 	#camera_power.turn_on_BBBx(0)
 	#camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
-	root.overrideredirect(False)		#for debugging turn this to False (allows to press ESCAPE)
+	root.overrideredirect(True)		#for debugging turn this to False (allows to press ESCAPE)
 	app = Application(master=root)
 	app.buttonCheck()
 	app.mainloop()
