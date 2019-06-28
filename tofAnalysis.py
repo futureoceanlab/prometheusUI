@@ -8,7 +8,7 @@ normDCIconvshift = ['0.55621', '0.54851', '0.54072', '0.53285', '0.52489', '0.51
 
 def analyze(dcsData):
 
-	result = list(map(lambda w,x,y,z: dcsInverse(w,x,y,z), dcsData[:,:,0][0], dcsData[:,:,1][0], dcsData[:,:,2][0], dcsData[:,:,3][0]))
+	result = map(lambda w,x,y,z: dcsInverse(w,x,y,z), dcsData[:,:,0][0], dcsData[:,:,1][0], dcsData[:,:,2][0], dcsData[:,:,3][0])
 	print("RESULT: ", result)
 	return np.array(result).reshape(320,240, order='F')
 
