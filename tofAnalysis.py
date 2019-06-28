@@ -13,6 +13,7 @@ def analyze(dcsData, freq):
 	dcs2 = dcsData[:,:,2].reshape(1,76800, order='C')
 	dcs3 = dcsData[:,:,3].reshape(1,76800, order='C')
 	print("TYPE: ", type(dcs0))	
+	print(dcs0)
 
 	f = lambda w,x,y,z: dcsInverse(freq, w,x,y,z)
 	result = f(dcs0, dcs1, dcs2, dcs3)
