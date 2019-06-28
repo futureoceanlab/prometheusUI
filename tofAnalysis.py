@@ -11,7 +11,7 @@ def analyze(dcsData, freq):
 	dcs2 = [y for x in dcsData[:,:,2] for y in x]
 	dcs3 = [y for x in dcsData[:,:,3] for y in x]
 
-	result = list(map(lambda w,x,y,z: dcsInverse(freq,w,x,y,z), dcs0[:7680], dcs1[:7680], dcs2[:7680], dcs3[:7680]))
+	result = list(map(lambda w,x,y,z: dcsInverse(freq,w,x,y,z), dcs0, dcs1, dcs2, dcs3))
 	# print("DONE ", result)
 	return np.array(result).reshape(320,24, order='F')
 
