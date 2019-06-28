@@ -7,6 +7,8 @@ normDCIconvshift = np.array([0.55621, 0.54851, 0.54072, 0.53285, 0.52489, 0.5168
 INDEX_OF_REFRACTION_SALT_WATER = 1.34
 normConvBeg = normDCIconv[:len(normDCIconv)-1]
 normConvEnd = normDCIconv[1:]
+normConvShiftBeg = normDCIconvshift[:len(normDCIconvshift)-1]
+normConvShiftEnd = normDCIconvshift[1:]
 
 def analyze(dcsData, freq):
 
@@ -55,14 +57,14 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 
 		if normDCS0 >= np.amax(normDCIconv):
 
-			riseIndex = ((normDCIconvshift[:len(normDCIconvshift)-1] <=normDCS1) & (normDCIconvshift[1:] > normDCS1)).nonzero()[0][0]
+			riseIndex = ((normConvShiftBeg <=normDCS1) & (normConvShiftEnd > normDCS1)).nonzero()[0][0]
 			slope = float(normDCIconvshift[riseIndex] - normDCIconvshift[riseIndex-1])
 			est = (normDCS1 - normDCIconvshift[riseIndex])/slope
 			phase = ((riseIndex + est)/wavelength)%1.0
 
 		elif normDCS0 <= np.amin(normDCIconv):
 
-			fallIndex = ((normDCIconvshift[:len(normDCIconvshift)-1] >=normDCS1) & (normDCIconvshift[1:] < normDCS1)).nonzero()[0][0]
+			fallIndex = ((normConvShiftBeg >=normDCS1) & (normConvShiftEnd < normDCS1)).nonzero()[0][0]
 			slope = float(normDCIconvshift[fallIndex] - normDCIconvshift[fallIndex-1])
 			est = (normDCS1 - normDCIconvshift[fallIndex])/slope
 			phase = ((riseIndex + est)/wavelength)%1.0
