@@ -10,12 +10,10 @@ def analyze(dcsData):
 	print("RESULT: ", result)
 	return np.array(result).reshape(320,240, order='F')
 
-def intersect(a, b):
-	c = []
-	for i in a: 
-		if i in b:
-			c.append(i)
-	return c
+def logical_intersect_index(a, b):
+	for i in range(0,len(a)):
+		if a[i]==b[i]==1:
+			return i 
 
 def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 
@@ -75,7 +73,7 @@ def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 			binaryPart1List = list(map(lambda x: 1 if x<=normDCS0 else 0, part1List))
 			binaryPart2List = list(map(lambda x: 1 if x>normDCS0 else 0, part2List))
 
-			riseIndex = intersect(binaryPart1List, binaryPart2List).index(1)
+			riseIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
 
 			print("BPL1: ", binaryPart1List)
 			print("BPL2: ", binaryPart2List)
