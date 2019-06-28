@@ -19,9 +19,9 @@ def intersect(a, b):
 
 def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 
-	if type(dcs2) == type(dcs3) == float:
-		dcs0 -= dcs2
-		dcs1 -= dcs3
+	# if type(dcs2) == type(dcs3) == float:
+	# 	dcs0 -= dcs2
+	# 	dcs1 -= dcs3
 
 	amplitude = float(abs(dcs0) + abs(dcs1))
 
