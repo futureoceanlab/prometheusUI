@@ -71,6 +71,7 @@ def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 		else:
 			part1 = list(filter(lambda x: x <= normDCS0, normDCIconv[:len(normDCIconv)-1]))
 			part2 = list(filter(lambda x: x > normDCS0, normDCIconv[1:]))
+			print("IIIII ", intersect(part1, part2))
 			riseIndex = intersect(part1, part2)[0]
 			print("IIIII ", intersect(part1, part2))
 
