@@ -55,3 +55,7 @@ def readSingleImage(img):
 		fig.add_subplot(1,1,1)
 		plt.imshow(image)
 		plt.savefig('singleImage.png')
+        
+if __name__ == 'main':
+    print("hi")
+    readDCSimage('DCS08.bin', 6)

@@ -12,15 +12,19 @@ normConvShiftEnd = normDCIconvshift[1:]
 
 def analyze(dcsData, freq):
 
+	#dcsData is a 320x240x4 array
 	dcs0 = dcsData[:,:,0].reshape(1,76800, order='C')[0]
 	dcs1 = dcsData[:,:,1].reshape(1,76800, order='C')[0]
 	dcs2 = dcsData[:,:,2].reshape(1,76800, order='C')[0]
 	dcs3 = dcsData[:,:,3].reshape(1,76800, order='C')[0]
 
 	a = time.time()
+
+	#this is the mapping function mapping the each value of the dcs array through the dcsInverse function
 	f = lambda w,x,y,z: dcsInverse(freq, w,x,y,z)
 	vectf = np.vectorize(f)
 	result = vectf(dcs0, dcs1, dcs2, dcs3)
+
 	print("TIME: ", time.time()-a)
 
 	# result = list(map(lambda w,x,y,z: dcsInverse(freq,w,x,y,z), dcs0, dcs1, dcs2, dcs3))
