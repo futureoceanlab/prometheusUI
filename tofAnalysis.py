@@ -36,9 +36,6 @@ def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 			#find the rising index
 			part1 = filter(lambda x: x <= normDCS1, normDCIconvshift[:len(normDCIconvshift)-1])
 			part2 = filter(lambda x: x > normDCS1, normDCIconvshift[1:])
-			print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-			print("part1: ", part1)
-			print("part2: ", part2)
 			riseIndex = list(set(part1) & set(part2))[0]
 
 			#use it to find the slope
@@ -67,6 +64,9 @@ def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 		else:
 			part1 = filter(lambda x: x <= normDCS0, normDCIconv[:len(normDCIconv)-1])
 			part2 = filter(lambda x: x > normDCS0, normDCIconv[1:])
+			print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
+			print("part1: ", part1)
+			print("part2: ", part2)
 			riseIndex = list(set(part1) & set(part2))[0]
 
 			part1 = filter(lambda x: x >= normDCS0, normDCIconv[:len(normDCIconv)-1])
