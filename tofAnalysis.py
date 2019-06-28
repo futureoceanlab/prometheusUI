@@ -17,7 +17,6 @@ def analyze(dcsData, freq):
 	f = lambda w,x,y,z: dcsInverse(freq, w,x,y,z)
 	vectf = np.vectorize(f)
 	result = vectf(dcs0, dcs1, dcs2, dcs3)
-	print("TYPE2: ", type(result))
 	print("TIME: ", time.time()-a)
 
 	# result = list(map(lambda w,x,y,z: dcsInverse(freq,w,x,y,z), dcs0, dcs1, dcs2, dcs3))
@@ -54,13 +53,7 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 
 		if normDCS0 >= np.amax(normDCIconv):
 
-			part1List = normDCIconvshift[:len(normDCIconv)-1]
-			part2List = normDCIconvshift[1:]
-			a = time.time()
-			binaryPart1List = list(map(lambda x: 1 if x<=normDCS1 else 0, part1List))
-			binaryPart2List = list(map(lambda x: 1 if x>normDCS1 else 0, part2List))
-			print("TIME: ", time.time()-a)
-			riseIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
+			riseIndex = ((normDCIconvshift[:len(normDCIconvshift)-1] <=normDCS1) & (normDCIconvshift[1:] > normDCS1)).nonzero()[0][0]
 
 			#use it to find the slope
 			slope = float(normDCIconvshift[riseIndex] - normDCIconvshift[riseIndex-1])
@@ -72,13 +65,7 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 
 		elif normDCS0 <= np.amin(normDCIconv):
 
-			part1List = normDCIconvshift[:len(normDCIconv)-1]
-			part2List = normDCIconvshift[1:]
-
-			binaryPart1List = list(map(lambda x: 1 if x>=normDCS1 else 0, part1List))
-			binaryPart2List = list(map(lambda x: 1 if x<normDCS1 else 0, part2List))
-
-			fallIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
+			fallIndex = ((normDCIconvshift[:len(normDCIconvshift)-1] >=normDCS1) & (normDCIconvshift[1:] < normDCS1)).nonzero()[0][0]
 
 			slope = float(normDCIconvshift[fallIndex] - normDCIconvshift[fallIndex-1])
 
@@ -89,20 +76,9 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 
 		else:
 
-			# binaryPart1List = list(map(lambda x: 1 if x<=normDCS0 else 0, part1List))
-			# binaryPart2List = list(map(lambda x: 1 if x>normDCS0 else 0, part2List))
-
 			riseIndex = ((normDCIconv[:len(normDCIconv)-1] <=normDCS0) & (normDCIconv[1:] > normDCS0)).nonzero()[0][0]
-			# print("RESULT: ", riseIndex)
 
 			fallIndex = ((normDCIconv[:len(normDCIconv)-1] >=normDCS0) & (normDCIconv[1:] < normDCS0)).nonzero()[0][0]
-
-			# riseIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
-
-			# binaryPart1List = list(map(lambda x: 1 if x>=normDCS0 else 0, part1List))
-			# binaryPart2List = list(map(lambda x: 1 if x<normDCS0 else 0, part2List))
-
-			# fallIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
 
 			if ((normDCS1 > min(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1])) and (normDCS1 > max(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1]))) or normDCS1 <= min(normDCIconvshift):
 				section = [riseIndex, riseIndex+1]
