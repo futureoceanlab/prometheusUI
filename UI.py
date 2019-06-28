@@ -544,7 +544,7 @@ class Application(tk.Frame):
 		self.dataArea = dataLabel
 
 		#DCS grid -- display = 0
-		dcsFigure, heatfig = readBinary.readDCSimage('DCS08.bin', self.clockFreq)
+		dcsFigure = readBinary.readDCSimage('DCS08.bin', self.clockFreq)
 		canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
 		canvas.draw()
 		canvas.get_tk_widget().pack()
