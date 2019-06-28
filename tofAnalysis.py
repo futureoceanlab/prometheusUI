@@ -75,17 +75,13 @@ def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 
 			riseIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
 
-			print("BPL1: ", binaryPart1List)
-			print("BPL2: ", binaryPart2List)
-			print(riseIndex)
+			binaryPart1List = list(map(lambda x: 1 if x>=normDCS0 else 0, part1List))
+			binaryPart2List = list(map(lambda x: 1 if x<normDCS0 else 0, part2List))
 
-			part1 = list(filter(lambda x: x <= normDCS0, normDCIconv[:len(normDCIconv)-1]))
-			part2 = list(filter(lambda x: x > normDCS0, normDCIconv[1:]))
-			riseIndex = intersect(part1, part2)[0]
+			fallIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
 
-			part1 = filter(lambda x: x >= normDCS0, normDCIconv[:len(normDCIconv)-1])
-			part2 = filter(lambda x: x < normDCS0, normDCIconv[1:])
-			fallIndex = list(set(part1) & set(part2))[0]
+			print("DDDDD", riseIndex, fallIndex)
+
 
 			if ((normDCS1 > min(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1])) and (normDCS1 > max(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1]))) or normDCS1 <= min(normDCIconvshift):
 				section = [riseIndex, riseIndex+1]
