@@ -1,5 +1,9 @@
 #!/usr/bin/env python3
 
+# Author: Evan Denmark
+# Prometheus UI
+# June 27, 2019
+
 import tkinter as tk
 from tkinter.ttk import Frame, Button, Label, Style 
 from tkinter import *
@@ -540,7 +544,7 @@ class Application(tk.Frame):
 		self.dataArea = dataLabel
 
 		#DCS grid -- display = 0
-		dcsFigure = readBinary.readDCSimage('DCS08.bin')
+		dcsFigure, heatmap = readBinary.readDCSimage('DCS08.bin')
 		canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
 		canvas.draw()
 		canvas.get_tk_widget().pack()

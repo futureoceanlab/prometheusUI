@@ -6,6 +6,7 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy import ndimage
+import tofAnalysis
 
 def readBinaryFile(filepath):
 	numBytes = os.path.getsize(filepath)	#size in bytes
@@ -29,17 +30,20 @@ def readDCSimage(img):
 		data = np.fromfile(file, dtype=np.uint16)
 		dcsData = data.reshape(320,240,4, order='F')
 		fig = plt.figure(figsize=(7.5,5.625), dpi=80)
+		heatmap = tofAnalysis.analyze(dcsData)
+		heatFig = plt.figure(figsize(8,6))
 
 
-		for i in range(0,4):
-			image = dcsData[:,:,i]
-			rotatedImg = ndimage.rotate(image, 90)
-			fig.add_subplot(2,2,i+1)
-			plt.axis('off')
-			plt.imshow(rotatedImg)
 
-		plt.savefig('dcs.png')
-	return fig
+		# for i in range(0,4):
+		# 	image = dcsData[:,:,i]
+		# 	rotatedImg = ndimage.rotate(image, 90)
+		# 	fig.add_subplot(2,2,i+1)
+		# 	plt.axis('off')
+		# 	plt.imshow(rotatedImg)
+
+		plt.savefig('heatmap.png')
+	return fig, heatmap
 
 def readSingleImage(img):
 	with open(img, 'r') as file:
