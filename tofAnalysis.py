@@ -6,8 +6,9 @@ normDCIconvshift = [0.55621, 0.54851, 0.54072, 0.53285, 0.52489, 0.51685, 0.5087
 INDEX_OF_REFRACTION_SALT_WATER = 1.34
 
 def analyze(dcsData, freq):
-
+	dcs0 = [y for x in dcsData[:,:,0] for y in x]
 	print(dcsData[:,:,0])
+
 	result = list(map(lambda w,x,y,z: dcsInverse(freq,w,x,y,z), dcsData[:,:,0][0], dcsData[:,:,1][0], dcsData[:,:,2][0], dcsData[:,:,3][0]))
 	return np.array(result).reshape(320,240, order='F')
 
