@@ -8,10 +8,10 @@ INDEX_OF_REFRACTION_SALT_WATER = 1.34
 
 def analyze(dcsData, freq):
 
-	dcs0 = dcsData[:,:,0].reshape(1,76800, order='C')[0]
-	dcs1 = dcsData[:,:,1].reshape(1,76800, order='C')[0]
-	dcs2 = dcsData[:,:,2].reshape(1,76800, order='C')[0]
-	dcs3 = dcsData[:,:,3].reshape(1,76800, order='C')[0]
+	dcs0 = dcsData[:,:,0].reshape(76800, 1, order='C')[0]
+	dcs1 = dcsData[:,:,1].reshape(76800, 1, order='C')[0]
+	dcs2 = dcsData[:,:,2].reshape(76800, 1, order='C')[0]
+	dcs3 = dcsData[:,:,3].reshape(76800, 1, order='C')[0]
 
 	a = time.time()
 	f = lambda w,x,y,z: dcsInverse(freq, w,x,y,z)
@@ -54,32 +54,21 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 		if normDCS0 >= np.amax(normDCIconv):
 
 			riseIndex = ((normDCIconvshift[:len(normDCIconvshift)-1] <=normDCS1) & (normDCIconvshift[1:] > normDCS1)).nonzero()[0][0]
-
-			#use it to find the slope
 			slope = float(normDCIconvshift[riseIndex] - normDCIconvshift[riseIndex-1])
-
 			est = (normDCS1 - normDCIconvshift[riseIndex])/slope
-
-			#find the phase
 			phase = ((riseIndex + est)/wavelength)%1.0
 
 		elif normDCS0 <= np.amin(normDCIconv):
 
 			fallIndex = ((normDCIconvshift[:len(normDCIconvshift)-1] >=normDCS1) & (normDCIconvshift[1:] < normDCS1)).nonzero()[0][0]
-
 			slope = float(normDCIconvshift[fallIndex] - normDCIconvshift[fallIndex-1])
-
 			est = (normDCS1 - normDCIconvshift[fallIndex])/slope
-
-			#find the phase
 			phase = ((riseIndex + est)/wavelength)%1.0
 
 		else:
 
 			riseIndex = ((normDCIconv[:len(normDCIconv)-1] <=normDCS0) & (normDCIconv[1:] > normDCS0)).nonzero()[0][0]
-
 			fallIndex = ((normDCIconv[:len(normDCIconv)-1] >=normDCS0) & (normDCIconv[1:] < normDCS0)).nonzero()[0][0]
-
 			if ((normDCS1 > min(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1])) and (normDCS1 > max(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1]))) or normDCS1 <= min(normDCIconvshift):
 				section = [riseIndex, riseIndex+1]
 			else:
