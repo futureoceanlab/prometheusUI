@@ -73,14 +73,14 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 
 			riseIndex = ((normConvBeg <=normDCS0) & (normConvEnd > normDCS0)).nonzero()[0][0]
 			fallIndex = ((normConvBeg >=normDCS0) & (normConvEnd < normDCS0)).nonzero()[0][0]
-			if ((normDCS1 > min(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1])) and (normDCS1 > max(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1]))) or normDCS1 <= min(normDCIconvshift):
-				section = np.array([riseIndex, riseIndex+1])
+			if ((normDCS1 > min(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1])) and (normDCS1 > max(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1]))) or normDCS1 <= np.amin(normDCIconvshift):
+				section = [riseIndex, riseIndex+1]
 			else:
-				section = np.array([fallIndex, fallIndex+1])
+				section = [fallIndex, fallIndex+1]
 
 			slope = normDCIconv[section[1]] - normDCIconv[section[0]]
 			est = (normDCS0 - normDCIconv[section[0]])/slope
 
 			phase = ((section[0] + est)/wavelength)%1.0
-			
+
 	return phase
