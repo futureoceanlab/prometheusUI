@@ -10,6 +10,13 @@ def analyze(dcsData):
 	print("RESULT: ", result)
 	return np.array(result).reshape(320,240, order='F')
 
+def intersect(a, b):
+	c = []
+	for i in a: 
+		if i in b:
+			c.append(i)
+	return c
+
 def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 
 
@@ -64,10 +71,8 @@ def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 		else:
 			part1 = list(filter(lambda x: x <= normDCS0, normDCIconv[:len(normDCIconv)-1]))
 			part2 = list(filter(lambda x: x > normDCS0, normDCIconv[1:]))
-			print("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA")
-			print("part1: ", len(part1))
-			print("part2: ", len(part2))
-			riseIndex = list(set(part1) & set(part2))[0]
+			riseIndex = intersect(part1, part2)[0]
+			print("IIIII ", intersect(part1, part2))
 
 			part1 = filter(lambda x: x >= normDCS0, normDCIconv[:len(normDCIconv)-1])
 			part2 = filter(lambda x: x < normDCS0, normDCIconv[1:])
