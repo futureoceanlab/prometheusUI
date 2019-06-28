@@ -8,12 +8,14 @@ INDEX_OF_REFRACTION_SALT_WATER = 1.34
 
 def analyze(dcsData, freq):
 
+	a = time.time()
 	dcs0 = dcsData[:,:,0].reshape(1,76800, order='C')[0]
 	dcs1 = dcsData[:,:,1].reshape(1,76800, order='C')[0]
 	dcs2 = dcsData[:,:,2].reshape(1,76800, order='C')[0]
 	dcs3 = dcsData[:,:,3].reshape(1,76800, order='C')[0]
 	print("TYPE: ", type(dcs0))	
 	print(dcs0)
+	print("TIME: ", time.time() - a)
 
 	f = lambda w,x,y,z: dcsInverse(freq, w,x,y,z)
 	vectf = np.vectorize(f)
