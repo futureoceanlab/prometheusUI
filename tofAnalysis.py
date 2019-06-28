@@ -94,10 +94,10 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 			# binaryPart1List = list(map(lambda x: 1 if x<=normDCS0 else 0, part1List))
 			# binaryPart2List = list(map(lambda x: 1 if x>normDCS0 else 0, part2List))
 
-			riseIndex = ((normDCIconv[:len(normDCIconv)-1] <=normDCS0) & (normDCIconv[1:] > normDCS0)).nonzero()
+			riseIndex = ((normDCIconv[:len(normDCIconv)-1] <=normDCS0) & (normDCIconv[1:] > normDCS0)).nonzero()[0]
 			print("RESULT: ", riseIndex)
 
-			fallIndex = ((normDCIconv[:len(normDCIconv)-1] >=normDCS0) & (normDCIconv[1:] < normDCS0)).nonzero()
+			fallIndex = ((normDCIconv[:len(normDCIconv)-1] >=normDCS0) & (normDCIconv[1:] < normDCS0)).nonzero()[0]
 
 			# riseIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
 
