@@ -91,18 +91,20 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 
 		else:
 
-			part1List = normDCIconv[:len(normDCIconv)-1]
-			part2List = normDCIconv[1:]
+			# binaryPart1List = list(map(lambda x: 1 if x<=normDCS0 else 0, part1List))
+			# binaryPart2List = list(map(lambda x: 1 if x>normDCS0 else 0, part2List))
 
-			binaryPart1List = list(map(lambda x: 1 if x<=normDCS0 else 0, part1List))
-			binaryPart2List = list(map(lambda x: 1 if x>normDCS0 else 0, part2List))
+			riseIndex = ((normDCIconv[:len(normDCIconv)-1] <=normDCS0) & (normDCIconv[1:] > normDCS0)).nonzero()
+			print("RESULT: ", result)
 
-			riseIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
+			fallIndex = ((normDCIconv[:len(normDCIconv)-1] >=normDCS0) & (normDCIconv[1:] < normDCS0)).nonzero()
 
-			binaryPart1List = list(map(lambda x: 1 if x>=normDCS0 else 0, part1List))
-			binaryPart2List = list(map(lambda x: 1 if x<normDCS0 else 0, part2List))
+			# riseIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
 
-			fallIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
+			# binaryPart1List = list(map(lambda x: 1 if x>=normDCS0 else 0, part1List))
+			# binaryPart2List = list(map(lambda x: 1 if x<normDCS0 else 0, part2List))
+
+			# fallIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
 
 			if ((normDCS1 > min(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1])) and (normDCS1 > max(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1]))) or normDCS1 <= min(normDCIconvshift):
 				section = [riseIndex, riseIndex+1]
