@@ -35,6 +35,7 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 	# 	dcs1 -= dcs3
 	wavelength = 300/(freq*4.0*INDEX_OF_REFRACTION_SALT_WATER)
 	#300 = speedOfLight 3*10^8 / megahertz 10^6
+	print('fasdfasdf', dcs0)
 
 	amplitude = float(abs(dcs0) + abs(dcs1))
 
