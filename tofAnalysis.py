@@ -34,7 +34,8 @@ def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 		normDCS0 = dcs0/amplitude
 		normDCS1 = dcs1/amplitude
 
-		print(type(normDCS0), '   ', type(normDCIconv))
+		print("DCSO: ", normDCS0)
+		print("NORM: ", normDCIconv)
 		if normDCS0 >= max(normDCIconv):
 			#find the rising index
 			part1 = filter(lambda x: x <= normDCS1, normDCIconvshift[:len(normDCIconvshift)-1])
