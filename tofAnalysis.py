@@ -7,9 +7,11 @@ INDEX_OF_REFRACTION_SALT_WATER = 1.34
 
 def analyze(dcsData, freq):
 	dcs0 = [y for x in dcsData[:,:,0] for y in x]
-	print(dcs0)
+	dcs1 = [y for x in dcsData[:,:,1] for y in x]
+	dcs2 = [y for x in dcsData[:,:,2] for y in x]
+	dcs3 = [y for x in dcsData[:,:,3] for y in x]
 
-	result = list(map(lambda w,x,y,z: dcsInverse(freq,w,x,y,z), dcsData[:,:,0][0], dcsData[:,:,1][0], dcsData[:,:,2][0], dcsData[:,:,3][0]))
+	result = list(map(lambda w,x,y,z: dcsInverse(freq,w,x,y,z), dcs0, dcs1, dcs2, dcs3))
 	return np.array(result).reshape(320,240, order='F')
 
 def logical_intersect_index(a, b):
