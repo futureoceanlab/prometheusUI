@@ -7,7 +7,7 @@ INDEX_OF_REFRACTION_SALT_WATER = 1.34
 
 def analyze(dcsData, freq):
 
-	print(len(dcsData[:,:,0]))
+	print(dcsData[:,:,0])
 	result = list(map(lambda w,x,y,z: dcsInverse(freq,w,x,y,z), dcsData[:,:,0][0], dcsData[:,:,1][0], dcsData[:,:,2][0], dcsData[:,:,3][0]))
 	return np.array(result).reshape(320,240, order='F')
 
