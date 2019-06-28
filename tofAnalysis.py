@@ -8,10 +8,10 @@ INDEX_OF_REFRACTION_SALT_WATER = 1.34
 
 def analyze(dcsData, freq):
 
-	dcs0 = dcsData[:,:,0].reshape(1,76800, order='C')
-	dcs1 = dcsData[:,:,1].reshape(1,76800, order='C')
-	dcs2 = dcsData[:,:,2].reshape(1,76800, order='C')
-	dcs3 = dcsData[:,:,3].reshape(1,76800, order='C')
+	dcs0 = dcsData[:,:,0].reshape(1,76800, order='C')[0]
+	dcs1 = dcsData[:,:,1].reshape(1,76800, order='C')[0]
+	dcs2 = dcsData[:,:,2].reshape(1,76800, order='C')[0]
+	dcs3 = dcsData[:,:,3].reshape(1,76800, order='C')[0]
 	print("TYPE: ", type(dcs0))	
 	print(dcs0)
 
