@@ -68,11 +68,12 @@ def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 			phase = ((riseIndex + est)/wavelength)%1.0
 
 		else:
+
+			part1 = list(filter(lambda x: x <= normDCS0, normDCIconv[:len(normDCIconv)-1]))
+			part2 = list(filter(lambda x: x > normDCS0, normDCIconv[1:]))
 			print("Part1: ", part1)
 			print("part2: ", part2)
 			print("normDCS0", normDCS0)
-			part1 = list(filter(lambda x: x <= normDCS0, normDCIconv[:len(normDCIconv)-1]))
-			part2 = list(filter(lambda x: x > normDCS0, normDCIconv[1:]))
 			riseIndex = intersect(part1, part2)[0]
 
 			part1 = filter(lambda x: x >= normDCS0, normDCIconv[:len(normDCIconv)-1])
