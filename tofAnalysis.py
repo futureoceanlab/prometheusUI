@@ -18,9 +18,6 @@ def intersect(a, b):
 	return c
 
 def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
-	print("INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN")
-	print(len(intersect(normDCIconvshift, normDCIconv)))
-
 
 	if type(dcs2) == type(dcs3) == float:
 		dcs0 -= dcs2
@@ -71,11 +68,12 @@ def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 			phase = ((riseIndex + est)/wavelength)%1.0
 
 		else:
+			print("Part1: ", part1)
+			print("part2: ", part2)
+			print("normDCS0", normDCS0)
 			part1 = list(filter(lambda x: x <= normDCS0, normDCIconv[:len(normDCIconv)-1]))
 			part2 = list(filter(lambda x: x > normDCS0, normDCIconv[1:]))
-			print("IIIII ", intersect(part1, part2))
 			riseIndex = intersect(part1, part2)[0]
-			print("IIIII ", intersect(part1, part2))
 
 			part1 = filter(lambda x: x >= normDCS0, normDCIconv[:len(normDCIconv)-1])
 			part2 = filter(lambda x: x < normDCS0, normDCIconv[1:])
