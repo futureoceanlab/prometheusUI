@@ -25,12 +25,12 @@ def readBinaryFile(filepath):
 		img_names.append(img_name)
 	return img_names
 
-def readDCSimage(img):
+def readDCSimage(img, freq):
 	with open(img, 'r') as file:
 		data = np.fromfile(file, dtype=np.uint16)
 		dcsData = data.reshape(320,240,4, order='F')
 		fig = plt.figure(figsize=(7.5,5.625), dpi=80)
-		heatmap = tofAnalysis.analyze(dcsData)
+		heatmap = tofAnalysis.analyze(dcsData, freq)
 		heatFig = plt.figure(figsize(8,6))
 
 
