@@ -14,7 +14,7 @@ def analyze(dcsData, freq):
 
 	result = list(map(lambda w,x,y,z: dcsInverse(freq,w,x,y,z), dcs0, dcs1, dcs2, dcs3))
 	# print("DONE ", result)
-	return np.array(result).reshape(320,240, order='F')
+	return np.array(result).reshape(320,240, order='C')
 
 def logical_intersect_index(a, b):
 	for i in range(0,len(a)):
