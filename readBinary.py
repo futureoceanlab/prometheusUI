@@ -43,7 +43,7 @@ def readDCSimage(img, freq):
 		# 	plt.imshow(rotatedImg)
 
 		plt.savefig('heatmap2.png')
-	return fig, heatFig
+	return heatFig #add back fig 
 
 def readSingleImage(img):
 	with open(img, 'r') as file:
@@ -56,6 +56,8 @@ def readSingleImage(img):
 		plt.imshow(image)
 		plt.savefig('singleImage.png')
         
-if __name__ == 'main':
+if __name__ == '__main__':
     print("hi")
     readDCSimage('DCS08.bin', 6)
+
+    

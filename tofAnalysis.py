@@ -9,6 +9,10 @@ normConvBeg = normDCIconv[:len(normDCIconv)-1]
 normConvEnd = normDCIconv[1:]
 normConvShiftBeg = normDCIconvshift[:len(normDCIconvshift)-1]
 normConvShiftEnd = normDCIconvshift[1:]
+normDCIconvMax = np.amax(normDCIconv)
+normDCIconvMin = np.amin(normDCIconv)
+normDCIshiftMin = np.amin(normDCIconvshift)
+
 
 def analyze(dcsData, freq):
 
@@ -34,9 +38,9 @@ def analyze(dcsData, freq):
 
 def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 
-	# if type(dcs2) == type(dcs3) == float:
-	# 	dcs0 -= dcs2
-	# 	dcs1 -= dcs3
+	if type(dcs2) == type(dcs3) == float:
+		dcs0 -= dcs2
+		dcs1 -= dcs3
 	wavelength = 300/(freq*4.0*INDEX_OF_REFRACTION_SALT_WATER)
 	#300 = speedOfLight 3*10^8 / megahertz 10^6
 
@@ -55,14 +59,14 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 		normDCS0 = dcs0/amplitude
 		normDCS1 = dcs1/amplitude
 
-		if normDCS0 >= np.amax(normDCIconv):
+		if normDCS0 >= normDCIconvMax:
 
 			riseIndex = ((normConvShiftBeg <=normDCS1) & (normConvShiftEnd > normDCS1)).nonzero()[0][0]
 			slope = float(normDCIconvshift[riseIndex] - normDCIconvshift[riseIndex-1])
 			est = (normDCS1 - normDCIconvshift[riseIndex])/slope
 			phase = ((riseIndex + est)/wavelength)%1.0
 
-		elif normDCS0 <= np.amin(normDCIconv):
+		elif normDCS0 <= normDCIconvMin:
 
 			fallIndex = ((normConvShiftBeg >=normDCS1) & (normConvShiftEnd < normDCS1)).nonzero()[0][0]
 			slope = float(normDCIconvshift[fallIndex] - normDCIconvshift[fallIndex-1])
@@ -73,7 +77,7 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 
 			riseIndex = ((normConvBeg <=normDCS0) & (normConvEnd > normDCS0)).nonzero()[0][0]
 			fallIndex = ((normConvBeg >=normDCS0) & (normConvEnd < normDCS0)).nonzero()[0][0]
-			if ((normDCS1 > min(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1])) and (normDCS1 > max(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1]))) or normDCS1 <= np.amin(normDCIconvshift):
+			if ((normDCS1 > min(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1])) and (normDCS1 > max(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1]))) or normDCS1 <= normDCIshiftMin:
 				section = [riseIndex, riseIndex+1]
 			else:
 				section = [fallIndex, fallIndex+1]
