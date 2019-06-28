@@ -14,7 +14,7 @@ def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 	normDCIconvshift = []
 
 
-	if dcs2 != None and dcs3 != None:
+	if (dcs2 != None) and (dcs3 != None):
 		dcs0 -= dcs2
 		dcs1 -= dcs3
 
