@@ -10,6 +10,10 @@ def analyze(dcsData):
 
 def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 
+	normDCIconv = []
+	normDCIconvshift = []
+
+
 	if dcs2 != None and dcs3 != None:
 		dcs0 -= dcs2
 		dcs1 -= dcs3
@@ -78,4 +82,5 @@ def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 			assert(type(wavelength) == float)
 			phase = ((section[0] + est)/wavelength)%1.0
 	
+	print("PHASE: ", phase)
 	return phase
