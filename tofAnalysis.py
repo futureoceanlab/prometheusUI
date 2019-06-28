@@ -4,6 +4,7 @@ import numpy as np
 
 def analyze(dcsData):
 
+	print("DCS0: ", dcsData[:,:,0])
 	result = list(map(lambda w,x,y,z: dcsInverse(w,x,y,z), dcsData[:,:,0], dcsData[:,:,1], dcsData[:,:,2], dcsData[:,:,3]))
 	print("RESULT: ", result)
 	return np.array(result).reshape(320,240, order='F')
