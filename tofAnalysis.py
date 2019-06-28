@@ -16,7 +16,8 @@ def analyze(dcsData, freq):
 	print(dcs0)
 
 	f = lambda w,x,y,z: dcsInverse(freq, w,x,y,z)
-	result = f(dcs0, dcs1, dcs2, dcs3)
+	vectf = np.vectorize(f)
+	result = vectf(dcs0, dcs1, dcs2, dcs3)
 	print("TYPE2: ", type(result))
 
 	# result = list(map(lambda w,x,y,z: dcsInverse(freq,w,x,y,z), dcs0, dcs1, dcs2, dcs3))
