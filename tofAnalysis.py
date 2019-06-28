@@ -95,7 +95,7 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 			# binaryPart2List = list(map(lambda x: 1 if x>normDCS0 else 0, part2List))
 
 			riseIndex = ((normDCIconv[:len(normDCIconv)-1] <=normDCS0) & (normDCIconv[1:] > normDCS0)).nonzero()
-			print("RESULT: ", result)
+			print("RESULT: ", riseIndex)
 
 			fallIndex = ((normDCIconv[:len(normDCIconv)-1] >=normDCS0) & (normDCIconv[1:] < normDCS0)).nonzero()
 
