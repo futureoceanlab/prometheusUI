@@ -69,11 +69,20 @@ def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 
 		else:
 
+			part1List = normDCIconv[:len(normDCIconv)-1]
+			part2List = normDCIconv[1:]
+
+			binaryPart1List = list(map(lambda x: 1 if x<=normDCS0 else 0, part1List))
+			binaryPart2List = list(map(lambda x: 1 if x>normDCS0 else 0, part2List))
+
+			riseIndex = intersect(binaryPart1List, binaryPart2List).index(1)
+
+			print("BPL1: ", binaryPart1List)
+			print("BPL2: ", binaryPart2List)
+			print(riseIndex)
+
 			part1 = list(filter(lambda x: x <= normDCS0, normDCIconv[:len(normDCIconv)-1]))
 			part2 = list(filter(lambda x: x > normDCS0, normDCIconv[1:]))
-			print("Part1: ", part1)
-			print("part2: ", part2)
-			print("normDCS0", normDCS0)
 			riseIndex = intersect(part1, part2)[0]
 
 			part1 = filter(lambda x: x >= normDCS0, normDCIconv[:len(normDCIconv)-1])
