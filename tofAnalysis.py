@@ -40,10 +40,14 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 		normDCS1 = dcs1/amplitude
 
 		if normDCS0 >= max(normDCIconv):
-			#find the rising index
-			part1 = filter(lambda x: x <= normDCS1, normDCIconvshift[:len(normDCIconvshift)-1])
-			part2 = filter(lambda x: x > normDCS1, normDCIconvshift[1:])
-			riseIndex = list(set(part1) & set(part2))[0]
+
+			part1List = normDCIconvshift[:len(normDCIconv)-1]
+			part2List = normDCIconvshift[1:]
+
+			binaryPart1List = list(map(lambda x: 1 if x<=normDCS1 else 0, part1List))
+			binaryPart2List = list(map(lambda x: 1 if x>normDCS1 else 0, part2List))
+
+			riseIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
 
 			#use it to find the slope
 			slope = float(normDCIconvshift[riseIndex] - normDCIconvshift[riseIndex-1])
@@ -56,9 +60,13 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 
 		elif normDCS0 <= min(normDCIconv):
 
-			part1 = filter(lambda x: x >= normDCS1, normDCIconvshift[:len(normDCIconvshift)-1])
-			part2 = filter(lambda x: x < normDCS1, normDCIconvshift[1:])
-			fallIndex = list(set(part1) & set(part2))[0]
+			part1List = normDCIconvshift[:len(normDCIconv)-1]
+			part2List = normDCIconvshift[1:]
+
+			binaryPart1List = list(map(lambda x: 1 if x>=normDCS1 else 0, part1List))
+			binaryPart2List = list(map(lambda x: 1 if x<normDCS1 else 0, part2List))
+
+			fallIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
 
 			slope = float(normDCIconvshift[fallIndex] - normDCIconvshift[fallIndex-1])
 
@@ -83,9 +91,6 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 
 			fallIndex = logical_intersect_index(binaryPart1List, binaryPart2List)
 
-			print("DDDDD", riseIndex, fallIndex)
-
-
 			if ((normDCS1 > min(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1])) and (normDCS1 > max(normDCIconvshift[riseIndex], normDCIconvshift[riseIndex+1]))) or normDCS1 <= min(normDCIconvshift):
 				section = [riseIndex, riseIndex+1]
 			else:
@@ -97,5 +102,4 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 			assert(type(wavelength) == float)
 			phase = ((section[0] + est)/wavelength)%1.0
 	
-	print("PHASE: ", phase)
 	return phase
