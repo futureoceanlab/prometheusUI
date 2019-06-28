@@ -19,7 +19,7 @@ def intersect(a, b):
 
 def dcsInverse(dcs0, dcs1, dcs2=None, dcs3=None):
 	print("INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN")
-	print(intersect(normDCIconvshift, normDCIconv))
+	print(len(intersect(normDCIconvshift, normDCIconv)))
 
 
 	if type(dcs2) == type(dcs3) == float:
