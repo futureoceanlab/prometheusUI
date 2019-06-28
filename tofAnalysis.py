@@ -82,4 +82,5 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 			est = (normDCS0 - normDCIconv[section[0]])/slope
 
 			phase = ((section[0] + est)/wavelength)%1.0
+			
 	return phase
