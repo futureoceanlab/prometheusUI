@@ -68,7 +68,6 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 			est = (normDCS1 - normDCIconvshift[riseIndex])/slope
 
 			#find the phase
-			assert(type(wavelength) == float)
 			phase = ((riseIndex + est)/wavelength)%1.0
 
 		elif normDCS0 <= np.amin(normDCIconv):
@@ -86,7 +85,6 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 			est = (normDCS1 - normDCIconvshift[fallIndex])/slope
 
 			#find the phase
-			assert(type(wavelength) == float)
 			phase = ((riseIndex + est)/wavelength)%1.0
 
 		else:
@@ -95,7 +93,7 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 			# binaryPart2List = list(map(lambda x: 1 if x>normDCS0 else 0, part2List))
 
 			riseIndex = ((normDCIconv[:len(normDCIconv)-1] <=normDCS0) & (normDCIconv[1:] > normDCS0)).nonzero()[0][0]
-			print("RESULT: ", riseIndex)
+			# print("RESULT: ", riseIndex)
 
 			fallIndex = ((normDCIconv[:len(normDCIconv)-1] >=normDCS0) & (normDCIconv[1:] < normDCS0)).nonzero()[0][0]
 
@@ -114,6 +112,5 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 			slope = normDCIconv[section[1]] - normDCIconv[section[0]]
 			est = (normDCS0 - normDCIconv[section[0]])/slope
 
-			assert(type(wavelength) == float)
 			phase = ((section[0] + est)/wavelength)%1.0
 	return phase
