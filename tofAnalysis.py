@@ -134,31 +134,31 @@ def f_convshift_inverse(y):
 
 
 def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
-	phase = 0 
+	
 	if type(dcs2) == type(dcs3) == float:
 		dcs0 -= dcs2
 		dcs1 -= dcs3
 	# wavelength = 300/(freq*4.0*INDEX_OF_REFRACTION_SALT_WATER)
 	amplitude = float(abs(dcs0) + abs(dcs1))
 
-		if math.isnan(dcs0) or math.isnan(dcs1):
-			quality = 'NaN'
-			phase = -1
+	if math.isnan(dcs0) or math.isnan(dcs1):
+		quality = 'NaN'
+		phase = -1
 
-		elif dcs0 == dcs1 == 0:
-			phase = -1
-			quality = 0
+	elif dcs0 == dcs1 == 0:
+		phase = -1
+		quality = 0
 
+	else:
+		quality = math.sqrt(dcs0**2 + dcs1**2)
+		normDCS0 = dcs0/amplitude
+		normDCS1 = dcs1/amplitude
+
+		x1, x2 = f f_conv_inverse(normDCS0)
+
+		if normDCS1 > 0:
+			phase = x1
 		else:
-			quality = math.sqrt(dcs0**2 + dcs1**2)
-			normDCS0 = dcs0/amplitude
-			normDCS1 = dcs1/amplitude
-
-			x1, x2 = f f_conv_inverse(normDCS0)
-
-			if normDCS1 > 0:
-				phase = x1
-			else:
-				phase = x2
+			phase = x2
 
 	return phase
