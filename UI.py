@@ -27,8 +27,12 @@ PI_DELAY_OPTIONS = [0,1]
 MOD_FREQ_OPTIONS = [0,1]
 NUM_EXPOSURES = len(EXPOSURE_OPTIONS)
 MODE_OPTIONS = ["CAPTURE", "MENU"]
-HDR_SETTINGS = {0:[[],[],[]],
-			   1:[[],[],[]]}
+HDR_SETTINGS = {0:[[1],[30,100,300,1000,3000],[0],[0]],
+			    1:[[1],[300],[0],[0,1]],
+			    2:[[0,1],[30,100,300,1000,3000],[0,1],[0,1]]}
+			    # setting 0: an exposure test
+			    #         1: mod freq test
+			    #         2: entire blast
 TEMP_LIVEVIEW = ['diver.jpg','whale.jpg']
 MENUTREE = {'root':{
 							'Camera Settings': {'CamSubsetting1': 'f22',
@@ -544,7 +548,7 @@ class Application(tk.Frame):
 		self.dataArea = dataLabel
 
 		#DCS grid -- display = 0
-		dcsFigure = readBinary.readDCSimage('DCS08.bin', self.clockFreq)
+		dcsFigure, heatFig = readBinary.readDCSimage('DCS08.bin', self.clockFreq)
 		canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
 		canvas.draw()
 		canvas.get_tk_widget().pack()
@@ -1005,6 +1009,10 @@ class Application(tk.Frame):
 		self.dimensionMode = 1 - self.dimensionMode
 		# uiFunctionCalls.toggle2d3dMode(self.dimensionMode)
 
+	def set_2d3d(self, x):
+		self.dimensionMode = x
+		# uiFunctionCalls.toggle2d3dMode(self.dimensionMode)
+
 	def toggleModulationFrequency(self):
 		self.modFreq = 1 - self.modFreq
 		# uiFunctionCalls.setModulationFrequency(self.modFreq)
@@ -1056,12 +1064,12 @@ class Application(tk.Frame):
 		self.I2Cdata["temperature"] = t 
 		self.I2Cdata["pressure"] = p 
 
-	def doHDRtest(self, expOptions, piOptions, modFreqOptions):
+	def doHDRtest(self, _2d3dModeOptions, expOptions, piOptions, modFreqOptions):
 		print("DOING HDR TEST")
 
 		self.dimensionMode = 1
-		for dimMode in [0,1]:			#2d and 3d mode
-			self.toggle_2d3d()
+		for dimMode in _2d3dModeOptions:			#2d and 3d mode
+			self.set_2d3d(dimMode)
 			for exp in expOptions:
 				self.change_exposure(self.dimensionMode)
 				for pi in piOptions:
@@ -1076,8 +1084,8 @@ class Application(tk.Frame):
 		return singleRepresentativePhoto
 
 	def HDRWrapper(self, setting):
-		exp, pi, modfreq = HDR_SETTINGS[setting]
-		return self.doHDRtest(exp,pi, modFreq)
+		_2d3d, exp, pi, modfreq = HDR_SETTINGS[setting]
+		return self.doHDRtest(_2d3d, exp,pi, modFreq)
 
 
 	def restartBBB(self):

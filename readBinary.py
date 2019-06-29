@@ -29,22 +29,24 @@ def readDCSimage(img, freq):
 	with open(img, 'r') as file:
 		data = np.fromfile(file, dtype=np.uint16)
 		dcsData = data.reshape(320,240,4, order='F')
-		# fig = plt.figure(figsize=(7.5,5.625), dpi=80)
+
+
+		fig = plt.figure(figsize=(7.5,5.625), dpi=80)
+		for i in range(0,4):
+			image = dcsData[:,:,i]
+			rotatedImg = ndimage.rotate(image, 90)
+			fig.add_subplot(2,2,i+1)
+			plt.axis('off')
+			plt.imshow(rotatedImg)
+
+		
+
+
 		heatmap = tofAnalysis.analyze(dcsData, freq)
-		heatFig = plt.figure(figsize=(8,6))
+		heatFig = plt.figure(figsize=(7.5,5.625))
 		plt.imshow(heatmap)
 		plt.axis('off')
-
-
-		# for i in range(0,4):
-		# 	image = dcsData[:,:,i]
-		# 	rotatedImg = ndimage.rotate(image, 90)
-		# 	fig.add_subplot(2,2,i+1)
-		# 	plt.axis('off')
-		# 	plt.imshow(rotatedImg)
-
-		plt.savefig('heatmap_estimate.png')
-	return heatFig#, heatFig #add back fig 
+	return fig, heatFig
 
 def readSingleImage(img):
 	with open(img, 'r') as file:
