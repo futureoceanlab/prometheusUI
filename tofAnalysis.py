@@ -32,7 +32,7 @@ def analyze(dcsData, freq):
 
 	avg = np.mean(result)
 	print("avg ", avg)
-	g = lambda x: if x == -1: avg else: x
+	g = lambda x: avg if x == -1 else x
 	vectg = np.vectorize(g)
 	resultSansOutliers = vectg(result)
 
