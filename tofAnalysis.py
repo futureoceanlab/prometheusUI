@@ -31,21 +31,12 @@ def analyze(dcsData, freq):
 	result = vectf(dcs0, dcs1, dcs2, dcs3)
 
 	avg = np.mean(result)
-	print("avg ", avg)
 	g = lambda x: avg if x == -1 else x
 	vectg = np.vectorize(g)
 	resultSansOutliers = vectg(result)
 
-	# rmax = np.amax(result)
-	# rmin = np.amin(result)
-	# dif = rmax - rmin
-
-	# result -= rmin
-	# result /= dif
-
 	b = time.time()
 	print("TIME: ", b-a)
-	print("RESULT: ", resultSansOutliers)
 	# print("DONE ", result)
 	return resultSansOutliers.reshape(320,240, order='C')
 
