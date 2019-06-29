@@ -31,7 +31,7 @@ def analyze(dcsData, freq):
 	result = vectf(dcs0, dcs1, dcs2, dcs3)
 
 	print("TIME: ", time.time()-a)
-
+	print("RESULT: ", result)
 	# result = list(map(lambda w,x,y,z: dcsInverse(freq,w,x,y,z), dcs0, dcs1, dcs2, dcs3))
 	# print("DONE ", result)
 	return result.reshape(320,240, order='C')
@@ -91,7 +91,6 @@ PERIOD = 1.0
 AMP = 1.0
 slope_DCSconv = (max(normDCIconv) - min(normDCIconv))/(0.5*PERIOD)
 slope_DCSconvshift = (max(normDCIconv) - min(normDCIconv))/(0.5*PERIOD)
-print("SLOPES: ", slope_DCSconv, slope_DCSconvshift)
 
 def f_conv(x):
 	if x <= (1.0/8)*PERIOD: 
