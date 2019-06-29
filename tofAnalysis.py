@@ -32,8 +32,7 @@ def analyze(dcsData, freq):
 
 	b = time.time()
 	print("TIME: ", b-a)
-	# print("RESULT: ", result)
-	# result = list(map(lambda w,x,y,z: dcsInverse(freq,w,x,y,z), dcs0, dcs1, dcs2, dcs3))
+	print("RESULT: ", result)
 	# print("DONE ", result)
 	return result.reshape(320,240, order='C')
 
@@ -140,6 +139,7 @@ def inverseEstimate(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 	# 	dcs0 -= dcs2
 	# 	dcs1 -= dcs3
 	wavelength = 300/(freq*4.0*INDEX_OF_REFRACTION_SALT_WATER)
+	print("wavelength: ", wavelength)
 
 	amplitude = float(abs(dcs0) + abs(dcs1))
 
@@ -155,4 +155,5 @@ def inverseEstimate(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 			phase = phase1
 		else:
 			phase = phase2
-	return (phase/wavelength)%1.0
+
+	return phase/wavelength
