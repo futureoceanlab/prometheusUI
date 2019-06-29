@@ -91,7 +91,7 @@ PERIOD = 1.0
 AMP = 1.0
 slope_DCSconv = (max(normDCIconv) - min(normDCIconv))/(0.5*PERIOD)
 slope_DCSconvshift = (max(normDCIconv) - min(normDCIconv))/(0.5*PERIOD)
-
+print("SLOPES: ", slope_DCSconv, slope_DCSconvshift)
 
 def f_conv(x):
 	if x <= (1.0/8)*PERIOD: 
