@@ -56,7 +56,7 @@ def get_4DCS_PNG(img):
 		data = np.fromfile(file, dtype=np.uint16)
 
 		if '_2D_' in img: 
-			return read_2D_BINImage
+			return read_2D_BINImage(img)
 		dcsData = data.reshape(320,240,4, order='F')
 
 		dcsFig = plt.figure(figsize=(7.5,5.625), dpi=80)
