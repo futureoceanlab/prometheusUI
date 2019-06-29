@@ -572,12 +572,6 @@ class Application(tk.Frame):
 		richDataGrid.grid_forget()
 
 		# #Color Map -- display = 3
-		# colorMapCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		# imgColor = self.get_colorMap_image()
-		# mainFrame.imgColor = imgColor
-		# colorMapCanvas.create_image(0,0,anchor=NW, image=imgColor)
-		# colorMapCanvas.pack_forget()
-
 		heatCanvas = FigureCanvasTkAgg(heatFig, mainFrame)
 		heatCanvas.draw()
 		heatCanvas.get_tk_widget().pack()
