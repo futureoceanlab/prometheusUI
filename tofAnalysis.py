@@ -151,5 +151,4 @@ def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
 
 		if normDCS1 > 0:
 			return phase1
-	print(phase)
 	return phase
