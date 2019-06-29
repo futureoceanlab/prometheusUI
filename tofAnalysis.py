@@ -151,7 +151,7 @@ def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
 
 		phase1, phase2 = f_conv_inverse(normDCS0)
 
-		if f_convshift(phase1) > 0:
+		if f_convshift(dcs1) > 0:
 			phase = phase1
 		else:
 			phase = phase2
