@@ -584,7 +584,7 @@ class Application(tk.Frame):
 
 		# #PreviousImg -- display = 4
 		prevFigureCanvas = FigureCanvasTkAgg(heatFig, mainFrame)
-		mainFrame.previousFigure = prevImgCanvas
+		mainFrame.previousFigure = prevFigureCanvas
 		prevFigureCanvas.draw()
 		prevFigureCanvas.get_tk_widget().pack()
 		prevFigureCanvas.get_tk_widget().pack_forget()
