@@ -553,22 +553,6 @@ class Application(tk.Frame):
 		canvas.draw()
 		canvas.get_tk_widget().pack()
 
-
-		# DCSgrid = tk.Canvas(mainFrame, width=600, height=450)
-		# DCSgrid.pack()
-		# imgs = self.get_four_DCS_images()
-
-		# mainFrame.a = a = imgs[0]
-		# mainFrame.b = b = imgs[1]
-		# mainFrame.c = c = imgs[2]
-		# mainFrame.d = d = imgs[3]
-
-		# DCSgrid.create_image(0,0, anchor=NW, image=a)
-		# DCSgrid.create_image(300,0,anchor=NW, image=b)
-		# DCSgrid.create_image(0,225,anchor=NW, image=c)
-		# DCSgrid.create_image(300,225,anchor=NW, image=d)
-
-
 		#Point Cloud -- display = 1
 		pointCloudCanvas = tk.Canvas(mainFrame, width=600, height=450)
 		img = self.get_PC_image()
@@ -588,11 +572,16 @@ class Application(tk.Frame):
 		richDataGrid.grid_forget()
 
 		# #Color Map -- display = 3
-		colorMapCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		imgColor = self.get_colorMap_image()
-		mainFrame.imgColor = imgColor
-		colorMapCanvas.create_image(0,0,anchor=NW, image=imgColor)
-		colorMapCanvas.pack_forget()
+		# colorMapCanvas = tk.Canvas(mainFrame, width=800, height=480)
+		# imgColor = self.get_colorMap_image()
+		# mainFrame.imgColor = imgColor
+		# colorMapCanvas.create_image(0,0,anchor=NW, image=imgColor)
+		# colorMapCanvas.pack_forget()
+
+		heatCanvas = FigureCanvasTkAgg(heatFig, mainFrame)
+		heatCanvas.draw()
+		heatCanvas.get_tk_widget().pack()
+		heatCanvas.get_tk_widget().pack_forget()
 
 		# #PreviousImg -- display = 4
 		prevImgCanvas = tk.Canvas(mainFrame, width=800, height=480)

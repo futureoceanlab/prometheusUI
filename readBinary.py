@@ -44,7 +44,7 @@ def readDCSimage(img, freq):
 		heatFig = plt.figure(figsize=(7.5,5.625))
 		plt.imshow(heatmap)
 		plt.axis('off')
-	return heatFig, dcsFig
+	return dcsFig, heatFig
 
 def readSingleImage(img):
 	with open(img, 'r') as file:
