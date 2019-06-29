@@ -156,7 +156,7 @@ def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
 	if dcs0 == dcs1 == 0:
 		print('AAAAAAAA')
 		print(dcs0,dcs1,dcs2,dcs3)
-		return -1
+		return 0.5
 	else:
 		normDCS0 = dcs0/amplitude
 		normDCS1 = dcs1/amplitude
