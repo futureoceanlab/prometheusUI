@@ -30,8 +30,8 @@ def analyze(dcsData, freq):
 	vectf = np.vectorize(f)
 	result = vectf(dcs0, dcs1, dcs2, dcs3)
 
-	rmax = result.amax()
-	rmin = result.amin()
+	rmax = np.amax(result)
+	rmin = np.amin(result)
 	dif = rmax - rmin
 
 	result -= rmin
