@@ -924,15 +924,17 @@ class Application(tk.Frame):
 			newFile.write(str(data) + ":" + str(self.mainImportantData[data])+'\n')
 		newFile.close()
 
-	def writeVideoMetaFile(self, path, start, end, numFrames):
-		newFile = open(path+"meta.txt", 'w+')
+	def writeVideoMetaFile(self, vid_id, path, start, end, numFrames):
+		newFile = open(path+"video_"+str(vid_id)+"_meta.txt", 'w+')
 		
 		#timeStart, timeEnd, number of frames, camera settings
 
-		newFile.write(start + '\n' + end + '\n' + str(numFrames) + '\n')
+		newFile.write(vid_id + '\n' + start + '\n' + end + '\n' + str(numFrames) + '\n')
 		newFile.close()
 
-	def take_photo(self, write_to_temp):
+	def take_photo(self, write_to_temp, vid_id=0):
+		#if vid_id is zero, it means we don't care about associating this picture with a video
+		#i.e. a picture is being taken or we are in live view
 		print("TAKE PHOTO")
 
 		if write_to_temp:
@@ -959,7 +961,7 @@ class Application(tk.Frame):
 			#index, imageLocation, metadataLocation
 			metaFile = fileLocation+"_meta.txt"
 			self.writeImageMetaFile(metaFile)
-			writer.writerow([self.numPreviousImages, returnedFileName, metaFile])
+			writer.writerow([self.numPreviousImages, returnedFileName, vid_id, metaFile])
 			self.numPreviousImages +=1
 		
 			csvFile.close()
@@ -978,7 +980,7 @@ class Application(tk.Frame):
 		#HDR setting in the middle of a capture... that would be confusing
 		if self.HDRmode:
 			while self.showingLiveView:
-				photoLocation = self.HDRWrapper(self.HDRTestSetting)
+				photoLocation = self.HDRWrapper(self.HDRTestSetting, timeStart)
 				img = self.get_live_image(photoLocation)
 				self.setLiveImage(img)
 				frameCounter +=1
@@ -986,7 +988,7 @@ class Application(tk.Frame):
 				
 		else:
 			while self.showingLiveView:
-				photoLocation = self.take_photo(write_to_temp)
+				photoLocation = self.take_photo(write_to_temp, timeStart)
 				img = self.get_live_image(photoLocation)
 				self.setLiveImage(img)
 				frameCounter +=1
@@ -995,7 +997,7 @@ class Application(tk.Frame):
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
 		if frameCounter > 0:
-			self.writeVideoMetaFile("./images/", timeStart, timeEnd, frameCounter)
+			self.writeVideoMetaFile(timeStart, "./images/", timeStart, timeEnd, frameCounter)
 
 
 	def change_mode(self):
@@ -1088,7 +1090,7 @@ class Application(tk.Frame):
 		self.I2Cdata["temperature"] = t 
 		self.I2Cdata["pressure"] = p 
 
-	def doHDRtest(self, _2d3dModeOptions, expOptions, piOptions, modFreqOptions):
+	def doHDRtest(self, _2d3dModeOptions, expOptions, piOptions, modFreqOptions, vid_id):
 		print("DOING HDR TEST")
 
 		self.dimensionMode = 1
@@ -1100,16 +1102,16 @@ class Application(tk.Frame):
 					self.setPiDelay(pi)
 					for freq in modFreqOptions:
 						self.setModulationFrequency(freq)
-						singleRepresentativePhoto = self.take_photo(False)
+						singleRepresentativePhoto = self.take_photo(False, vid_id)
 						#if you're doing an HDR test, you always want to store the image (ie temp write is False)
 		#an HDR test takes a LOT of images, but we only return one (doesn't matter which)
 		#to display to the user in the live view
 		#it might be really trippy to be baraded by images with different exposures
 		return singleRepresentativePhoto
 
-	def HDRWrapper(self, setting):
+	def HDRWrapper(self, setting, vid_id=0):
 		_2d3d, exp, pi, modfreq = HDR_SETTINGS[setting]
-		return self.doHDRtest(_2d3d, exp,pi, modFreq)
+		return self.doHDRtest(_2d3d, exp,pi, modFreq, vid_id)
 
 
 	def restartBBB(self):
