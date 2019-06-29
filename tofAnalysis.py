@@ -25,7 +25,8 @@ def analyze(dcsData, freq):
 	a = time.time()
 
 	#this is the mapping function mapping the each value of the dcs array through the dcsInverse function
-	f = lambda w,x,y,z: dcsInverse(freq, w,x,y,z)
+	# f = lambda w,x,y,z: dcsInverse(freq, w,x,y,z)
+	f = lambda w,x,y,z: inverseEstimate(w,x,y,z)
 	vectf = np.vectorize(f)
 	result = vectf(dcs0, dcs1, dcs2, dcs3)
 
@@ -86,5 +87,82 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 			est = (normDCS0 - normDCIconv[section[0]])/slope
 
 			phase = ((section[0] + est)/wavelength)%1.0
+
+	return phase
+
+
+PERIOD = 1.0
+AMP = 1.0
+slope_DCSconv = (max(normDCIconv) + min(normDCIconv))/(0.5*PERIOD)
+slope_DCSconvshift = (max(normDCIconv) + min(normDCIconv))/(0.5*PERIOD)
+
+
+def f_conv(x):
+	if x <= (1.0/8)*PERIOD: 
+		y = -slope_DCSconv*x - 0.5*AMP
+	elif x >= (5.0/8)*PERIOD:
+		y = -slope_DCSconv*x + 3.5*AMP
+	else:
+		y = slope_DCSconv*x - 1.5*AMP
+	return y
+
+def f_convshift(x):
+	if x <= (3.0/8)*PERIOD:
+		y = -slope_DCSconvshift*x + 0.5*AMP
+	elif x >= (7.0/8)*PERIOD:
+		y = -slope_DCSconvshift*x + 4.5*AMP
+	else:
+		y = slope_DCSconvshift*x - 2.5*AMP
+	return y
+
+def f_conv_inverse(y):
+
+	if y < -0.5:
+		x1 = (y + (0.5*AMP))/(-slope_DCSconv)
+	else:
+		x1 = (y - (3.5*AMP))/(-slope_DCSconv)
+	
+	x2 = (y + (1.5*AMP))/slope_DCSconv
+
+	return (x1, x2)
+
+def f_convshift_inverse(y):
+	if y > 0.5:
+		x1 = (y - (4.5*AMP))/(-slope_DCSconvshift)
+	else:
+		x1 = (y - (0.5*AMP))/(-slope_DCSconvshift)
+
+	x2 = (y + (2.5*AMP))/slope_DCSconvshift
+
+	return (x1, x2)
+
+
+def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
+	phase = 0 
+	if type(dcs2) == type(dcs3) == float:
+		dcs0 -= dcs2
+		dcs1 -= dcs3
+	# wavelength = 300/(freq*4.0*INDEX_OF_REFRACTION_SALT_WATER)
+	amplitude = float(abs(dcs0) + abs(dcs1))
+
+		if math.isnan(dcs0) or math.isnan(dcs1):
+		quality = 'NaN'
+		phase = -1
+
+		elif dcs0 == dcs1 == 0:
+			phase = -1
+			quality = 0
+
+		else:
+			quality = math.sqrt(dcs0**2 + dcs1**2)
+			normDCS0 = dcs0/amplitude
+			normDCS1 = dcs1/amplitude
+
+			x1, x2 = f f_conv_inverse(normDCS0)
+
+			if normDCS1 > 0:
+				phase = x1
+			else:
+				phase = x2
 
 	return phase
