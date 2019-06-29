@@ -154,9 +154,7 @@ def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
 	amplitude = float(abs(dcs0) + abs(dcs1))
 
 	if dcs0 == dcs1 == 0:
-		print('AAAAAAAA')
-		print(dcs0,dcs1,dcs2,dcs3)
-		return 0.7
+		return 0.8
 	else:
 		normDCS0 = dcs0/amplitude
 		normDCS1 = dcs1/amplitude
