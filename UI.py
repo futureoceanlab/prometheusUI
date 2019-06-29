@@ -429,8 +429,8 @@ class Application(tk.Frame):
 
 	def get_previousFigure(self, x):
 		prevImagePath = self.previousImages[x%len(self.previousImages)]
-
-		return readBinary.readDCSimage(prevImagePath, self.clockFreq)
+		dcsFig, heatFig = readBinary.readDCSimage(prevImagePath, self.clockFreq)
+		return heatFig
 
 	def get_previousImageIndex(self, offset=0):
 		return (self.currentPreviousImage+offset)%len(self.previousImages)
