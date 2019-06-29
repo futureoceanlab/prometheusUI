@@ -146,7 +146,7 @@ def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
 		normDCS0 = dcs0/amplitude
 		normDCS1 = dcs1/amplitude
 
-		phase1, phase2 = f_conv_inverse(normDCS0)
+		phase1, phase = f_conv_inverse(normDCS0)
 
 		if normDCS1 > 0:
 			return phase1
