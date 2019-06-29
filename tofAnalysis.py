@@ -30,8 +30,9 @@ def analyze(dcsData, freq):
 	vectf = np.vectorize(f)
 	result = vectf(dcs0, dcs1, dcs2, dcs3)
 
-	print("TIME: ", time.time()-a)
-	print("RESULT: ", result)
+	b = time.time()
+	print("TIME: ", b-a)
+	# print("RESULT: ", result)
 	# result = list(map(lambda w,x,y,z: dcsInverse(freq,w,x,y,z), dcs0, dcs1, dcs2, dcs3))
 	# print("DONE ", result)
 	return result.reshape(320,240, order='C')
@@ -150,4 +151,5 @@ def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
 
 		if normDCS1 > 0:
 			return phase1
+	print(phase)
 	return phase
