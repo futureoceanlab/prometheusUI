@@ -34,8 +34,11 @@ def analyze(dcsData, freq):
 	rmin = np.amin(result)
 	dif = rmax - rmin
 
+	print("RESULT:", result[1])
 	result -= rmin
+	print("RESULT:", result[1])
 	result /= dif
+	print("RESULT:", result[1])
 
 	b = time.time()
 	print("TIME: ", b-a)
