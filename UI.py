@@ -594,7 +594,8 @@ class Application(tk.Frame):
 		# heatCanvas.get_tk_widget().pack_forget()
 
 		colorCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		colorImg = ImageTk.PhotoImage(Image.open(self.get_previousImage_2(self.currentPreviousImage)))
+		print()
+		colorImg = ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage))
 		mainFrame.colorImg = colorImg
 		colorCanvas.create_image(0,0,anchor=NW, image=colorImg)
 		colorCanvas.pack_forget()
@@ -607,7 +608,7 @@ class Application(tk.Frame):
 		# prevFigureCanvas.get_tk_widget().pack_forget()
 
 		prevImageCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		prevImg = ImageTk.PhotoImage(Image.open(self.get_previousImage_2(self.currentPreviousImage)))
+		prevImg = ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage))
 		mainFrame.prevImg = prevImg
 		prevImageCanvas.create_image(0,0,anchor=NW, image=prevImg)
 		prevImageCanvas.pack_forget()
