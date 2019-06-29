@@ -429,23 +429,13 @@ class Application(tk.Frame):
 
 	def get_previousImage_2(self, x):
 		binPath = self.previousImages[x%len(self.previousImages)]
-		pngPath = self.convertBINtoPNG(binPath)
+		pngPath = readBinary.convertBINtoPNG(binPath, self.clockFreq)
 		return Image.open(pngPath)
 
 	def get_previousFigure(self, x):
 		prevImagePath = self.previousImages[x%len(self.previousImages)]
-		dcsFig, heatFig = readBinary.readDCSimage(prevImagePath, self.clockFreq)
+		dcsFig, heatFig = readBinary.getDCSFigures(prevImagePath, self.clockFreq)
 		return heatFig
-
-	def convertBINtoPNG(self, binPath):
-		with open(binPath, 'r') as file:
-			data = np.fromfile(file, dtype=np.uint16)
-			dcsData = data.reshape(320,240,4, order='F')
-
-			if '_2D_' in binPath:
-				return readBinary.readSingleImage(binPath)
-			else:
-				return readBinary.readDCSimagePNG(binPath, self.clockFreq)
 
 	def get_previousImageIndex(self, offset=0):
 		return (self.currentPreviousImage+offset)%len(self.previousImages)
@@ -568,7 +558,7 @@ class Application(tk.Frame):
 		self.dataArea = dataLabel
 
 		#DCS grid -- display = 0
-		dcsFigure, heatFig = readBinary.readDCSimage(self.previousImages[self.currentPreviousImage], self.clockFreq)
+		dcsFigure, heatFig = readBinary.getDCSFigures(self.previousImages[self.currentPreviousImage], self.clockFreq)
 		canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
 		canvas.draw()
 		canvas.get_tk_widget().pack()
@@ -603,6 +593,12 @@ class Application(tk.Frame):
 		prevFigureCanvas.draw()
 		prevFigureCanvas.get_tk_widget().pack()
 		prevFigureCanvas.get_tk_widget().pack_forget()
+
+		prevImageCanvas = tk.Canvas(mainFrame, width=800, height=480)
+		prevImg = self.get_previousImage_2(self.currentPreviousImage)
+		mainFrame.prevImg = prevImg
+		prevImageCanvas.create_image(0,0,anchor=NW, image=prevImg)
+		prevImageCanvas.pack_forget()
 
 		# #Live View -- display = 5
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)

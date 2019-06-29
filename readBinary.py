@@ -25,13 +25,15 @@ def readBinaryFile(filepath):
 		img_names.append(img_name)
 	return img_names
 
-def readDCSimage(img, freq):
+def getDCSFigures(img, freq):
 	with open(img, 'r') as file:
 		data = np.fromfile(file, dtype=np.uint16)
 		dcsData = data.reshape(320,240,4, order='F')
 
-		#DCS figure
 		dcsFig = plt.figure(figsize=(7.5,5.625), dpi=80)
+	
+		#3d
+		#DCS figure
 		for i in range(0,4):
 			image = dcsData[:,:,i]
 			rotatedImg = np.rot90(image, 1)
@@ -49,7 +51,7 @@ def readDCSimage(img, freq):
 		plt.axis('off')
 	return dcsFig, heatFig
 
-def readDCSimagePNG(img, freq):
+def readDCSBINimage(img, freq):
 	with open(img, 'r') as file:
 		data = np.fromfile(file, dtype=np.uint16)
 		dcsData = data.reshape(320,240,4, order='F')
@@ -66,7 +68,7 @@ def readDCSimagePNG(img, freq):
 
 	return outputFileName
 
-def readSingleImage(img):
+def readSingleBINImage(img):
 	with open(img, 'r') as file:
 		data = np.fromfile(file, dtype=np.uint16)
 		dcsData = data.reshape(320,240,1, order='F')
@@ -78,6 +80,16 @@ def readSingleImage(img):
 		outputFileName = img.replace('.bin', '.png')
 		plt.savefig(outputFileName)
 	return outputFileName
+
+def convertBINtoPNG(binPath, freq):
+	with open(binPath, 'r') as file:
+		data = np.fromfile(file, dtype=np.uint16)
+		dcsData = data.reshape(320,240,4, order='F')
+
+		if '_2D_' in binPath:
+			return readBinary.readSingleBINImage(binPath)
+		else:
+			return readBinary.readDCSBINimage(binPath, freq)
         
 if __name__ == '__main__':
     print("hi")
