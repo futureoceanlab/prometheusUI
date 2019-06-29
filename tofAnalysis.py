@@ -140,12 +140,8 @@ def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
 	# wavelength = 300/(freq*4.0*INDEX_OF_REFRACTION_SALT_WATER)
 	amplitude = float(abs(dcs0) + abs(dcs1))
 
-	if not (math.isnan(dcs0) and math.isnan(dcs1)):
+	if dcs0 == dcs1 == 0:
 		phase = -1
-
-	elif dcs0 == dcs1 == 0:
-		phase = -1
-
 	else:
 		normDCS0 = dcs0/amplitude
 		normDCS1 = dcs1/amplitude
