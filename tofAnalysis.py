@@ -142,8 +142,8 @@ def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
 	amplitude = float(abs(dcs0) + abs(dcs1))
 
 		if math.isnan(dcs0) or math.isnan(dcs1):
-		quality = 'NaN'
-		phase = -1
+			quality = 'NaN'
+			phase = -1
 
 		elif dcs0 == dcs1 == 0:
 			phase = -1
