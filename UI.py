@@ -438,7 +438,7 @@ class Application(tk.Frame):
 		return heatFig
 
 	def convertBINtoPNG(self, binPath):
-		with open(img, 'r') as file:
+		with open(binPath, 'r') as file:
 			data = np.fromfile(file, dtype=np.uint16)
 			dcsData = data.reshape(320,240,4, order='F')
 
