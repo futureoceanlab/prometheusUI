@@ -35,8 +35,10 @@ def analyze(dcsData, freq):
 	dif = rmax - rmin
 
 	print("RESULT:", result[1])
+	print(rmin)
 	result -= rmin
 	print("RESULT:", result[1])
+	print(dif)
 	result /= dif
 	print("RESULT:", result[1])
 
