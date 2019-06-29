@@ -89,8 +89,8 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 
 PERIOD = 1.0
 AMP = 1.0
-slope_DCSconv = (max(normDCIconv) + min(normDCIconv))/(0.5*PERIOD)
-slope_DCSconvshift = (max(normDCIconv) + min(normDCIconv))/(0.5*PERIOD)
+slope_DCSconv = (max(normDCIconv) - min(normDCIconv))/(0.5*PERIOD)
+slope_DCSconvshift = (max(normDCIconv) - min(normDCIconv))/(0.5*PERIOD)
 
 
 def f_conv(x):
