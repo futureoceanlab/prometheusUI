@@ -50,11 +50,9 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 	if math.isnan(dcs0) or math.isnan(dcs1):
 		quality = 'NaN'
 		phase = -1
-
 	elif dcs0 == dcs1 == 0:
 		phase = -1
 		quality = 0
-
 	else:
 		quality = math.sqrt(dcs0**2 + dcs1**2)
 		normDCS0 = dcs0/amplitude
@@ -66,14 +64,12 @@ def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 			slope = float(normDCIconvshift[riseIndex] - normDCIconvshift[riseIndex-1])
 			est = (normDCS1 - normDCIconvshift[riseIndex])/slope
 			phase = ((riseIndex + est)/wavelength)%1.0
-
 		elif normDCS0 <= normDCIconvMin:
 
 			fallIndex = ((normConvShiftBeg >=normDCS1) & (normConvShiftEnd < normDCS1)).nonzero()[0][0]
 			slope = float(normDCIconvshift[fallIndex] - normDCIconvshift[fallIndex-1])
 			est = (normDCS1 - normDCIconvshift[fallIndex])/slope
 			phase = ((riseIndex + est)/wavelength)%1.0
-
 		else:
 
 			riseIndex = ((normConvBeg <=normDCS0) & (normConvEnd > normDCS0)).nonzero()[0][0]
