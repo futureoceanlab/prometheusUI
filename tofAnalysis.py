@@ -26,9 +26,16 @@ def analyze(dcsData, freq):
 
 	#this is the mapping function mapping the each value of the dcs array through the dcsInverse function
 	# f = lambda w,x,y,z: dcsInverse(freq, w,x,y,z)
-	f = lambda w,x,y,z: inverseEstimate(freq, w,x,y,z)
+	f = lambda w,x,y,z: inverseEstimate(w,x,y,z)
 	vectf = np.vectorize(f)
 	result = vectf(dcs0, dcs1, dcs2, dcs3)
+
+	rmax = result.amax()
+	rmin = result.amin()
+	dif = rmax - rmin
+
+	result -= rmin
+	result /= dif
 
 	b = time.time()
 	print("TIME: ", b-a)
@@ -132,18 +139,18 @@ def f_convshift_inverse(y):
 	return (x1, x2)
 
 
-def inverseEstimate(freq, dcs0, dcs1, dcs2=None, dcs3=None):
+def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
 
 	
 	# if type(dcs2) == type(dcs3) == float:
 	# 	dcs0 -= dcs2
 	# 	dcs1 -= dcs3
-	wavelength = 300/(freq*4.0*INDEX_OF_REFRACTION_SALT_WATER)
+	# wavelength = 300/(freq*4.0*INDEX_OF_REFRACTION_SALT_WATER)
 
 	amplitude = float(abs(dcs0) + abs(dcs1))
 
 	if dcs0 == dcs1 == 0:
-		phase = -1
+		return -1
 	else:
 		normDCS0 = dcs0/amplitude
 		normDCS1 = dcs1/amplitude
@@ -151,8 +158,5 @@ def inverseEstimate(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 		falling, rising = f_conv_inverse(normDCS0)
 
 		if normDCS1 > 0:
-			phase = falling
-		else:
-			phase = rising
-
-	return phase
+			return falling
+		return rising
