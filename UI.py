@@ -422,16 +422,12 @@ class Application(tk.Frame):
 		return self.showingLiveView
 
 	def get_previousImage(self, x):
+		prevImagePath = self.previousImages[x%len(self.previousImages)]
+
 		return Image.open(self.previousImages[x%len(self.previousImages)])
 
 	def get_previousImageIndex(self, offset=0):
 		return (self.currentPreviousImage+offset)%len(self.previousImages)
-
-	def get_four_DCS_images(self):
-		return [ImageTk.PhotoImage(self.get_previousImage(self.get_previousImageIndex()).resize((300,225),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(self.get_previousImage(self.get_previousImageIndex(-1)).resize((300,225),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(self.get_previousImage(self.get_previousImageIndex(-2)).resize((300,225),Image.ANTIALIAS)),
-				ImageTk.PhotoImage(self.get_previousImage(self.get_previousImageIndex(-3)).resize((300,225),Image.ANTIALIAS))]
 
 	def get_PC_image(self):
 		return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((600,450),Image.ANTIALIAS))
@@ -580,9 +576,9 @@ class Application(tk.Frame):
 
 		# #PreviousImg -- display = 4
 		prevImgCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		previousImage = ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS))
-		mainFrame.previousImage = previousImage
-		prevImgCanvas.create_image(0,0,anchor=NW, image=previousImage)
+		# previousImage = ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS))
+		# mainFrame.previousImage = previousImage
+		# prevImgCanvas.create_image(0,0,anchor=NW, image=previousImage)
 		prevImgCanvas.pack_forget()
 
 		# #Live View -- display = 5

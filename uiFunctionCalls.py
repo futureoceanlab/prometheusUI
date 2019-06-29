@@ -1,6 +1,7 @@
 import os
 from gpiozero import LED
 import readBinary as binReader
+import prom_GPIO as pg
 
 def capturePhotoCommand2D(filename):
     # Sanity power check may be required 
@@ -12,7 +13,7 @@ def capturePhotoCommand2D(filename):
     file1 = filename + "_1.bin"
     prom_cli0 = prom_cli + cmd + " -i 0  >> %s" %(file0)
     prom_cli1 = prom_cli + cmd + " -i 1  >> %s" %(file1)
-    camsel = LED(18)
+    camsel = LED(pg.led_cam_select_GPIO())
     # capture 0 
     camsel.off()
     os.system(prom_cli0)
@@ -35,7 +36,7 @@ def capturePhotoCommand3D(filename):
     file1 = filename + "_1.bin"
     prom_cli0 = prom_cli + cmd + " -i 0 >> %s" %(file0)
     prom_cli1 = prom_cli + cmd + " -i 1 >> %s" %(file1)
-    camsel = LED(18)
+    camsel = LED(pg.led_cam_select_GPIO())
     # capture 0 
     camsel.off()
     os.system(prom_cli0)

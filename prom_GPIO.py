@@ -13,13 +13,13 @@ BBB_0_reset = 23
 BBB_1_reset = 24
 
 #i2c
-I2C_DATA = 2
-I2C_CLOCK = 3
+I2C_DATA = 2		#never explicitly called
+I2C_CLOCK = 3		#never explicitly called
 
 #misc
 LED_CAM_SELECT = 18
-SHUTTER_OUTPUT = 21
-MOD_CLOCK = 4
+SHUTTER_OUTPUT = 21 #called only from C files
+MOD_CLOCK = 4		#called only from C files
 LED_ENABLE = 0000000
 
 

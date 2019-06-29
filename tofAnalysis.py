@@ -37,7 +37,6 @@ def analyze(dcsData, freq):
 
 	b = time.time()
 	print("TIME: ", b-a)
-	# print("DONE ", result)
 	return resultSansOutliers.reshape(320,240, order='C')
 
 
