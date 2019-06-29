@@ -35,15 +35,16 @@ def readDCSimage(img, freq):
 		for i in range(0,4):
 			image = dcsData[:,:,i]
 			rotatedImg = ndimage.rotate(image, 90)
+			rotatedImg = np.rot90(image, 1)
 			dcsFig.add_subplot(2,2,i+1)
 			plt.axis('off')
-			plt.imshow(image)
+			plt.imshow(rotatedImg)
 
 		#depth image figure
 		heatmap = tofAnalysis.analyze(dcsData, freq)
-		# rotatedHeatMap = ndimage.rotate(heatmap, 90)
+		rotatedHeatMap = np.rot90(heatmap, 1)
 		heatFig = plt.figure(figsize=(7.5,5.625))
-		plt.imshow(heatmap)
+		plt.imshow(rotatedHeatMap)
 		plt.axis('off')
 	return dcsFig, heatFig
 
