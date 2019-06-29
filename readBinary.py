@@ -100,6 +100,7 @@ def read_2D_BINImage(img):
 		fig.add_subplot(1,1,1)
 		plt.imshow(image)
 		outputFileName = img.replace('.bin', '_depth.png')
+		print('saving file as: ', outputFileName)
 		plt.savefig(outputFileName)
 	return outputFileName
 
