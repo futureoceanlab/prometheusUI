@@ -28,6 +28,7 @@ PI_DELAY_OPTIONS = [0,1]
 MOD_FREQ_OPTIONS = [0,1]
 NUM_EXPOSURES = len(EXPOSURE_OPTIONS)
 MODE_OPTIONS = ["CAPTURE", "MENU"]
+CAPTURE_MODE_DISPLAYS = ["DCS IMAGES", "POINT CLOUD", "RICH DATA", "COLOR MAP", "PREVIOUS IMAGES", "LIVE", ""]
 HDR_SETTINGS = {0:[[1],[30,100,300,1000,3000],[0],[0]],
 			    1:[[1],[300],[0],[0,1]],
 			    2:[[0,1],[30,100,300,1000,3000],[0,1],[0,1]]}
@@ -410,7 +411,7 @@ class Application(tk.Frame):
 		return self.exposure3d
 
 	def get_title(self):
-		return MODE_OPTIONS[self.mode]
+		return MODE_OPTIONS[self.mode] +  '  -  ' CAPTURE_MODE_DISPLAYS[self.get_display()]
 
 	def get_mainImportantData(self):
 		return self.mainImportantData
@@ -506,12 +507,12 @@ class Application(tk.Frame):
 		#update data
 		self.dataArea['text'] = self.get_mainImportantData_string()
 
-		#update main area dimensions
 		#the display below is the display that the screen is CHANGING TO
 		#not the one that it is coming from
 		display = self.get_display()
 		print("DISPLAY: ", display)
 
+		#update main area dimensions
 		#erase everything that goes in main area
 		self.menuFrame.grid_forget()
 		for i in [0,1,2,3,4,5]:
