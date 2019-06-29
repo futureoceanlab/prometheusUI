@@ -106,9 +106,6 @@ def read_2D_BINImage(img):
 
 def convertBINtoPNG(binPath, freq):
 	with open(binPath, 'r') as file:
-		data = np.fromfile(file, dtype=np.uint16)
-		dcsData = data.reshape(320,240,4, order='F')
-
 		if '_2D_' in binPath:
 			return readBinary.read_2D_BINImage(binPath)
 		else:
