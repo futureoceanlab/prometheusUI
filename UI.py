@@ -427,6 +427,11 @@ class Application(tk.Frame):
 
 		return Image.open(self.previousImages[x%len(self.previousImages)])
 
+	def get_previousFigure(self, x):
+		prevImagePath = self.previousImages[x%len(self.previousImages)]
+
+		return readBinary.readDCSimage(prevImagePath, self.clockFreq)
+
 	def get_previousImageIndex(self, offset=0):
 		return (self.currentPreviousImage+offset)%len(self.previousImages)
 
@@ -578,10 +583,11 @@ class Application(tk.Frame):
 		heatCanvas.get_tk_widget().pack_forget()
 
 		# #PreviousImg -- display = 4
-		prevImgCanvas = FigureCanvasTkAgg(heatFig, mainFrame)
-		prevImgCanvas.draw()
-		prevImgCanvas.get_tk_widget().pack()
-		prevImgCanvas.get_tk_widget().pack_forget()
+		prevFigureCanvas = FigureCanvasTkAgg(heatFig, mainFrame)
+		mainFrame.previousFigure = prevImgCanvas
+		prevFigureCanvas.draw()
+		prevFigureCanvas.get_tk_widget().pack()
+		prevFigureCanvas.get_tk_widget().pack_forget()
 
 		# #Live View -- display = 5
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
@@ -733,7 +739,11 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[4].create_image(0,0,anchor=NW, image=img)
 		self.mainArea.winfo_children()[4].pack()
 
-	# def setPreviousFigure():
+	def setPreviousFigure(self, fig):
+		prevFigure = FigureCanvasTkAgg(fig, self.mainArea)
+		self.mainArea.previousFigure = prevFigure
+		self.mainArea.winfo_children()[4].draw()
+		self.mainArea.winfo_children()[4].get_tk_widget().pack()
 
 
 	def setLiveImage(self, img):
@@ -797,7 +807,9 @@ class Application(tk.Frame):
 			self.selectUp(self.currentSelectionNode)
 
 	def DISP_long_pressed(self):
-		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
+		# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
+		self.setPreviousFigure(self.get_previousFigure(self.currentPreviousImage))
+
 		if not self.get_mode() and not self.get_video_state():  
 			#capture mode and not taking video
 			self.toggle_prev_image()
