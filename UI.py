@@ -411,7 +411,7 @@ class Application(tk.Frame):
 		return self.exposure3d
 
 	def get_title(self):
-		return MODE_OPTIONS[self.mode] +  '  -  ' CAPTURE_MODE_DISPLAYS[self.get_display()]
+		return MODE_OPTIONS[self.mode] +  '  -  ' + CAPTURE_MODE_DISPLAYS[self.get_display()]
 
 	def get_mainImportantData(self):
 		return self.mainImportantData
