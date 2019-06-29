@@ -135,9 +135,10 @@ def f_convshift_inverse(y):
 
 def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
 	
-	if type(dcs2) == type(dcs3) == float:
-		dcs0 -= dcs2
-		dcs1 -= dcs3
+	
+	# if type(dcs2) == type(dcs3) == float:
+	# 	dcs0 -= dcs2
+	# 	dcs1 -= dcs3
 	# wavelength = 300/(freq*4.0*INDEX_OF_REFRACTION_SALT_WATER)
 	amplitude = float(abs(dcs0) + abs(dcs1))
 
@@ -151,8 +152,6 @@ def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
 
 		if normDCS1 > 0:
 			phase = phase1
-			print("IIIIIIIIIIIIIIIII")
 		else:
 			phase = phase2
-			print("OOOOOOOOOOOOOOOOO")
 	return phase
