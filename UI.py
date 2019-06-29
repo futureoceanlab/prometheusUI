@@ -219,7 +219,7 @@ class Application(tk.Frame):
 		self.previousImages = []
 		self.numPreviousImages = 0
 		self.createMainCSV()	
-		self.previousImages = ['ocean.jpg','reef.jpg'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
+		self.previousImages = ['DCS08.bin', 'DCS09.bin','DCS10.bin'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
 		self.currentPreviousImage = len(self.previousImages)-1
 		self.dimensionMode = 0
 
@@ -545,8 +545,9 @@ class Application(tk.Frame):
 		self.dataArea = dataLabel
 
 		#DCS grid -- display = 0
-		dcsFigure, heatFig = readBinary.readDCSimage('DCS08.bin', self.clockFreq)
-		canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
+		dcsFigure, heatFig = readBinary.readDCSimage(self.previousImages[self.currentPreviousImage], self.clockFreq)
+		# canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
+		canvas = FigureCanvasTkAgg()
 		canvas.draw()
 		canvas.get_tk_widget().pack()
 
@@ -576,9 +577,6 @@ class Application(tk.Frame):
 
 		# #PreviousImg -- display = 4
 		prevImgCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		# previousImage = ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS))
-		# mainFrame.previousImage = previousImage
-		# prevImgCanvas.create_image(0,0,anchor=NW, image=previousImage)
 		prevImgCanvas.pack_forget()
 
 		# #Live View -- display = 5
@@ -730,6 +728,9 @@ class Application(tk.Frame):
 		self.mainArea.previousImage = img
 		self.mainArea.winfo_children()[4].create_image(0,0,anchor=NW, image=img)
 		self.mainArea.winfo_children()[4].pack()
+
+	def setPreviousFigure():
+
 
 	def setLiveImage(self, img):
 		self.mainArea.liveImg = img
