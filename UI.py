@@ -545,7 +545,7 @@ class Application(tk.Frame):
 
 		#the 3 main frames
 
-		topLabel = Label(self, text=self.title, relief=RIDGE, borderwidth=5, font=('Helvetica', 16))
+		topLabel = Label(self, text=self.get_title(), relief=RIDGE, borderwidth=5, font=('Helvetica', 16))
 		topLabel.grid(row=0, column=0, sticky=W+N+E+S, columnspan=2)
 
 		mainFrame = tk.Frame(self, relief=RIDGE, borderwidth=5)
