@@ -7,14 +7,15 @@ import sys
 import time
 import signal
 import shlex, subprocess
+import prom_GPIO as pg
 
 def connect_both_cameras():
     # control pin for BBB0
-    bbb0_ctrl = LED(7)
-    bbb1_ctrl = LED(8)
+    bbb0_ctrl = LED(pg.bbb0_ctrl_GPIO())
+    bbb1_ctrl = LED(pg.bbb1_ctrl_GPIO())
     # sys_reset polling pins
-    reset0 = Button(23)
-    reset1 = Button(24)
+    reset0 = Button(pg.bbb0_reset_GPIO())
+    reset1 = Button(pg.bbb1_reset_GPIO())
     bbb0_works = False
     bbb1_works = False
     # if a board is on, check the prom cli!

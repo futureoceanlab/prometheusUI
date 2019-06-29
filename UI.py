@@ -20,6 +20,7 @@ from random import randint
 import i2c_functions as i2c
 import readBinary
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import prom_GPIO as pg
 
 BUTTON_LONGPRESS_TIME = 1
 EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
@@ -242,11 +243,11 @@ class Application(tk.Frame):
 		self.currentLogFile = ""
 
 		#button information
-		self.MENU_BTN = gpio.Button(21, pull_up=True)
-		self.DISP_BTN = gpio.Button(20, pull_up=True)
-		self.EXPO_BTN = gpio.Button(16, pull_up=True)
-		self.ACTN_BTN = gpio.Button(12, pull_up=True)
-		# self.HDR_BTN =  gpio.Button(X, pull_up=True)
+		self.MENU_BTN = gpio.Button(pg.menuGPIO(), pull_up=True)
+		self.DISP_BTN = gpio.Button(pg.dispGPIO(), pull_up=True)
+		self.EXPO_BTN = gpio.Button(pg.expoGPIO(), pull_up=True)
+		self.ACTN_BTN = gpio.Button(pg.actnGPIO(), pull_up=True)
+		# self.HDR_BTN =  gpio.Button(pg.hdrGPIO(), pull_up=True)
 		self.MENU_BTN.when_pressed = self.MENU_pressed
 		# self.HDR_BTN.when_pressed  = self.HDR_pressed
 		self.dispBtnState = 0
