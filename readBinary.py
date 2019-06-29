@@ -54,11 +54,10 @@ def readDCSimagePNG(img, freq):
 		data = np.fromfile(file, dtype=np.uint16)
 		dcsData = data.reshape(320,240,4, order='F')
 
-	
 		#depth image figure
 		heatmap = tofAnalysis.analyze(dcsData, freq)
 		heatFig = plt.figure(figsize=(7.5,5.625))
-		plt.imshow(heatmap)
+		plt.imshow(np.rot90(heatmap, 1))
 		plt.axis('off')
 		
 		outputFileName = img.replace('.bin', '.png')

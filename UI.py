@@ -219,7 +219,7 @@ class Application(tk.Frame):
 		self.previousImages = []
 		self.numPreviousImages = 0
 		self.createMainCSV()	
-		self.previousImages = ['DCS08_3D_.bin', 'DCS09_3D_.bin','DCS10_3D_.bin'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
+		self.previousImages = ['DCS08_3D_.bin', 'DCS09_3D_.bin','DCS10_3D_.bin','image13_2D_.bin'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
 		self.currentPreviousImage = len(self.previousImages)-1
 		self.dimensionMode = 0
 
