@@ -219,7 +219,7 @@ class Application(tk.Frame):
 		self.previousImages = []
 		self.numPreviousImages = 0
 		self.createMainCSV()	
-		self.previousImages = ['DCS08.bin', 'DCS09.bin','DCS10.bin'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
+		self.previousImages = ['DCS08_3D_.bin', 'DCS09_3D_.bin','DCS10_3D_.bin'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
 		self.currentPreviousImage = len(self.previousImages)-1
 		self.dimensionMode = 0
 
@@ -427,10 +427,25 @@ class Application(tk.Frame):
 
 		return Image.open(self.previousImages[x%len(self.previousImages)])
 
+	def get_previousImage_2(self, x):
+		binPath = self.previousImages[x%len(self.previousImages)]
+		pngPath = self.convertBINtoPNG(binPath)
+		return Image.open(pngPath)
+
 	def get_previousFigure(self, x):
 		prevImagePath = self.previousImages[x%len(self.previousImages)]
 		dcsFig, heatFig = readBinary.readDCSimage(prevImagePath, self.clockFreq)
 		return heatFig
+
+	def convertBINtoPNG(self, binPath):
+		with open(img, 'r') as file:
+			data = np.fromfile(file, dtype=np.uint16)
+			dcsData = data.reshape(320,240,4, order='F')
+
+			if '_2D_' in binPath:
+				return readBinary.readSingleImage(binPath)
+			else:
+				return readBinary.readDCSimagePNG(binPath, self.clockFreq)
 
 	def get_previousImageIndex(self, offset=0):
 		return (self.currentPreviousImage+offset)%len(self.previousImages)
@@ -801,7 +816,8 @@ class Application(tk.Frame):
 				#not taking video
 				if self.viewingPreviousImages:
 					#get the next previous image
-					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
+					# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
+					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
 					self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
 					self.update_display()
 				else:
@@ -811,7 +827,8 @@ class Application(tk.Frame):
 
 	def DISP_long_pressed(self):
 		# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
-		self.setPreviousFigure(self.get_previousFigure(self.currentPreviousImage))
+		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
+		# self.setPreviousFigure(self.get_previousFigure(self.currentPreviousImage))
 
 		if not self.get_mode() and not self.get_video_state():  
 			#capture mode and not taking video

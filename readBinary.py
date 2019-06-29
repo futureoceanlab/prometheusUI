@@ -49,6 +49,24 @@ def readDCSimage(img, freq):
 		plt.axis('off')
 	return dcsFig, heatFig
 
+def readDCSimagePNG(img, freq):
+	with open(img, 'r') as file:
+		data = np.fromfile(file, dtype=np.uint16)
+		dcsData = data.reshape(320,240,4, order='F')
+
+	
+		#depth image figure
+		heatmap = tofAnalysis.analyze(dcsData, freq)
+		heatFig = plt.figure(figsize=(7.5,5.625))
+		plt.imshow(heatmap)
+		plt.axis('off')
+		
+		outputFileName = img.replace('.bin', '.png')
+
+		plt.savefig(outputFileName)
+
+	return outputFileName
+
 def readSingleImage(img):
 	with open(img, 'r') as file:
 		data = np.fromfile(file, dtype=np.uint16)
@@ -58,7 +76,9 @@ def readSingleImage(img):
 		image = dcsData[:,:,0]
 		fig.add_subplot(1,1,1)
 		plt.imshow(image)
-		plt.savefig('singleImage.png')
+		outputFileName = img.replace('.bin', '.png')
+		plt.savefig(outputFileName)
+	return outputFileName
         
 if __name__ == '__main__':
     print("hi")
