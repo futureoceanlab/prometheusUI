@@ -150,7 +150,7 @@ def inverseEstimate(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 
 		falling, rising = f_conv_inverse(normDCS0)
 
-		if f_convshift(falling) > 0:
+		if normDCS1 > 0:
 			phase = falling
 		else:
 			phase = rising
