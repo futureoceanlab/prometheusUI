@@ -113,13 +113,13 @@ def f_convshift(x):
 def f_conv_inverse(y):
 
 	if y < -0.5:
-		x1 = (y + (0.5*AMP))/(-slope_DCSconv)
+		fallingX = (y + (0.5*AMP))/(-slope_DCSconv)
 	else:
-		x1 = (y - (3.5*AMP))/(-slope_DCSconv)
+		fallingX = (y - (3.5*AMP))/(-slope_DCSconv)
 	
-	x2 = (y + (1.5*AMP))/slope_DCSconv
+	risingX = (y + (1.5*AMP))/slope_DCSconv
 
-	return (x1, x2)
+	return (fallingX, risingX)
 
 def f_convshift_inverse(y):
 	if y > 0.5:
@@ -139,7 +139,6 @@ def inverseEstimate(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 	# 	dcs0 -= dcs2
 	# 	dcs1 -= dcs3
 	wavelength = 300/(freq*4.0*INDEX_OF_REFRACTION_SALT_WATER)
-	print("wavelength: ", wavelength)
 
 	amplitude = float(abs(dcs0) + abs(dcs1))
 
@@ -149,11 +148,11 @@ def inverseEstimate(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 		normDCS0 = dcs0/amplitude
 		normDCS1 = dcs1/amplitude
 
-		phase1, phase2 = f_conv_inverse(normDCS0)
+		falling, rising = f_conv_inverse(normDCS0)
 
-		if f_convshift(phase1) > 0:
-			phase = phase1
+		if f_convshift(falling) > 0:
+			phase = falling
 		else:
-			phase = phase2
+			phase = rising
 
-	return phase/wavelength
+	return phase
