@@ -729,7 +729,7 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[4].create_image(0,0,anchor=NW, image=img)
 		self.mainArea.winfo_children()[4].pack()
 
-	def setPreviousFigure():
+	# def setPreviousFigure():
 
 
 	def setLiveImage(self, img):
