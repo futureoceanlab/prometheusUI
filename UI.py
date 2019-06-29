@@ -742,6 +742,8 @@ class Application(tk.Frame):
 	def setPreviousFigure(self, fig):
 		prevFigure = FigureCanvasTkAgg(fig, self.mainArea)
 		self.mainArea.previousFigure = prevFigure
+		print("OOOOOOOOOOOOOO")
+		print(self.mainArea.winfo_children())
 		self.mainArea.winfo_children()[4].draw()
 		self.mainArea.winfo_children()[4].get_tk_widget().pack()
 
