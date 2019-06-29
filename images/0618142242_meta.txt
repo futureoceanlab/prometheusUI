@@ -1,8 +1,0 @@
-0618142242temperature:None
-direction:None
-pressure:None
-EXP 2D:30
-S/N ratio:0.6
-Mem:43.2GB
-EXP 3D:30
-Battery:50%
