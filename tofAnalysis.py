@@ -155,4 +155,4 @@ def inverseEstimate(freq, dcs0, dcs1, dcs2=None, dcs3=None):
 			phase = phase1
 		else:
 			phase = phase2
-	return phase/wavelength
+	return (phase/wavelength)%1.0
