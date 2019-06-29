@@ -140,7 +140,7 @@ def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
 	# 	dcs0 -= dcs2
 	# 	dcs1 -= dcs3
 	# wavelength = 300/(freq*4.0*INDEX_OF_REFRACTION_SALT_WATER)
-	print(dcs0, "   ", dc1)
+	print(dcs0, "   ", dcs1)
 	amplitude = float(abs(dcs0) + abs(dcs1))
 
 	if dcs0 == dcs1 == 0:
