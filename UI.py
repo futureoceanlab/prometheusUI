@@ -546,8 +546,7 @@ class Application(tk.Frame):
 
 		#DCS grid -- display = 0
 		dcsFigure, heatFig = readBinary.readDCSimage(self.previousImages[self.currentPreviousImage], self.clockFreq)
-		# canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
-		canvas = FigureCanvasTkAgg()
+		canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
 		canvas.draw()
 		canvas.get_tk_widget().pack()
 
@@ -576,8 +575,10 @@ class Application(tk.Frame):
 		heatCanvas.get_tk_widget().pack_forget()
 
 		# #PreviousImg -- display = 4
-		prevImgCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		prevImgCanvas.pack_forget()
+		prevImgCanvas = FigureCanvasTkAgg(heatFig, mainFrame)
+		prevImgCanvas.draw()
+		prevImgCanvas.get_tk_widget().pack()
+		prevImgCanvas.get_tk_widget().pack_forget()
 
 		# #Live View -- display = 5
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
