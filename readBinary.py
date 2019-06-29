@@ -54,6 +54,9 @@ def getDCSFigures(img, freq):
 def get_4DCS_PNG(img):
 	with open(img, 'r') as file:
 		data = np.fromfile(file, dtype=np.uint16)
+
+		if '_2D_' in img: 
+			return read_2D_BINImage
 		dcsData = data.reshape(320,240,4, order='F')
 
 		dcsFig = plt.figure(figsize=(7.5,5.625), dpi=80)
