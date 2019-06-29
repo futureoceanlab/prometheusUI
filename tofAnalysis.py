@@ -30,23 +30,24 @@ def analyze(dcsData, freq):
 	vectf = np.vectorize(f)
 	result = vectf(dcs0, dcs1, dcs2, dcs3)
 
-	rmax = np.amax(result)
-	rmin = np.amin(result)
-	dif = rmax - rmin
+	avg = np.mean(result)
+	print("avg ", avg)
+	g = lambda x: if x == -1: avg else: x
+	vectg = np.vectorize(g)
+	resultSansOutliers = vectg(result)
 
-	print("RESULT:", result[1])
-	print(rmin)
-	result -= rmin
-	print("RESULT:", result[1])
-	print(dif)
-	result /= dif
-	print("RESULT:", result[1])
+	# rmax = np.amax(result)
+	# rmin = np.amin(result)
+	# dif = rmax - rmin
+
+	# result -= rmin
+	# result /= dif
 
 	b = time.time()
 	print("TIME: ", b-a)
-	print("RESULT: ", result)
+	print("RESULT: ", resultSansOutliers)
 	# print("DONE ", result)
-	return result.reshape(320,240, order='C')
+	return resultSansOutliers.reshape(320,240, order='C')
 
 
 def dcsInverse(freq, dcs0, dcs1, dcs2=None, dcs3=None):
@@ -154,7 +155,7 @@ def inverseEstimate(dcs0, dcs1, dcs2=None, dcs3=None):
 	amplitude = float(abs(dcs0) + abs(dcs1))
 
 	if dcs0 == dcs1 == 0:
-		return 0.75 
+		return -1 
 	else:
 		normDCS0 = dcs0/amplitude
 		normDCS1 = dcs1/amplitude

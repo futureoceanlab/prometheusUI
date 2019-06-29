@@ -33,6 +33,7 @@ def readDCSimage(img, freq):
 		heatmap = tofAnalysis.analyze(dcsData, freq)
 		heatFig = plt.figure(figsize=(8,6))
 		plt.imshow(heatmap)
+		plt.axis('off')
 
 
 		# for i in range(0,4):
