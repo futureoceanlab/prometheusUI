@@ -564,6 +564,7 @@ class Application(tk.Frame):
 		# canvas.get_tk_widget().pack()
 
 		dcsCanvas = tk.Canvas(mainFrame, width=800, height=480)
+		print("$$$$$$$$$$$$$$$", readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage]))
 		fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])))
 		mainFrame.fourDCSImages = fourDCSImages
 		dcsCanvas.create_image(0,0,anchor=NW, image=fourDCSImages)
