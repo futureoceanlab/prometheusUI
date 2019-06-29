@@ -51,7 +51,7 @@ def getDCSFigures(img, freq):
 		plt.axis('off')
 	return dcsFig, heatFig
 
-def get_4DCS_PNG():
+def get_4DCS_PNG(img):
 	with open(img, 'r') as file:
 		data = np.fromfile(file, dtype=np.uint16)
 		dcsData = data.reshape(320,240,4, order='F')
