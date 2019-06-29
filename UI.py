@@ -35,7 +35,6 @@ HDR_SETTINGS = {0:[[1],[30,100,300,1000,3000],[0],[0]],
 			    # setting 0: an exposure test
 			    #         1: mod freq test
 			    #         2: entire blast
-TEMP_LIVEVIEW = ['diver.jpg','whale.jpg']
 MENUTREE = {'root':{
 							'Camera Settings': {'CamSubsetting1': 'f22',
 												'CamSubsetting2': '1/250',
@@ -61,7 +60,7 @@ TEMP_MENUTREE ={'root': {
 						"CLOCK FREQ"	 : ('6 Hz', ['6 Hz', '12 Hz', '24 Hz']),
 						"_RESTART BBB_"  : (' '   , [' ','restarting']),
 						"_SHUTDOWN BBB_" : (' '   , [' ','BYE!']), 
-						"HDR SETTING"    : (0     , [0,1,2])
+						"HDR SETTING"    : (0     , ['EXPOSURE','MOD FREQ','BLAST'])
 
 }
 	
@@ -614,7 +613,7 @@ class Application(tk.Frame):
 
 		# #Live View -- display = 5
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		liveImg = self.get_live_image('whale.jpg')
+		liveImg = self.get_live_image('live_view.jpg')
 		mainFrame.liveImg = liveImg
 		liveViewCanvas.create_image(0,0,anchor=NW, image=liveImg)
 		liveViewCanvas.pack_forget()
