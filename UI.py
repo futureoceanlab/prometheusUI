@@ -424,8 +424,6 @@ class Application(tk.Frame):
 
 	def get_previousImage(self, x):
 		prevImagePath = self.previousImages[x%len(self.previousImages)]
-
-
 		return Image.open(self.previousImages[x%len(self.previousImages)])
 
 	def get_previousImage_2(self, x):

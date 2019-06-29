@@ -86,6 +86,7 @@ def read_3D_BINimage(img, freq):
 		plt.axis('off')
 		
 		outputFileName = img.replace('.bin', '_depth.png')
+		outputFileName = './images/'+outputFileName
 
 		plt.savefig(outputFileName)
 
