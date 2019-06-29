@@ -558,10 +558,16 @@ class Application(tk.Frame):
 		self.dataArea = dataLabel
 
 		#DCS grid -- display = 0
-		dcsFigure, heatFig = readBinary.getDCSFigures(self.previousImages[self.currentPreviousImage], self.clockFreq)
-		canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
-		canvas.draw()
-		canvas.get_tk_widget().pack()
+		# dcsFigure, heatFig = readBinary.getDCSFigures(self.previousImages[self.currentPreviousImage], self.clockFreq)
+		# canvas = FigureCanvasTkAgg(dcsFigure, mainFrame)
+		# canvas.draw()
+		# canvas.get_tk_widget().pack()
+
+		dcsCanvas = tk.Canvas(mainFrame, width=800, height=480)
+		fourDCSImages = readBinary.get_4DCS_PNG()
+		mainFrame.fourDCSImages = fourDCSImages
+		dcsCanvas.create_image(0,0,anchor=NW, image=fourDCSImages)
+		dcsCanvas.pack_forget()
 
 		#Point Cloud -- display = 1
 		pointCloudCanvas = tk.Canvas(mainFrame, width=600, height=450)
@@ -581,18 +587,24 @@ class Application(tk.Frame):
 			rowNum+=1
 		richDataGrid.grid_forget()
 
-		# #Color Map -- display = 3
-		heatCanvas = FigureCanvasTkAgg(heatFig, mainFrame)
-		heatCanvas.draw()
-		heatCanvas.get_tk_widget().pack()
-		heatCanvas.get_tk_widget().pack_forget()
+		# # #Color Map -- display = 3
+		# heatCanvas = FigureCanvasTkAgg(heatFig, mainFrame)
+		# heatCanvas.draw()
+		# heatCanvas.get_tk_widget().pack()
+		# heatCanvas.get_tk_widget().pack_forget()
+
+		colorCanvas = tk.Canvas(mainFrame, width=800, height=480)
+		colorImg = self.get_previousImage_2(self.currentPreviousImage)
+		mainFrame.colorImg = colorImg
+		colorCanvas.create_image(0,0,anchor=NW, image=colorImg)
+		colorCanvas.pack_forget()
 
 		# #PreviousImg -- display = 4
-		prevFigureCanvas = FigureCanvasTkAgg(heatFig, mainFrame)
-		mainFrame.previousFigure = prevFigureCanvas
-		prevFigureCanvas.draw()
-		prevFigureCanvas.get_tk_widget().pack()
-		prevFigureCanvas.get_tk_widget().pack_forget()
+		# prevFigureCanvas = FigureCanvasTkAgg(heatFig, mainFrame)
+		# mainFrame.previousFigure = prevFigureCanvas
+		# prevFigureCanvas.draw()
+		# prevFigureCanvas.get_tk_widget().pack()
+		# prevFigureCanvas.get_tk_widget().pack_forget()
 
 		prevImageCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		prevImg = self.get_previousImage_2(self.currentPreviousImage)
