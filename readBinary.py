@@ -107,9 +107,9 @@ def read_2D_BINImage(img):
 def convertBINtoPNG(binPath, freq):
 	with open(binPath, 'r') as file:
 		if '_2D_' in binPath:
-			return readBinary.read_2D_BINImage(binPath)
+			return read_2D_BINImage(binPath)
 		else:
-			return readBinary.read_3D_BINimage(binPath, freq)
+			return read_3D_BINimage(binPath, freq)
         
 if __name__ == '__main__':
     print("hi")
