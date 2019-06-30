@@ -825,7 +825,7 @@ class Application(tk.Frame):
 				if self.viewingPreviousImages:
 					#get the next previous image
 					# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
-					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((900,675),Image.ANTIALIAS)))
+					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
 					self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
 					self.update_display()
 				else:
