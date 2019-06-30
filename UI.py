@@ -246,11 +246,31 @@ class Application(tk.Frame):
 		#button information
 		self.MENU_BTN = gpio.Button(pg.menuGPIO(), pull_up=True)
 		self.DISP_BTN = gpio.Button(pg.dispGPIO(), pull_up=True)
-		self.EXPO_BTN = gpio.Button(pg.expoGPIO(), pull_up=True)
+		# self.EXPO_BTN = gpio.Button(pg.expoGPIO(), pull_up=True)
 		self.ACTN_BTN = gpio.Button(pg.actnGPIO(), pull_up=True)
 		# self.HDR_BTN =  gpio.Button(pg.hdrGPIO(), pull_up=True)
 		self.MENU_BTN.when_pressed = self.MENU_pressed
 		# self.HDR_BTN.when_pressed  = self.HDR_pressed
+
+
+		self.JS1_MENU_BTN = gpio.Button(pg.js1_menuGPIO())
+		self.JS1_DISP_BTN = gpio.Button(pg.js1_dispGPIO())
+		self.JS1_EXPO_BTN = gpio.Button(pg.js1_expoGPIO())
+		self.JS1_ACTN_BTN = gpio.Button(pg.js1_actnGPIO())
+		self.JS1_HDR_BTN  = gpio.Button(pg.js1_hdrGPIO())
+
+		self.JS1_MENU_BTN.when_pressed = self.MENU_pressed
+		self.JS1_HDR_BTN.when_pressed = self.HDR_pressed
+
+		self.JS2_MENU_BTN = gpio.Button(pg.js2_menuGPIO())
+		self.JS2_DISP_BTN = gpio.Button(pg.js2_dispGPIO())
+		self.JS2_EXPO_BTN = gpio.Button(pg.js2_expoGPIO())
+		self.JS2_ACTN_BTN = gpio.Button(pg.js2_actnGPIO())
+		self.JS2_HDR_BTN  = gpio.Button(pg.js2_hdrGPIO())
+
+		self.JS2_MENU_BTN.when_pressed = self.MENU_pressed
+		self.JS2_HDR_BTN.when_pressed = self.HDR_pressed
+
 		self.dispBtnState = 0
 		self.expoBtnState = 0
 		self.actnBtnState = 0
