@@ -300,12 +300,12 @@ class Application(tk.Frame):
 
 		# DISPLAY BUTTON
 		if (time.time() - self.dispSinceLongheld)>1:
-			if self.DISP_BTN.is_pressed and not self.dispBtnState:
+			if (self.DISP_BTN.is_pressed or self.JS1_DISP_BTN.is_pressed or self.JS2_DISP_BTN.is_pressed) and not self.dispBtnState:
 				#button is being pressed down 
 				self.dispBtnState = 1
 				self.dispHeldStart = time.time()
 
-			if not self.DISP_BTN.is_pressed and self.dispBtnState:
+			if not (self.DISP_BTN.is_pressed or self.JS1_DISP_BTN.is_pressed or self.JS2_DISP_BTN.is_pressed) and self.dispBtnState:
 				#button is being released
 				self.dispBtnState = 0
 				lengthOfPress = time.time() - self.dispHeldStart 
@@ -325,12 +325,12 @@ class Application(tk.Frame):
 
 		# EXPOSURE BUTTON
 		if (time.time() - self.expoSinceLongheld)>1:
-			if self.EXPO_BTN.is_pressed and not self.expoBtnState:
+			if (self.JS1_EXPO_BTN.is_pressed or self.JS2_EXPO_BTN.is_pressed) and not self.expoBtnState:
 				#button is being pressed down 
 				self.expoBtnState = 1
 				self.expoHeldStart = time.time()
 
-			if not self.EXPO_BTN.is_pressed and self.expoBtnState:
+			if not (self.JS1_EXPO_BTN.is_pressed or self.JS2_EXPO_BTN.is_pressed) and self.expoBtnState:
 				#button is being released
 				self.expoBtnState = 0
 				lengthOfPress = time.time() - self.expoHeldStart 
@@ -350,12 +350,12 @@ class Application(tk.Frame):
 
 		#ACTION BUTTON
 		if (time.time() - self.actnSinceLongheld)>1:
-			if self.ACTN_BTN.is_pressed and not self.actnBtnState:
+			if (self.ACTN_BTN.is_pressed or self.JS1_ACTN_BTN.is_pressed or self.JS2_ACTN_BTN.is_pressed) and not self.actnBtnState:
 				#button is being pressed down 
 				self.actnBtnState = 1
 				self.actnHeldStart = time.time()
 
-			if not self.ACTN_BTN.is_pressed and self.actnBtnState:
+			if not (self.ACTN_BTN.is_pressed or self.JS1_ACTN_BTN.is_pressed or self.JS2_ACTN_BTN.is_pressed) and self.actnBtnState:
 				#button is being released
 				self.actnBtnState = 0
 				lengthOfPress = time.time() - self.actnHeldStart 
