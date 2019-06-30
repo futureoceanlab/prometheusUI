@@ -22,6 +22,7 @@ import readBinary
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import prom_GPIO as pg
 
+SCREEEN_WIDTH = 1080
 BUTTON_LONGPRESS_TIME = 1
 EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
 PI_DELAY_OPTIONS = [0,1]
@@ -439,21 +440,21 @@ class Application(tk.Frame):
 		return (self.currentPreviousImage+offset)%len(self.previousImages)
 
 	def get_PC_image(self):
-		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((800,480),Image.ANTIALIAS))
+		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((2400,1440),Image.ANTIALIAS))
 		# return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((600,450),Image.ANTIALIAS))
 
 	def get_colorMap_image(self):
-		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((800,480),Image.ANTIALIAS))
+		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((2400,1440),Image.ANTIALIAS))
 		# return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
 
 	def get_live_image(self, path):
-		return ImageTk.PhotoImage(Image.open(path).resize((800,480),Image.ANTIALIAS))
+		return ImageTk.PhotoImage(Image.open(path).resize((2400,1440),Image.ANTIALIAS))
 
 	def get_live_image_temp(self, x):
 		if x%2==0:
-			img = Image.open('small1.jpg').resize((800,480),Image.ANTIALIAS)
+			img = Image.open('small1.jpg').resize((2400,1440),Image.ANTIALIAS)
 		else:
-			img = Image.open('small2.jpg').resize((800,480),Image.ANTIALIAS)
+			img = Image.open('small2.jpg').resize((2400,1440),Image.ANTIALIAS)
 		return ImageTk.PhotoImage(img)
 		
 	def get_richData_string(self):
@@ -542,13 +543,13 @@ class Application(tk.Frame):
 
 		#the 3 main frames
 
-		topLabel = Label(self, text=self.get_title(), relief=RIDGE, borderwidth=5, font=('Helvetica', 16))
+		topLabel = Label(self, text=self.get_title(), relief=RIDGE, borderwidth=5, font=('Helvetica', 36))
 		topLabel.grid(row=0, column=0, sticky=W+N+E+S, columnspan=2)
 
 		mainFrame = tk.Frame(self, relief=RIDGE, borderwidth=5)
 		mainFrame.grid(row=1,column=0, sticky=W+N+E+S)
 
-		dataLabel = Label(self, text=self.get_mainImportantData_string(), font=('Helvetica', 16), relief=RIDGE, borderwidth=5)
+		dataLabel = Label(self, text=self.get_mainImportantData_string(), font=('Helvetica', 36), relief=RIDGE, borderwidth=5)
 		dataLabel.grid(row=1, column=1, sticky=W+N+E+S)
 
 		self.topArea = topLabel
@@ -562,13 +563,13 @@ class Application(tk.Frame):
 		# canvas.get_tk_widget().pack()
 
 		dcsCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((600,450),Image.ANTIALIAS))
+		fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((1800,1350),Image.ANTIALIAS))
 		mainFrame.fourDCSImages = fourDCSImages
 		dcsCanvas.create_image(0,0,anchor=NW, image=fourDCSImages)
 		dcsCanvas.pack()
 
 		#Point Cloud -- display = 1
-		pointCloudCanvas = tk.Canvas(mainFrame, width=600, height=450)
+		pointCloudCanvas = tk.Canvas(mainFrame, width=800, height=600)
 		img = self.get_PC_image()
 		mainFrame.img = img
 		pointCloudCanvas.create_image(0,0,anchor=NW, image=img)
@@ -824,7 +825,7 @@ class Application(tk.Frame):
 				if self.viewingPreviousImages:
 					#get the next previous image
 					# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
-					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
+					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((1800,1350),Image.ANTIALIAS)))
 					self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
 					self.update_display()
 				else:
@@ -834,7 +835,7 @@ class Application(tk.Frame):
 
 	def DISP_long_pressed(self):
 		# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
-		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
+		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((1800,1350),Image.ANTIALIAS)))
 		# self.setPreviousFigure(self.get_previousFigure(self.currentPreviousImage))
 
 		if not self.get_mode() and not self.get_video_state():  
