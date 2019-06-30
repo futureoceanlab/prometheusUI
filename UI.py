@@ -641,7 +641,7 @@ class Application(tk.Frame):
 
 
 		self.menuFrame = tk.Frame(mainFrame, bg='green')
-		labelName = Label(self.menuFrame, text="TEMPORARY TEXT")
+		labelName = Label(self.menuFrame, text="")
 		self.menuFrame.pack()
 		# self.menuFrame.rowconfigure(0,weight=1)
 		# self.menuFrame.columnconfigure(0,weight=1)
@@ -970,14 +970,14 @@ class Application(tk.Frame):
 
 		fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
 		if not self.dimensionMode:		#2d
-			# returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
-			returnedFile = [] #TEMP
+			returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
+			# returnedFile = [] #TEMP
 		else:
-			# returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
-			returnedFile = [] #TEMP
+			returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
+			# returnedFile = [] #TEMP
 		self.previousImages = self.previousImages + returnedFile
-		# returnedFileName = str(returnedFile[0])
-		returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
+		returnedFileName = str(returnedFile[0])
+		# returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
 
 		if not write_to_temp:
 			#update CSV
@@ -1042,14 +1042,14 @@ class Application(tk.Frame):
 			exposureIndex = EXPOSURE_OPTIONS.index(self.exposure3d)
 			self.exposure3d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
 			self.mainImportantData['EXP 3D'] = self.exposure3d
-			# uiFunctionCalls.change3dExposure(self.exposure3d)
+			uiFunctionCalls.change3dExposure(self.exposure3d)
 			print("EXP3D: ", self.exposure3d)
 		else:
 			#2d
 			exposureIndex = EXPOSURE_OPTIONS.index(self.exposure2d)
 			self.exposure2d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
 			self.mainImportantData['EXP 2D'] = self.exposure2d
-			# uiFunctionCalls.change2dExposure(self.exposure2d)
+			uiFunctionCalls.change2dExposure(self.exposure2d)
 			print("EXP2D: ", self.exposure2d)
 		self.update_display()
 
@@ -1059,35 +1059,35 @@ class Application(tk.Frame):
 
 	def toggle_2d3d(self):
 		self.dimensionMode = 1 - self.dimensionMode
-		# uiFunctionCalls.toggle2d3dMode(self.dimensionMode)
+		uiFunctionCalls.toggle2d3dMode(self.dimensionMode)
 
 	def set_2d3d(self, x):
 		self.dimensionMode = x
-		# uiFunctionCalls.toggle2d3dMode(self.dimensionMode)
+		uiFunctionCalls.toggle2d3dMode(self.dimensionMode)
 
 	def toggleModulationFrequency(self):
 		self.modFreq = 1 - self.modFreq
-		# uiFunctionCalls.setModulationFrequency(self.modFreq)
+		uiFunctionCalls.setModulationFrequency(self.modFreq)
 
 	def setModulationFrequency(self, x):
 		self.modFreq = x
-		# uiFunctionCalls.setModulationFrequency(self.modFreq)
+		uiFunctionCalls.setModulationFrequency(self.modFreq)
 
 	def toggleEnablePiDelay(self):
 		self.piDelay = 1 - self.piDelay
-		# uiFunctionCalls.enablePiDelay(self.piDelay)
+		uiFunctionCalls.enablePiDelay(self.piDelay)
 
 	def setPiDelay(self, x):
 		self.piDelay = x
-		# uiFunctionCalls.enablePiDelay(self.piDelay)
+		uiFunctionCalls.enablePiDelay(self.piDelay)
 
 	def toggleClockSource(self):
 		self.clockSource = 1 - self.clockSource
-		# uiFunctionCalls.changeClockSource(self.clockSource)
+		uiFunctionCalls.changeClockSource(self.clockSource)
 
 	def setClock(self, x):
 		self.clockSource = x
-		# uiFunctionCalls.changeClockSource(self.clockSource)
+		uiFunctionCalls.changeClockSource(self.clockSource)
 
 	def toggleClockFreq(self):
 		self.clockFreq = (2*self.clockFreq)%42	#rotates between 6,12,24
@@ -1109,7 +1109,7 @@ class Application(tk.Frame):
 
 	def toggleEnableCapture(self):
 		self.enableCapture = 1 - self.enableCapture
-		# uiFunctionCalls.enableCapture(self.enableCapture)
+		uiFunctionCalls.enableCapture(self.enableCapture)
 
 	def updateI2Cdata(self, d,t,p):
 		self.I2Cdata["direction"] = d
@@ -1142,6 +1142,8 @@ class Application(tk.Frame):
 
 	def restartBBB(self):
 		print("YO IM RESTARTING THE BBB")
+		camera_power.turn_off(gpio.LED(pg.bbb0_ctrl_GPIO()), gpio.Button(pg.bbb0_reset_GPIO()))
+		camera_power.turn_off(gpio.LED(pg.bbb0_ctrl_GPIO()), gpio.Button(pg.bbb0_reset_GPIO()))
 		# camera_power.connect_both_cameras()
 		# camera_power.turn_on_BBBx(0)
 		# camera_power.turn_on_BBBx(1)
