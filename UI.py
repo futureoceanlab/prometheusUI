@@ -440,21 +440,21 @@ class Application(tk.Frame):
 		return (self.currentPreviousImage+offset)%len(self.previousImages)
 
 	def get_PC_image(self):
-		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((1200,720),Image.ANTIALIAS))
+		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((1440,950),Image.ANTIALIAS))
 		# return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((600,450),Image.ANTIALIAS))
 
 	def get_colorMap_image(self):
-		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((1200,720),Image.ANTIALIAS))
+		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((1440,950),Image.ANTIALIAS))
 		# return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
 
 	def get_live_image(self, path):
-		return ImageTk.PhotoImage(Image.open(path).resize((1200,720),Image.ANTIALIAS))
+		return ImageTk.PhotoImage(Image.open(path).resize((1440,950),Image.ANTIALIAS))
 
 	def get_live_image_temp(self, x):
 		if x%2==0:
-			img = Image.open('small1.jpg').resize((1200,720),Image.ANTIALIAS)
+			img = Image.open('small1.jpg').resize((1440,950),Image.ANTIALIAS)
 		else:
-			img = Image.open('small2.jpg').resize((1200,720),Image.ANTIALIAS)
+			img = Image.open('small2.jpg').resize((1440,950),Image.ANTIALIAS)
 		return ImageTk.PhotoImage(img)
 		
 	def get_richData_string(self):
