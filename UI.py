@@ -710,9 +710,9 @@ class Application(tk.Frame):
 		for child in level: 
 
 			
-			settingValue = Label(self.menuFrame, text=child.value[0], justify=LEFT, font=('Helvetica', 48))
+			settingValue = Label(self.menuFrame, text=child.value[0], sticky=W+N+E+S, font=('Helvetica', 48))
 			settingValue.grid(row=rowNumber, column=1)
-			settingKey = Button(self.menuFrame, text=child.name, font=('Helvetica', 48), justify=LEFT, command=lambda: self.changeMenuValue(child, settingValue))
+			settingKey = Button(self.menuFrame, text=child.name, font=('Helvetica', 48), sticky=W+N+E+S, command=lambda: self.changeMenuValue(child, settingValue))
 			self.buttonColor = settingKey.cget('bg')
 			settingKey.grid(row=rowNumber, column=0)
 			self.nodeToButtonDict[child] = (settingKey, settingValue)
