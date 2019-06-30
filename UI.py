@@ -594,7 +594,7 @@ class Application(tk.Frame):
 
 		colorCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		print()
-		colorImg = ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage))
+		colorImg = ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
 		mainFrame.colorImg = colorImg
 		colorCanvas.create_image(0,0,anchor=NW, image=colorImg)
 		colorCanvas.pack_forget()
@@ -607,7 +607,7 @@ class Application(tk.Frame):
 		# prevFigureCanvas.get_tk_widget().pack_forget()
 
 		prevImageCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		prevImg = ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage))
+		prevImg = ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
 		mainFrame.prevImg = prevImg
 		prevImageCanvas.create_image(0,0,anchor=NW, image=prevImg)
 		prevImageCanvas.pack_forget()
