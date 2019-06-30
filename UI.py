@@ -546,10 +546,10 @@ class Application(tk.Frame):
 		topLabel = Label(self, text=self.get_title(), relief=RIDGE, borderwidth=5, font=('Helvetica', 36))
 		topLabel.grid(row=0, column=0, sticky=W+N+E+S, columnspan=3)
 
-		mainFrame = tk.Frame(self, relief=RIDGE, borderwidth=5, bg='green')
+		mainFrame = tk.Frame(self, relief=RIDGE, borderwidth=5)
 		mainFrame.grid(row=1,column=0, sticky=W+N+E+S)
 
-		dataLabel = Label(self, text=self.get_mainImportantData_string(), font=('Helvetica', 36), relief=RIDGE, borderwidth=5)
+		dataLabel = Label(self, text=self.get_mainImportantData_string(), font=('Helvetica', 36), relief=RIDGE, borderwidth=5, justify=LEFT)
 		dataLabel.grid(row=1, column=1, sticky=W+N+E+S)
 
 		self.topArea = topLabel
