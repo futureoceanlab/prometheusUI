@@ -579,9 +579,9 @@ class Application(tk.Frame):
 		richDataGrid = tk.Frame(mainFrame)
 		rowNum = 0 
 		for key in self.richData:
-			dataRowKey = Label(richDataGrid, text=key)
+			dataRowKey = Label(richDataGrid, text=key,font=('Helvetica', 36))
 			dataRowKey.grid(row=rowNum,column=0)
-			dataRowVal = Label(richDataGrid, text=str(self.richData[key]))
+			dataRowVal = Label(richDataGrid, text=str(self.richData[key]),font=('Helvetica', 36) )
 			dataRowVal.grid(row=rowNum,column=1)
 			rowNum+=1
 		richDataGrid.grid_forget()
