@@ -527,7 +527,7 @@ class Application(tk.Frame):
 			self.mainArea.winfo_children()[display].pack(fill=BOTH, expand=YES)
 
 		if display == 0:
-			self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S)
+			self.winfo_children()[2].grid(row=1, column=5,sticky=W+N+E+S, columnspan=2)
 
 
 	def create_layout(self):
