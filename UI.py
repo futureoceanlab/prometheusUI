@@ -549,7 +549,7 @@ class Application(tk.Frame):
 		mainFrame = tk.Frame(self, borderwidth=5)
 		mainFrame.grid(row=1,column=0, sticky=W+N+E+S)
 
-		dataLabel = Label(self, text=self.get_mainImportantData_string(), font=('Helvetica', 36),  borderwidth=5, justify=LEFT)
+		dataLabel = Label(self, text=self.get_mainImportantData_string(), relief=RIDGE, font=('Helvetica', 36),  borderwidth=5, justify=LEFT)
 		dataLabel.grid(row=1, column=1, sticky=W+N+E+S)
 
 		self.topArea = topLabel
