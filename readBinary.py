@@ -45,7 +45,7 @@ def getDCSFigures(img, freq):
 		#depth image figure
 		heatmap = tofAnalysis.analyze(dcsData, freq)
 		rotatedHeatMap = np.rot90(heatmap, 1)
-		heatFig = plt.figure(figsize=(7.5,5.625))
+		heatFig = plt.figure(figsize=(7.5,5.625), dpi=300)
 		# heatFig.tight_layout()
 		plt.imshow(rotatedHeatMap)
 		plt.axis('off')
@@ -60,7 +60,7 @@ def get_4DCS_PNG(img):
 			# return read_2D_BINImage(img)
 		dcsData = data.reshape(320,240,4, order='F')
 
-		dcsFig = plt.figure(figsize=(7.5,5.625), dpi=80)
+		dcsFig = plt.figure(figsize=(7.5,5.625), dpi=300)
 	
 		#DCS figure
 		for i in range(0,4):
@@ -81,7 +81,7 @@ def read_3D_BINimage(img, freq):
 
 		#depth image figure
 		heatmap = tofAnalysis.analyze(dcsData, freq)
-		heatFig = plt.figure(figsize=(7.5,5.625))
+		heatFig = plt.figure(figsize=(7.5,5.625), dpi=300)
 		plt.imshow(np.rot90(heatmap, 1))
 		plt.axis('off')
 		
