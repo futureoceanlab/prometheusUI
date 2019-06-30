@@ -1163,8 +1163,8 @@ class Application(tk.Frame):
 
 def main():
 	camera_power.connect_both_cameras()
-	camera_power.turn_on_BBBx(0)
-	camera_power.turn_on_BBBx(1)
+	# camera_power.turn_on_BBBx(0)
+	# camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
 	root.overrideredirect(False)		
 	root.attributes('-fullscreen', True)
