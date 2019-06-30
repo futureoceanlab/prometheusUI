@@ -544,7 +544,7 @@ class Application(tk.Frame):
 		#the 3 main frames
 
 		topLabel = Label(self, text=self.get_title(), relief=RIDGE, borderwidth=5, font=('Helvetica', 36))
-		topLabel.grid(row=0, column=0, sticky=W+N+E+S, columnspan=2)
+		topLabel.grid(row=0, column=0, sticky=W+N+E+S, columnspan=3)
 
 		mainFrame = tk.Frame(self, relief=RIDGE, borderwidth=5, bg='green')
 		mainFrame.grid(row=1,column=0, sticky=W+N+E+S)
@@ -835,7 +835,7 @@ class Application(tk.Frame):
 
 	def DISP_long_pressed(self):
 		# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
-		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((900,675),Image.ANTIALIAS)))
+		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
 		# self.setPreviousFigure(self.get_previousFigure(self.currentPreviousImage))
 
 		if not self.get_mode() and not self.get_video_state():  
