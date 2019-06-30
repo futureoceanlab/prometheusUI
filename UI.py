@@ -1131,7 +1131,7 @@ class Application(tk.Frame):
 		return singleRepresentativePhoto
 
 	def HDRWrapper(self, setting, vid_id=0):
-		_2d3d, exp, pi, modfreq = HDR_SETTINGS[setting]
+		_2d3d, exp, pi, modFreq = HDR_SETTINGS[setting]
 		return self.doHDRtest(_2d3d, exp,pi, modFreq, vid_id)
 
 
