@@ -114,8 +114,8 @@ def convertBINtoPNG(binPath, freq):
 		else:
 			return read_3D_BINimage(binPath, freq)
         
-if __name__ == '__main__':
-    print("hi")
-    readDCSimage('DCS08.bin', 6)
+# if __name__ == '__main__':
+#     print("hi")
+#     readDCSimage('DCS08.bin', 6)
 
 

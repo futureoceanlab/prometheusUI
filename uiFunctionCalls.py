@@ -15,6 +15,8 @@ def capturePhotoCommand2D(filename):
     prom_cli1 = prom_cli + cmd + " -i 1  >> %s" %(file1)
     camsel = LED(pg.led_cam_select_GPIO())
     # capture 0 
+    
+    print("COMMAND : ", prom_cli0)
     camsel.off()
     os.system(prom_cli0)
     # capture 1
