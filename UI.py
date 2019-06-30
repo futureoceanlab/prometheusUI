@@ -1150,6 +1150,8 @@ class Application(tk.Frame):
 
 	def shutdownBBB(self):
 		print("AYYO TIME TO SHUTDOWN")
+		camera_power.turn_off(gpio.LED(pg.bbb0_ctrl_GPIO()), gpio.Button(pg.bbb0_reset_GPIO()))
+		camera_power.turn_off(gpio.LED(pg.bbb0_ctrl_GPIO()), gpio.Button(pg.bbb0_reset_GPIO()))
 		# camera_power.connect_both_cameras()
 		# camera_power.turn_on_BBBx(0)
 		# camera_power.turn_on_BBBx(1)
