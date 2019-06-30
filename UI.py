@@ -836,6 +836,7 @@ class Application(tk.Frame):
 				self.menu_tree.goUpLevel(self.menu_tree.currentLevel)
 
 	def HDR_pressed(self):
+		print("HDR pressed")
 		self.HDRmode = 1 - self.HDRmode
 
 	def DISP_short_pressed(self):
