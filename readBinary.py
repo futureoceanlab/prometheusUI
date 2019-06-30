@@ -10,6 +10,8 @@ import tofAnalysis
 
 def readBinaryFile(filepath):
 	numBytes = os.path.getsize(filepath)	#size in bytes
+	if numBytes == 0:
+		return filepath
 	numPixels = int(numBytes/2)
 	numFrames = int(numPixels/(320*240))
 	numPixelsPerFrame = int((numPixels/numFrames))
@@ -20,7 +22,7 @@ def readBinaryFile(filepath):
 	for i in range(0,numFrames):
 		newArray = array[i*numPixelsPerFrame:(i+1)*numPixelsPerFrame].reshape(320,240)
 		img = Image.fromarray(newArray, mode='L')
-		img_name = "./generatedImages/" + fname + "_" + str(i) + ".jpg"
+		img_name = "./images/" + fname + "_" + str(i) + ".jpg"
 		img.save(img_name, 'JPEG')
 		img_names.append(img_name)
 	return img_names
@@ -114,8 +116,8 @@ def convertBINtoPNG(binPath, freq):
 		else:
 			return read_3D_BINimage(binPath, freq)
         
-# if __name__ == '__main__':
-#     print("hi")
-#     readDCSimage('DCS08.bin', 6)
+if __name__ == '__main__':
+    print("hi")
+    convertBINtoPNG('_3D_.bin', 6)
 
 

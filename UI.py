@@ -14,6 +14,7 @@ import os
 import numpy as np
 import uiFunctionCalls
 import camera_power
+import configure_camera as camera_configure
 from datetime import datetime
 import csv
 from random import randint
@@ -446,7 +447,7 @@ class Application(tk.Frame):
 		prevImagePath = self.previousImages[x%len(self.previousImages)]
 		return Image.open(self.previousImages[x%len(self.previousImages)])
 
-	def get_previousImage_2(self, x):
+	def get_previousImage_BININ(self, x):
 		binPath = self.previousImages[x%len(self.previousImages)]
 		pngPath = readBinary.convertBINtoPNG(binPath, self.clockFreq)
 		return Image.open(pngPath)
@@ -614,7 +615,7 @@ class Application(tk.Frame):
 
 		colorCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		print()
-		colorImg = ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
+		colorImg = ImageTk.PhotoImage(self.get_previousImage_BININ(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
 		mainFrame.colorImg = colorImg
 		colorCanvas.create_image(0,0,anchor=NW, image=colorImg)
 		colorCanvas.pack_forget()
@@ -627,7 +628,7 @@ class Application(tk.Frame):
 		# prevFigureCanvas.get_tk_widget().pack_forget()
 
 		prevImageCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		prevImg = ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
+		prevImg = ImageTk.PhotoImage(self.get_previousImage_BININ(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
 		mainFrame.prevImg = prevImg
 		prevImageCanvas.create_image(0,0,anchor=NW, image=prevImg)
 		prevImageCanvas.pack_forget()
@@ -848,7 +849,7 @@ class Application(tk.Frame):
 				if self.viewingPreviousImages:
 					#get the next previous image
 					# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
-					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
+					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
 					self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
 					self.update_display()
 				else:
@@ -858,7 +859,7 @@ class Application(tk.Frame):
 
 	def DISP_long_pressed(self):
 		# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
-		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_2(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
+		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
 		# self.setPreviousFigure(self.get_previousFigure(self.currentPreviousImage))
 
 		if not self.get_mode() and not self.get_video_state():  
@@ -969,28 +970,29 @@ class Application(tk.Frame):
 			elementLocation = "./images/"
 
 		fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
+
 		if not self.dimensionMode:		#2d
-			returnedFile = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
+			returnedFiles = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
 			# returnedFile = [] #TEMP
 		else:
-			returnedFile = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
+			returnedFiles = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
 			# returnedFile = [] #TEMP
-		self.previousImages = self.previousImages + returnedFile
-		returnedFileName = str(returnedFile[0])
+		self.previousImages += returnedFiles
+		# returnedFileName = str(returnedFile[0])
 		# returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
 
-		if not write_to_temp:
-			#update CSV
-			csvFile = open(self.currentCSVFile, 'a')
-			writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-			#CSV FORMAT
-			#index, imageLocation, metadataLocation
-			metaFile = fileLocation+"_meta.txt"
-			self.writeImageMetaFile(metaFile)
-			writer.writerow([self.numPreviousImages, returnedFileName, vid_id, metaFile])
-			self.numPreviousImages +=1
+		# if not write_to_temp:
+		# 	#update CSV
+		# 	csvFile = open(self.currentCSVFile, 'a')
+		# 	writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+		# 	#CSV FORMAT
+		# 	#index, imageLocation, metadataLocation
+		# 	metaFile = fileLocation+"_meta.txt"
+		# 	self.writeImageMetaFile(metaFile)
+		# 	writer.writerow([self.numPreviousImages, returnedFileName, vid_id, metaFile])
+		# 	self.numPreviousImages +=1
 		
-			csvFile.close()
+		# 	csvFile.close()
 		return fileLocation
 
 	def capture_video(self, write_to_temp = False):
@@ -1163,6 +1165,9 @@ class Application(tk.Frame):
 
 def main():
 	camera_power.connect_both_cameras()
+	camera_configure.configure_camera(0)
+	camera_configure.configure_camera(1)
+
 	# camera_power.turn_on_BBBx(0)
 	# camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
