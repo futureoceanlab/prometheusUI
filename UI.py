@@ -566,7 +566,7 @@ class Application(tk.Frame):
 		fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((900,675),Image.ANTIALIAS))
 		mainFrame.fourDCSImages = fourDCSImages
 		dcsCanvas.create_image(0,0,anchor=NW, image=fourDCSImages)
-		dcsCanvas.pack(fill=BOTH)
+		dcsCanvas.pack(fill=BOTH, expand=YES)
 
 		#Point Cloud -- display = 1
 		pointCloudCanvas = tk.Canvas(mainFrame, width=800, height=600)
