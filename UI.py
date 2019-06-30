@@ -194,9 +194,10 @@ class Application(tk.Frame):
 		self.HDRmode = 0		#is HDR enabled
 		self.HDRTestSetting = 0	#when taking HDR, what test should we run? see HDR_SETTINGS - the key to dictionary
 		self.clockSource = 1	#0 internal; 1 external
+		print("HERE")
 		self.setClock(self.clockSource)
 		self.clockFreq = 6
-		
+		print("THERE")
 		#states
 		self.isTakingVideo = False
 		self.showingLiveView = False
