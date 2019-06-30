@@ -823,6 +823,7 @@ class Application(tk.Frame):
 			i.grid_forget()
 
 	def MENU_pressed(self):
+		print("MENU PRESSED")
 		if self.get_mode() == 0:            #capture
 			self.change_mode()
 			self.set_live_view(False)
@@ -838,6 +839,7 @@ class Application(tk.Frame):
 		self.HDRmode = 1 - self.HDRmode
 
 	def DISP_short_pressed(self):
+		print("DISP SHORT")
 		if self.get_mode() == 0:
 			#capture mode
 			if not self.isTakingVideo:  #ready to take photo
@@ -865,6 +867,7 @@ class Application(tk.Frame):
 			self.update_display()
 
 	def EXP_short_pressed(self):
+		print("EXPO PRESSED")
 		if self.get_mode() == 0:            #capture
 			self.change_exposure(self.dimensionMode)
 		else:                               #menu mode
@@ -882,6 +885,7 @@ class Application(tk.Frame):
 			self.EXP_short_pressed()
 
 	def ACTN_short_pressed(self):
+		print("ACTN PRESSED")
 		if self.get_mode() == 0:            #capture
 			if not self.isTakingVideo:  #ready to take photo
 				if not self.viewingPreviousImages:
@@ -1131,7 +1135,7 @@ class Application(tk.Frame):
 		return singleRepresentativePhoto
 
 	def HDRWrapper(self, setting, vid_id=0):
-		_2d3d, exp, pi, modFreq = HDR_SETTINGS[setting]
+		_2d3d, exp, pi, modreq = HDR_SETTINGS[setting]
 		return self.doHDRtest(_2d3d, exp,pi, modFreq, vid_id)
 
 
