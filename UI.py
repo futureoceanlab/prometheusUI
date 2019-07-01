@@ -234,7 +234,7 @@ class Application(tk.Frame):
 		self.fullScreen = True
 
 		#data contained in the UI 
-		self.mainImportantData = {'Battery': '50%', 'Mem': str(43.2)+'GB', 'S/N ratio': 0.6, 'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d} 
+		self.mainImportantData = {'Battery': '50%', 'Mem': str(43.2)+'GB', 'S/N ratio': 0.6, 'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d, 'Video':"NO"} 
 		self.richData = {'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d}
 		self.menu_tree = MenuTree(MENUTREE)
 		self.temp_menu_tree = MenuTree(TEMP_MENUTREE)
@@ -971,8 +971,10 @@ class Application(tk.Frame):
 			self.set_live_view(True)
 			self.viewingPreviousImages = False
 
-			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('video.jpg').resize((1440,950),Image.ANTIALIAS)))
-			self.change_display(5) #to live view/video capture image
+			# self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('video.jpg').resize((1440,950),Image.ANTIALIAS)))
+			# self.change_display(5) #to live view/video capture image
+			self.mainImportantData['VIDEO'] = 'YES'
+			self.update_display()
 			self.capture_video(False)
 		else:                               
 			#else is same as short press
