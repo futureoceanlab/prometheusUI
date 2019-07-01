@@ -967,7 +967,7 @@ class Application(tk.Frame):
 			self.viewingPreviousImages = False
 
 			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('video.jpg').resize((1440,950),Image.ANTIALIAS)))
-			self.update_display()
+			self.change_display(5)
 			self.capture_video(False)
 		else:                               
 			#else is same as short press
@@ -1092,8 +1092,12 @@ class Application(tk.Frame):
 		self.display = max(-1,-1*(self.display+1))
 		self.update_display()
 
-	def change_display(self):
-		self.display = (self.display +1)%4
+	def change_display(self, val=10):
+		#10 is arbitrary display that doesn't exist
+		if val == 10:
+			self.display = (fself.display +1)%4
+		else:
+			self.display = val
 		self.update_display()
 
 	def change_exposure(self, mode):
