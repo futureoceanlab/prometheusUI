@@ -407,7 +407,7 @@ class Application(tk.Frame):
 
 	def updateMainLog(self, msg):
 		logFile = open(self.currentLogFile, 'a')
-		logFile.write(msg)
+		logFile.write(msg+'\n')
 		logFile.close()
 
 	def createMainCSV(self):
@@ -462,7 +462,7 @@ class Application(tk.Frame):
 			print("getting bin; ", binPath)
 			pngPath = readBinary.convertBINtoPNG(binPath, self.clockFreq)
 		else: 
-			pngPath = 'noDCS.jpg'
+			pngPath = 'noPrevImg.jpg'
 		return Image.open(pngPath)
 
 	def get_previousFigure(self, x):
@@ -542,7 +542,8 @@ class Application(tk.Frame):
 		#the display below is the display that the screen is CHANGING TO
 		#not the one that it is coming from
 		display = self.get_display()
-		print("DISPLAY: ", display)
+		if display = 0:
+			self.setDCSImage(self.getDCSImage())
 
 		#update main area dimensions
 		#erase everything that goes in main area
@@ -825,6 +826,20 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[4].create_image(0,200,anchor=NW, image=img1)
 		self.mainArea.winfo_children()[4].create_image(720,200,anchor=NW, image=img2)
 		self.mainArea.winfo_children()[4].pack()
+
+	def setDCSImage(self, img):
+		self.mainArea.fourDCSImages = img
+		self.mainArea.winfo_children()[0].pack_forget()
+		self.mainArea.winfo_children()[0].create_image(0,0,anchor=NW, image=img)
+		self.mainArea.winfo_children()[0].pack()
+
+	def getDCSImage():
+		if len(self.previousImages) > 0:
+			binPath = self.previousImages[len(self.previousImages)-1]
+			pngPath = readBinary.convertBINtoPNG(binPath, self.clockFreq)
+		else: 
+			pngPath = 'noDCS.jpg'
+		return Image.open(pngPath)
 
 
 	def setLiveImage(self, img):
@@ -1120,7 +1135,6 @@ class Application(tk.Frame):
 			#2d
 			uiFunctionCalls.change2dExposure(self.exposure2d)
 			exposureIndex = EXPOSURE_OPTIONS.index(self.exposure2d)
-			print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEXP IND", exposureIndex)
 			self.exposure2d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
 			self.mainImportantData['EXP 2D'] = self.exposure2d
 			print("EXP2D: ", self.exposure2d)
@@ -1253,7 +1267,6 @@ def main():
 	root.attributes('-fullscreen', True)
 	app = Application(master=root)
 	app.buttonCheck()
-	app.mainloop()
 
 if __name__ == '__main__':
 	main()
