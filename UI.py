@@ -828,7 +828,7 @@ class Application(tk.Frame):
 
 	def setDCSImage(self):
 		fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((1440,950),Image.ANTIALIAS))
-		mainFrame.fourDCSImages = fourDCSImages
+		self.mainArea.fourDCSImages = fourDCSImages
 		self.mainArea.winfo_children()[0].create_image(0,0,anchor=NW, image=fourDCSImages)
 		self.mainArea.winfo_children()[0].pack(fill=BOTH, expand=YES)
 
