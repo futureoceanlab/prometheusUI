@@ -542,7 +542,7 @@ class Application(tk.Frame):
 		#the display below is the display that the screen is CHANGING TO
 		#not the one that it is coming from
 		display = self.get_display()
-		if display = 0:
+		if display == 0:
 			self.setDCSImage(self.getDCSImage())
 
 		#update main area dimensions
