@@ -955,6 +955,9 @@ class Application(tk.Frame):
 				self.set_video_state(False)
 				self.set_live_view(False)
 				self.change_display(4)
+				self.setPreviousImage_2(ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-1).resize((720,425),Image.ANTIALIAS)),ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-2).resize((720,425),Image.ANTIALIAS)))
+				self.currentPreviousImage = (self.currentPreviousImage-2)%len(self.previousImages)
+				self.update_display()
 		else:                               #menu mode
 			self.changeMenuValue(self.currentSelectionNode, self.nodeToButtonDict[self.currentSelectionNode][1])
 
