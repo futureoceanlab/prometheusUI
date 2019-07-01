@@ -544,7 +544,7 @@ class Application(tk.Frame):
 		#not the one that it is coming from
 		display = self.get_display()
 		if display == 0:
-			self.setDCSImage(ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[len(self.previousImages)-1])).resize((1440,950),Image.ANTIALIAS)))
+			self.setDCSImage()
 
 		#update main area dimensions
 		#erase everything that goes in main area
@@ -602,12 +602,10 @@ class Application(tk.Frame):
 		dcsCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		if not len(self.previousImages):
 			fourDCSImages = ImageTk.PhotoImage(Image.open('noDCS.jpg').resize((1440,950),Image.ANTIALIAS))
-			mainFrame.fourDCSImages = fourDCSImages
-			dcsCanvas.create_image(0,0,anchor=NW, image=fourDCSImages)
 		else:
 			fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((1440,950),Image.ANTIALIAS))
-			mainFrame.fourDCSImages = fourDCSImages
-			dcsCanvas.create_image(0,0,anchor=NW, image=fourDCSImages)
+		mainFrame.fourDCSImages = fourDCSImages
+		dcsCanvas.create_image(0,0,anchor=NW, image=fourDCSImages)
 		dcsCanvas.pack(fill=BOTH, expand=YES)
 
 		#Point Cloud -- display = 1
@@ -828,11 +826,11 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[4].create_image(720,200,anchor=NW, image=img2)
 		self.mainArea.winfo_children()[4].pack()
 
-	def setDCSImage(self, img):
-		self.mainArea.fourDCSImages = img
-		self.mainArea.winfo_children()[0].pack_forget()
-		self.mainArea.winfo_children()[0].create_image(0,0,anchor=NW, image=img)
-		self.mainArea.winfo_children()[0].pack()
+	def setDCSImage(self):
+		fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((1440,950),Image.ANTIALIAS))
+		mainFrame.fourDCSImages = fourDCSImages
+		self.mainArea.winfo_children()[0].create_image(0,0,anchor=NW, image=fourDCSImages)
+		self.mainArea.winfo_children()[0].pack(fill=BOTH, expand=YES)
 
 
 	def setLiveImage(self, img):
