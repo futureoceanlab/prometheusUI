@@ -560,7 +560,7 @@ class Application(tk.Frame):
 		else:
 			self.mainArea.winfo_children()[display].pack(fill=BOTH, expand=YES)
 
-		if display in [0,3]:
+		if display in [0,3,4]:
 			self.winfo_children()[2].grid(row=1, column=1,sticky=W+N+E+S)
 
 
@@ -974,8 +974,8 @@ class Application(tk.Frame):
 
 			# self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('video.jpg').resize((1440,950),Image.ANTIALIAS)))
 			# self.change_display(5) #to live view/video capture image
-			# self.mainImportantData['VIDEO'] = 'YES'
-			# self.update_display()
+			self.mainImportantData['VIDEO'] = 'YES'
+			self.update_display()
 			self.capture_video(False)
 		else:                               
 			#else is same as short press
