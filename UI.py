@@ -874,7 +874,6 @@ class Application(tk.Frame):
 			self.set_live_view(False)
 			self.viewingPreviousImages = False
 		else:
-			print("AT ROOT: ", self.menu_tree.isAtTempRoot())
 			if self.menu_tree.isAtTempRoot():
 				self.change_mode()
 			else:
@@ -1009,7 +1008,7 @@ class Application(tk.Frame):
 		newFile.write(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
 
 		#i2c data
-		#self.updateI2Cdata(0, i2c.getTemperature(),0)
+		self.updateI2Cdata(0, i2c.getTemperature(),0)
 		for data in self.I2Cdata:
 			newFile.write(str(data) + ":" + str(self.I2Cdata[data])+'\n')
 
@@ -1078,8 +1077,8 @@ class Application(tk.Frame):
 		if self.HDRmode:
 			while self.showingLiveView:
 				photoLocation = self.HDRWrapper(self.HDRTestSetting, timeStart)
-				img = self.get_live_image(photoLocation)
-				self.setLiveImage(img)
+				# img = self.get_live_image(photoLocation)
+				# self.setLiveImage(img)
 				frameCounter +=1
 				self.nonRecursiveButtonCheck()
 				

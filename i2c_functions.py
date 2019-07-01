@@ -7,7 +7,7 @@ import adafruit_si5351
 
 
 # Default I2C address for device.
-MCP9808_I2CADDR_DEFAULT        = 0x60
+MCP9808_I2CADDR_DEFAULT        = 0x3c
 
 # Register addresses.
 MCP9808_REG_CONFIG             = 0x01
