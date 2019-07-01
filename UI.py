@@ -234,7 +234,7 @@ class Application(tk.Frame):
 		self.fullScreen = True
 
 		#data contained in the UI 
-		self.mainImportantData = {'Battery': '50%', 'Mem': str(43.2)+'GB', 'S/N ratio': 0.6, 'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d, 'Video':"NO"} 
+		self.mainImportantData = {'Battery': '50%', 'Mem': str(43.2)+'GB', 'S/N ratio': 0.6, 'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d, 'VIDEO':"NO"} 
 		self.richData = {'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d}
 		self.menu_tree = MenuTree(MENUTREE)
 		self.temp_menu_tree = MenuTree(TEMP_MENUTREE)
