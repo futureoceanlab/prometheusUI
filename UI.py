@@ -928,6 +928,7 @@ class Application(tk.Frame):
 			self.toggle_live_view()
 			self.viewingPreviousImages = False
 			self.set_video_state(False)
+			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('noLiveViewAvailable.jpg').resize((1440,950),Image.ANTIALIAS)))
 			self.update_display()
 			self.capture_video(True)
 		else:                           
@@ -965,8 +966,8 @@ class Application(tk.Frame):
 			self.set_live_view(True)
 			self.viewingPreviousImages = False
 
-			self.update_display()
 			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('video.jpg').resize((1440,950),Image.ANTIALIAS)))
+			self.update_display()
 			self.capture_video(False)
 		else:                               
 			#else is same as short press
