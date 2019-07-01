@@ -22,6 +22,7 @@ import i2c_functions as i2c
 import readBinary
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import prom_GPIO as pg
+import time
 
 SCREEEN_WIDTH = 1080
 BUTTON_LONGPRESS_TIME = 1
@@ -973,6 +974,7 @@ class Application(tk.Frame):
 			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('video.jpg').resize((1440,950),Image.ANTIALIAS)))
 			self.change_display(5) #to live view/video capture image
 			self.update_display()
+			time.sleep(0.1)
 			self.capture_video(False)
 		else:                               
 			#else is same as short press
