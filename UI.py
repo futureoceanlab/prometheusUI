@@ -820,18 +820,9 @@ class Application(tk.Frame):
 	def setPreviousImage_2(self, img1, img2):
 		self.mainArea.prevImg1 = img1
 		self.mainArea.prevImg2 = img2
-		self.mainArea.winfo_children()[4].create_image(0,0,anchor=NW, image=img1)
-		self.mainArea.winfo_children()[4].create_image(200,0,anchor=NW, image=img2)
+		self.mainArea.winfo_children()[4].create_image(0,200,anchor=NW, image=img1)
+		self.mainArea.winfo_children()[4].create_image(720,200,anchor=NW, image=img2)
 		self.mainArea.winfo_children()[4].pack()
-
-	def setPreviousFigure(self, fig):
-		prevFigure = FigureCanvasTkAgg(fig, self.mainArea)
-		self.mainArea.previousFigure = prevFigure
-		print("OOOOOOOOOOOOOO")
-		print(self.mainArea.winfo_children())
-		print(len(self.mainArea.winfo_children()))
-		self.mainArea.winfo_children()[4].draw()
-		self.mainArea.winfo_children()[4].get_tk_widget().pack()
 
 
 	def setLiveImage(self, img):
@@ -904,14 +895,12 @@ class Application(tk.Frame):
 	def DISP_long_pressed(self):
 		# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
 
-		# self.setPreviousFigure(self.get_previousFigure(self.currentPreviousImage))
-
 		if not self.get_mode() and not self.get_video_state():  
 			self.currentPreviousImage = len(self.previousImages)-1
 			# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS)))
 			self.setPreviousImage_2(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS)),ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage-1).resize((720,425),Image.ANTIALIAS)))
 						
-			self.currentPreviousImage = (self.currentPreviousImage-2)%len(self.previousImages)
+			self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
 			#capture mode and not taking video
 			self.toggle_prev_image()
 			self.set_live_view(False)
