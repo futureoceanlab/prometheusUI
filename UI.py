@@ -221,8 +221,8 @@ class Application(tk.Frame):
 		self.previousImages = []
 		self.numPreviousImages = 0
 		self.createMainCSV()	
-		self.previousImages = ['DCS08_3D_.bin', 'DCS09_3D_.bin','DCS10_3D_.bin','image13_2D_.bin'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
-		self.currentPreviousImage = len(self.previousImages)-1
+		# self.previousImages = ['DCS08_3D_.bin', 'DCS09_3D_.bin','DCS10_3D_.bin','image13_2D_.bin'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
+		self.currentPreviousImage = max(0, len(self.previousImages)-1)
 		self.dimensionMode = 0
 
 		#frame areas of the UI
@@ -289,6 +289,9 @@ class Application(tk.Frame):
 		master.bind('<Escape>',lambda e: self.toggleFullScreen())
 		master.bind('q', lambda x: master.quit())
 		self.create_layout()
+
+		camera_configure.configure_camera(0)
+		camera_configure.configure_camera(1)
 
 	def toggleFullScreen(self):
 		self.fullScreen = not self.fullScreen
@@ -447,9 +450,14 @@ class Application(tk.Frame):
 		prevImagePath = self.previousImages[x%len(self.previousImages)]
 		return Image.open(self.previousImages[x%len(self.previousImages)])
 
-	def get_previousImage_BININ(self, x):
-		binPath = self.previousImages[x%len(self.previousImages)]
-		pngPath = readBinary.convertBINtoPNG(binPath, self.clockFreq)
+	def get_previousImage_BIN(self, x):
+		print("LEN: ", len(self.previousImages))
+		if len(self.previousImages) > 0:
+			binPath = self.previousImages[x%len(self.previousImages)]
+			print("bin path; ", binPath)
+			pngPath = readBinary.convertBINtoPNG(binPath, self.clockFreq)
+		else: 
+			pngPath = 'noDCS.jpg'
 		return Image.open(pngPath)
 
 	def get_previousFigure(self, x):
@@ -584,9 +592,14 @@ class Application(tk.Frame):
 		# canvas.get_tk_widget().pack()
 
 		dcsCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((1440,950),Image.ANTIALIAS))
-		mainFrame.fourDCSImages = fourDCSImages
-		dcsCanvas.create_image(0,0,anchor=NW, image=fourDCSImages)
+		if not len(self.previousImages):
+			fourDCSImages = ImageTk.PhotoImage(Image.open('noDCS.jpg').resize((1440,950),Image.ANTIALIAS))
+			mainFrame.fourDCSImages = fourDCSImages
+			dcsCanvas.create_image(0,0,anchor=NW, image=fourDCSImages)
+		else:
+			fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((1440,950),Image.ANTIALIAS))
+			mainFrame.fourDCSImages = fourDCSImages
+			dcsCanvas.create_image(0,0,anchor=NW, image=fourDCSImages)
 		dcsCanvas.pack(fill=BOTH, expand=YES)
 
 		#Point Cloud -- display = 1
@@ -615,7 +628,7 @@ class Application(tk.Frame):
 
 		colorCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		print()
-		colorImg = ImageTk.PhotoImage(self.get_previousImage_BININ(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
+		colorImg = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
 		mainFrame.colorImg = colorImg
 		colorCanvas.create_image(0,0,anchor=NW, image=colorImg)
 		colorCanvas.pack_forget()
@@ -628,7 +641,7 @@ class Application(tk.Frame):
 		# prevFigureCanvas.get_tk_widget().pack_forget()
 
 		prevImageCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		prevImg = ImageTk.PhotoImage(self.get_previousImage_BININ(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
+		prevImg = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
 		mainFrame.prevImg = prevImg
 		prevImageCanvas.create_image(0,0,anchor=NW, image=prevImg)
 		prevImageCanvas.pack_forget()
@@ -849,9 +862,11 @@ class Application(tk.Frame):
 				if self.viewingPreviousImages:
 					#get the next previous image
 					# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
-					self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
-					self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
-					self.update_display()
+					if len(self.previousImages) > 0:
+						self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
+						print("DISPLAYING: ", self.get_previousImage_BIN(self.currentPreviousImage))
+						self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
+						self.update_display()
 				else:
 					self.change_display()
 		else:                           
@@ -942,7 +957,7 @@ class Application(tk.Frame):
 		newFile.write(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
 
 		#i2c data
-		self.updateI2Cdata(0, i2c.getTemperature(),0)
+		#self.updateI2Cdata(0, i2c.getTemperature(),0)
 		for data in self.I2Cdata:
 			newFile.write(str(data) + ":" + str(self.I2Cdata[data])+'\n')
 
@@ -981,18 +996,20 @@ class Application(tk.Frame):
 		# returnedFileName = str(returnedFile[0])
 		# returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
 
-		# if not write_to_temp:
-		# 	#update CSV
-		# 	csvFile = open(self.currentCSVFile, 'a')
-		# 	writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-		# 	#CSV FORMAT
-		# 	#index, imageLocation, metadataLocation
-		# 	metaFile = fileLocation+"_meta.txt"
-		# 	self.writeImageMetaFile(metaFile)
-		# 	writer.writerow([self.numPreviousImages, returnedFileName, vid_id, metaFile])
-		# 	self.numPreviousImages +=1
+		csvFile = open(self.currentCSVFile, 'a')
+		writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+		for file in returnedFiles: 
+			if not write_to_temp:
+				#update CSV
+				
+				#CSV FORMAT
+				#index, imageLocation, metadataLocation
+				metaFile = fileLocation+"_meta.txt"
+				self.writeImageMetaFile(metaFile)
+				writer.writerow([self.numPreviousImages, file, vid_id, metaFile])
+				self.numPreviousImages +=1
 		
-		# 	csvFile.close()
+		csvFile.close()
 		return fileLocation
 
 	def capture_video(self, write_to_temp = False):
@@ -1017,8 +1034,8 @@ class Application(tk.Frame):
 		else:
 			while self.showingLiveView:
 				photoLocation = self.take_photo(write_to_temp, timeStart)
-				img = self.get_live_image(photoLocation)
-				self.setLiveImage(img)
+				# img = self.get_live_image(photoLocation)
+				# self.setLiveImage(img)
 				frameCounter +=1
 				self.nonRecursiveButtonCheck()
 
@@ -1121,7 +1138,6 @@ class Application(tk.Frame):
 	def doHDRtest(self, _2d3dModeOptions, expOptions, piOptions, modFreqOptions, vid_id):
 		print("DOING HDR TEST")
 
-		self.dimensionMode = 1
 		for dimMode in _2d3dModeOptions:			#2d and 3d mode
 			self.set_2d3d(dimMode)
 			for exp in expOptions:
@@ -1165,8 +1181,6 @@ class Application(tk.Frame):
 
 def main():
 	camera_power.connect_both_cameras()
-	camera_configure.configure_camera(0)
-	camera_configure.configure_camera(1)
 
 	# camera_power.turn_on_BBBx(0)
 	# camera_power.turn_on_BBBx(1)
