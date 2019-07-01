@@ -820,8 +820,8 @@ class Application(tk.Frame):
 	def setPreviousImage_2(self, img1, img2):
 		self.mainArea.prevImg1 = img1
 		self.mainArea.prevImg2 = img2
-		self.mainArea.winfo_children()[4].create_image(0,0,anchor=NW, image=img)
-		self.mainArea.winfo_children()[4].create_image(200,0,anchor=NW, image=img)
+		self.mainArea.winfo_children()[4].create_image(0,0,anchor=NW, image=img1)
+		self.mainArea.winfo_children()[4].create_image(200,0,anchor=NW, image=img2)
 		self.mainArea.winfo_children()[4].pack()
 
 	def setPreviousFigure(self, fig):
