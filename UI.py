@@ -954,7 +954,7 @@ class Application(tk.Frame):
 				print("END VIDEO")          #currently taking video
 				self.set_video_state(False)
 				self.set_live_view(False)
-				self.
+				# self.
 		else:                               #menu mode
 			self.changeMenuValue(self.currentSelectionNode, self.nodeToButtonDict[self.currentSelectionNode][1])
 
