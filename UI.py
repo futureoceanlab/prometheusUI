@@ -840,6 +840,7 @@ class Application(tk.Frame):
 			pngPath = readBinary.convertBINtoPNG(binPath, self.clockFreq)
 		else: 
 			pngPath = 'noDCS.jpg'
+		print("PNG: ", pngPath)
 		return Image.open(pngPath)
 
 
