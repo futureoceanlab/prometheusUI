@@ -954,6 +954,7 @@ class Application(tk.Frame):
 				print("END VIDEO")          #currently taking video
 				self.set_video_state(False)
 				self.set_live_view(False)
+				self.
 		else:                               #menu mode
 			self.changeMenuValue(self.currentSelectionNode, self.nodeToButtonDict[self.currentSelectionNode][1])
 
@@ -967,7 +968,7 @@ class Application(tk.Frame):
 			self.viewingPreviousImages = False
 
 			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('video.jpg').resize((1440,950),Image.ANTIALIAS)))
-			self.change_display(5)
+			self.change_display(5) #to live view/video capture image
 			self.capture_video(False)
 		else:                               
 			#else is same as short press
