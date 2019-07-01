@@ -17,7 +17,6 @@ def capturePhotoCommand2D(filename):
     camsel = LED(pg.led_cam_select_GPIO())
     # capture 0 
 
-    print("COMMAND : ", prom_cli0)
     camsel.off()
     subprocess_command(prom_cli0, error_msg="2D getBWsorted from BBB0 failed")
     # capture 1
@@ -93,12 +92,17 @@ def toggle2d3dMode(mode):
     if (mode == 0 or mode == 1):
         cwd = os.getcwd()
         prom_cli = os.path.join(cwd, "prometheus-cli", "build", "prom-cli")
-        cmd = " -a \"setEnableImaging %d.\"" %(mode) 
+        cmd = " -a \"setEnableImaging 0.\""
+        cmd2 = " -a \"loadConfig %d.\"" %(mode)
         prom_cli0 = prom_cli + cmd + " -i 0 | hexdump"
         prom_cli1 = prom_cli + cmd + " -i 1 | hexdump"
+        prom_cli0_2 = prom_cli + cmd2 + " -i 0 | hexdump"
+        prom_cli1_2 = prom_cli + cmd2 + " -i 1 | hexdump"
         # Timer may be required
         subprocess_command(prom_cli0, error_msg="BBB0 2D 3D toggle failed")
         subprocess_command(prom_cli1, error_msg="BBB1 2D 3D toggle failed")
+        subprocess_command(prom_cli0_2, error_msg="BBB0 2D 3D load config failed")
+        subprocess_command(prom_cli1_2, error_msg="BBB1 2D 3D load config failed")
     else:
         print("Invalid input for toggling 2D and 3D")
 
@@ -172,9 +176,9 @@ def changeClockSource(source):
 
 def subprocess_command(cmd, error_msg):
     with  open('redirect.txt', 'a+') as outcome: 
-    p = subprocess.Popen(args=cmd, shell=True, stdout=outcome)
-    try:
-        p.wait(timeout=5)
-    except subprocess.TimeoutExpired:
-        p.kill()
-        print(error_msg)
+        p = subprocess.Popen(args=cmd, shell=True, stdout=outcome)
+        try:
+            p.wait(timeout=5)
+        except subprocess.TimeoutExpired:
+            p.kill()
+            print(error_msg)
