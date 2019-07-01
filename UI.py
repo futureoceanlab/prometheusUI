@@ -687,6 +687,7 @@ class Application(tk.Frame):
 		# self.menuFrame.grid_forget()
 		self.menuFrame.pack_forget()
 
+
 	def createMenu(self, previousMenu, clickedNode, atRoot):
 
 		if not atRoot:
@@ -831,6 +832,13 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[5].create_image(0,0,anchor=NW, image=img)
 		self.mainArea.winfo_children()[5].pack()
 
+	def setCapturingVideoImage(self, img):
+		self.mainArea.liveImg = img
+		self.mainArea.winfo_children()[5].pack_forget()
+		self.mainArea.winfo_children()[5].create_image(0,0,anchor=NW, image=img)
+		self.mainArea.winfo_children()[5].pack()
+
+
 	# def openChildMenu(self, node):
 
 	def selectUp(self, currentSelectionNode):
@@ -950,13 +958,15 @@ class Application(tk.Frame):
 
 
 	def ACTN_long_pressed(self):
-		if not self.get_mode() and not self.get_video_state() and not self.viewingPreviousImages:  
+		if not self.get_mode() and not self.get_video_state():  
 			#capture mode and ready to take video
 
 			self.set_video_state(True)
 			self.set_live_view(True)
 			self.viewingPreviousImages = False
+
 			self.update_display()
+			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('video.jpg').resize((1440,950),Image.ANTIALIAS)))
 			self.capture_video(False)
 		else:                               
 			#else is same as short press
