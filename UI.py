@@ -953,6 +953,7 @@ class Application(tk.Frame):
 					self.DISP_long_pressed()
 			else:
 				print("END VIDEO")          #currently taking video
+				self.mainImportantData["VIDEO"] = 'NO'
 				self.set_video_state(False)
 				self.set_live_view(False)
 				self.change_display(4)
@@ -973,8 +974,8 @@ class Application(tk.Frame):
 
 			# self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('video.jpg').resize((1440,950),Image.ANTIALIAS)))
 			# self.change_display(5) #to live view/video capture image
-			self.mainImportantData['VIDEO'] = 'YES'
-			self.update_display()
+			# self.mainImportantData['VIDEO'] = 'YES'
+			# self.update_display()
 			self.capture_video(False)
 		else:                               
 			#else is same as short press
