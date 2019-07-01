@@ -549,7 +549,7 @@ class Application(tk.Frame):
 		for i in [0,1,2,3,4,5]:
 			self.mainArea.winfo_children()[i].pack_forget()
 
-		if display in [-1,2,4,5]:
+		if display in [-1,2]:
 			#erase the data grid
 			self.winfo_children()[2].grid_forget()
 
@@ -559,7 +559,7 @@ class Application(tk.Frame):
 		else:
 			self.mainArea.winfo_children()[display].pack(fill=BOTH, expand=YES)
 
-		if display == 0:
+		if display in [0,3]:
 			self.winfo_children()[2].grid(row=1, column=1,sticky=W+N+E+S)
 
 
