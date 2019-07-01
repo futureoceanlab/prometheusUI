@@ -1069,26 +1069,27 @@ class Application(tk.Frame):
 
 		#this looks awkward but we need two while loops because we don't want user to change
 		#HDR setting in the middle of a capture... that would be confusing
-		# if self.HDRmode:
-		# 	while self.showingLiveView:
-		# 		photoLocation = self.HDRWrapper(self.HDRTestSetting, timeStart)
-		# 		img = self.get_live_image(photoLocation)
-		# 		self.setLiveImage(img)
-		# 		frameCounter +=1
-		# 		self.nonRecursiveButtonCheck()
+		if self.HDRmode:
+			while self.showingLiveView:
+				photoLocation = self.HDRWrapper(self.HDRTestSetting, timeStart)
+				img = self.get_live_image(photoLocation)
+				self.setLiveImage(img)
+				frameCounter +=1
+				self.nonRecursiveButtonCheck()
 				
-		# else:
-		# 	while self.showingLiveView:
-		# 		photoLocation = self.take_photo(write_to_temp, timeStart)
-		# 		# img = self.get_live_image(photoLocation)
-		# 		# self.setLiveImage(img)
-		# 		frameCounter +=1
-		# 		self.nonRecursiveButtonCheck()
+		else:
+			while self.showingLiveView:
+				photoLocation = self.take_photo(write_to_temp, timeStart)
+				# img = self.get_live_image(photoLocation)
+				# self.setLiveImage(img)
+				frameCounter +=1
+				# self.nonRecursiveButtonCheck()
+				break
 
-		# timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
+		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
-		# if frameCounter > 0:
-		# 	self.writeVideoMetaFile(timeStart, "./images/", timeStart, timeEnd, frameCounter)
+		if frameCounter > 0:
+			self.writeVideoMetaFile(timeStart, "./images/", timeStart, timeEnd, frameCounter)
 
 
 	def change_mode(self):
