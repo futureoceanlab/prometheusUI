@@ -555,7 +555,7 @@ class Application(tk.Frame):
 
 		#now display things we want
 		if display == -1:
-			self.mainArea.winfo_children()[6].grid()
+			self.mainArea.winfo_children()[-1].grid()
 		else:
 			self.mainArea.winfo_children()[display].pack(fill=BOTH, expand=YES)
 
@@ -954,7 +954,7 @@ class Application(tk.Frame):
 				print("END VIDEO")          #currently taking video
 				self.set_video_state(False)
 				self.set_live_view(False)
-				# self.
+				self.change_display()
 		else:                               #menu mode
 			self.changeMenuValue(self.currentSelectionNode, self.nodeToButtonDict[self.currentSelectionNode][1])
 
@@ -969,7 +969,7 @@ class Application(tk.Frame):
 
 			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('video.jpg').resize((1440,950),Image.ANTIALIAS)))
 			self.change_display(5) #to live view/video capture image
-			self.capture_video(False)
+			# self.capture_video(False)
 		else:                               
 			#else is same as short press
 			self.ACTN_short_pressed()
