@@ -1267,6 +1267,7 @@ def main():
 	root.attributes('-fullscreen', True)
 	app = Application(master=root)
 	app.buttonCheck()
+	app.mainloop()
 
 if __name__ == '__main__':
 	main()
