@@ -1102,7 +1102,6 @@ class Application(tk.Frame):
 		self.change_title(MODE_OPTIONS[self.mode])
 		self.display = max(-1,-1*(self.display+1))
 		self.change_display(0)
-		self.update_display()
 
 	def change_display(self, val=10):
 		#10 is arbitrary display that doesn't exist
