@@ -883,7 +883,7 @@ class Application(tk.Frame):
 					# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
 					if len(self.previousImages) > 0:
 						# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
-						self.setPreviousImage_2(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS)),ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS)))
+						self.setPreviousImage_2(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS)),ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage-1).resize((720,425),Image.ANTIALIAS)))
 						print("DISPLAYING: ", self.previousImages[self.currentPreviousImage])
 						self.currentPreviousImage = (self.currentPreviousImage-2)%len(self.previousImages)
 						self.update_display()
