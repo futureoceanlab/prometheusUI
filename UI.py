@@ -186,8 +186,8 @@ class Application(tk.Frame):
 		super().__init__(master)
 		self.master = master
 
-		self.exposure2d = 30
-		self.exposure3d = 30
+		self.exposure2d = 1000
+		self.exposure3d = 1000
 		self.title = "CAPTURE"
 		self.modFreq = 0 
 		self.piDelay = 0 
@@ -290,8 +290,13 @@ class Application(tk.Frame):
 		master.bind('q', lambda x: master.quit())
 		self.create_layout()
 
+		#setters for prom-cli
 		camera_configure.configure_camera(0)
 		camera_configure.configure_camera(1)
+
+		self.set_exposure(0, self.exposure2d)
+		self.set_exposure(1, self.exposure3d)
+
 
 	def toggleFullScreen(self):
 		self.fullScreen = not self.fullScreen
@@ -451,10 +456,9 @@ class Application(tk.Frame):
 		return Image.open(self.previousImages[x%len(self.previousImages)])
 
 	def get_previousImage_BIN(self, x):
-		print("LEN: ", len(self.previousImages))
 		if len(self.previousImages) > 0:
 			binPath = self.previousImages[x%len(self.previousImages)]
-			print("bin path; ", binPath)
+			print("getting bin; ", binPath)
 			pngPath = readBinary.convertBINtoPNG(binPath, self.clockFreq)
 		else: 
 			pngPath = 'noDCS.jpg'
@@ -864,7 +868,7 @@ class Application(tk.Frame):
 					# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
 					if len(self.previousImages) > 0:
 						self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
-						print("DISPLAYING: ", self.get_previousImage_BIN(self.currentPreviousImage))
+						print("DISPLAYING: ", self.previousImages[self.currentPreviousImage])
 						self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
 						self.update_display()
 				else:
@@ -874,10 +878,13 @@ class Application(tk.Frame):
 
 	def DISP_long_pressed(self):
 		# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
-		self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
+
 		# self.setPreviousFigure(self.get_previousFigure(self.currentPreviousImage))
 
 		if not self.get_mode() and not self.get_video_state():  
+			self.currentPreviousImage = len(self.previousImages)-1
+			self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
+			self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
 			#capture mode and not taking video
 			self.toggle_prev_image()
 			self.set_live_view(False)
@@ -910,7 +917,9 @@ class Application(tk.Frame):
 						if self.HDRmode:
 							self.HDRWrapper(self.HDRTestSetting)
 						else:
+							print("PHOTO exp", self.exposure2d)
 							self.take_photo(False)
+							self.DISP_long_pressed()
 			else:
 				print("END VIDEO")          #currently taking video
 				self.set_video_state(False)
@@ -1058,19 +1067,30 @@ class Application(tk.Frame):
 	def change_exposure(self, mode):
 		if mode:
 			#3d
+			uiFunctionCalls.change3dExposure(self.exposure3d)
 			exposureIndex = EXPOSURE_OPTIONS.index(self.exposure3d)
 			self.exposure3d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
 			self.mainImportantData['EXP 3D'] = self.exposure3d
-			uiFunctionCalls.change3dExposure(self.exposure3d)
 			print("EXP3D: ", self.exposure3d)
 		else:
 			#2d
+			uiFunctionCalls.change2dExposure(self.exposure2d)
 			exposureIndex = EXPOSURE_OPTIONS.index(self.exposure2d)
+			print("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEXP IND", exposureIndex)
 			self.exposure2d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
 			self.mainImportantData['EXP 2D'] = self.exposure2d
-			uiFunctionCalls.change2dExposure(self.exposure2d)
 			print("EXP2D: ", self.exposure2d)
 		self.update_display()
+
+	def set_exposure(self,mode, val):
+		if mode:
+			self.exposure3d = val
+			print("IN HERE: ", self.exposure3d)
+			uiFunctionCalls.change3dExposure(self.exposure3d)
+		else:
+			self.exposure2d = val
+			print("IN HERE: ", self.exposure2d)
+			uiFunctionCalls.change2dExposure(self.exposure2d)
 
 
 	def change_title(self, newTitle):
