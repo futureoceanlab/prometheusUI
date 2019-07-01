@@ -659,8 +659,8 @@ class Application(tk.Frame):
 
 		mainFrame.prevImgCanvas.prevImg1 = prevImg1
 		mainFrame.prevImgCanvas.prevImg2 = prevImg2
-		prevImageCanvas.create_image(0,0,anchor=NW, image=prevImg1)
-		prevImageCanvas.create_image(400,0,anchor=NW, image=prevImg1)
+		prevImgCanvas.create_image(0,0,anchor=NW, image=prevImg1)
+		prevImgCanvas.create_image(400,0,anchor=NW, image=prevImg1)
 
 		prevImgCanvas.pack_forget()
 
