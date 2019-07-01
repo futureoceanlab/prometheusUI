@@ -645,18 +645,24 @@ class Application(tk.Frame):
 		# prevFigureCanvas.get_tk_widget().pack()
 		# prevFigureCanvas.get_tk_widget().pack_forget()
 
-		prevImageCanvas1 = tk.Canvas(mainFrame, width=800, height=480)
+		prevImageCanvas = tk.Canvas(mainFrame, width=800, height=480)
+		prevImg = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
+		mainFrame.prevImg = prevImg
+		prevImageCanvas.create_image(0,0,anchor=NW, image=prevImg)
+		prevImageCanvas.pack_forget()
+
+
+
+		prevImgCanvas = tk.Frame(mainFrame, width=800, height=480)
 		prevImg1 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
-		mainFrame.prevImg1 = prevImg1
-		prevImageCanvas1.create_image(0,0,anchor=NW, image=prevImg1)
-
-		prevImageCanvas2 = tk.Canvas(mainFrame, width=800, height=480)
 		prevImg2 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage-1).resize((1440,950),Image.ANTIALIAS))
-		mainFrame.prevImg2 = prevImg2
-		prevImageCanvas1.create_image(0,0,anchor=NW, image=prevImg2) 
 
-		prevImageCanvas1.pack_forget()
-		prevImageCanvas2.pack_forget()
+		mainFrame.prevImgCanvas.prevImg1 = prevImg1
+		mainFrame.prevImgCanvas.prevImg2 = prevImg2
+		prevImageCanvas.create_image(0,0,anchor=NW, image=prevImg1)
+		prevImageCanvas.create_image(400,0,anchor=NW, image=prevImg1)
+
+		prevImgCanvas.pack_forget()
 
 		# #Live View -- display = 5
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
