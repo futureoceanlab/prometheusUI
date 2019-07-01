@@ -1101,8 +1101,8 @@ class Application(tk.Frame):
 		self.mode = 1 - self.mode
 		self.change_title(MODE_OPTIONS[self.mode])
 		self.display = max(-1,-1*(self.display+1))
-		if self.display == 0:
-			self.setDCSImage()
+		# if self.display == 0:
+		# 	self.setDCSImage()
 		self.update_display()
 
 	def change_display(self, val=10):
