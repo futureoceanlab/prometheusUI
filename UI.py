@@ -1083,7 +1083,7 @@ class Application(tk.Frame):
 				# img = self.get_live_image(photoLocation)
 				# self.setLiveImage(img)
 				frameCounter +=1
-				self.nonRecursiveButtonCheck()
+				# self.nonRecursiveButtonCheck()
 				if frameCounter >50:
 					break
 
