@@ -972,6 +972,7 @@ class Application(tk.Frame):
 
 			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('video.jpg').resize((1440,950),Image.ANTIALIAS)))
 			self.change_display(5) #to live view/video capture image
+			self.update_display()
 			# self.capture_video(False)
 		else:                               
 			#else is same as short press
