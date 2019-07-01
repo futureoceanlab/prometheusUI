@@ -928,14 +928,13 @@ class Application(tk.Frame):
 		print("ACTN PRESSED")
 		if self.get_mode() == 0:            #capture
 			if not self.isTakingVideo:  #ready to take photo
-				if not self.viewingPreviousImages:
-					if not self.showingLiveView:
-						if self.HDRmode:
-							self.HDRWrapper(self.HDRTestSetting)
-						else:
-							print("PHOTO exp", self.exposure2d)
-							self.take_photo(False)
-							self.DISP_long_pressed()
+				if not self.showingLiveView:
+					if self.HDRmode:
+						self.HDRWrapper(self.HDRTestSetting)
+					else:
+						print("PHOTO exp", self.exposure2d)
+						self.take_photo(False)
+						self.DISP_long_pressed()
 			else:
 				print("END VIDEO")          #currently taking video
 				self.set_video_state(False)
