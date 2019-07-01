@@ -544,7 +544,7 @@ class Application(tk.Frame):
 		#not the one that it is coming from
 		display = self.get_display()
 		if display == 0:
-			self.setDCSImage(self.getDCSImage())
+			self.setDCSImage(ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[len(self.previousImages)-1])).resize((1440,950),Image.ANTIALIAS)))
 
 		#update main area dimensions
 		#erase everything that goes in main area
@@ -833,15 +833,6 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[0].pack_forget()
 		self.mainArea.winfo_children()[0].create_image(0,0,anchor=NW, image=img)
 		self.mainArea.winfo_children()[0].pack()
-
-	def getDCSImage(self):
-		if '_3D_' in self.previousImages[len(self.previousImages)-1]:
-			binPath = self.previousImages[len(self.previousImages)-1]
-			pngPath = readBinary.convertBINtoPNG(binPath, self.clockFreq)
-		else: 
-			pngPath = 'noDCS.jpg'
-		print("PNG: ", pngPath)
-		return Image.open(pngPath)
 
 
 	def setLiveImage(self, img):
