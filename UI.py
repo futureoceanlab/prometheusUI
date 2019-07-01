@@ -561,6 +561,7 @@ class Application(tk.Frame):
 
 		if display in [0,3]:
 			self.winfo_children()[2].grid(row=1, column=1,sticky=W+N+E+S)
+			
 
 
 	def create_layout(self):
