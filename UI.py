@@ -463,6 +463,7 @@ class Application(tk.Frame):
 			pngPath = readBinary.convertBINtoPNG(binPath, self.clockFreq)
 		else: 
 			pngPath = 'noPrevImg.jpg'
+		print("PNG PATH: ", pngPath)
 		return Image.open(pngPath)
 
 	def get_previousFigure(self, x):
@@ -834,7 +835,7 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[0].pack()
 
 	def getDCSImage(self):
-		if len(self.previousImages) > 0:
+		if '_2D_' in self.previousImages[len(self.previousImages)-1]:
 			binPath = self.previousImages[len(self.previousImages)-1]
 			pngPath = readBinary.convertBINtoPNG(binPath, self.clockFreq)
 		else: 
@@ -1267,7 +1268,7 @@ def main():
 	root.attributes('-fullscreen', True)
 	app = Application(master=root)
 	app.buttonCheck()
-	app.mainloop()
+	app.mainloop()	# turns out this is actually really important and GUI won't run otherwise
 
 if __name__ == '__main__':
 	main()
