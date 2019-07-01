@@ -835,7 +835,7 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[0].pack()
 
 	def getDCSImage(self):
-		if '_2D_' in self.previousImages[len(self.previousImages)-1]:
+		if '_3D_' in self.previousImages[len(self.previousImages)-1]:
 			binPath = self.previousImages[len(self.previousImages)-1]
 			pngPath = readBinary.convertBINtoPNG(binPath, self.clockFreq)
 		else: 
