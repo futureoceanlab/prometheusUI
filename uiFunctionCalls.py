@@ -17,7 +17,6 @@ def capturePhotoCommand2D(filename):
     camsel = LED(pg.led_cam_select_GPIO())
     # capture 0 
 
-    print("COMMAND : ", prom_cli0)
     camsel.off()
     subprocess_command(prom_cli0, error_msg="2D getBWsorted from BBB0 failed")
     # capture 1
@@ -97,8 +96,8 @@ def toggle2d3dMode(mode):
         cmd2 = " -a \"loadConfig %d.\"" %(mode)
         prom_cli0 = prom_cli + cmd + " -i 0 | hexdump"
         prom_cli1 = prom_cli + cmd + " -i 1 | hexdump"
-        prom_cli0_2 = prom_cli + cmd + " -i 0 | hexdump"
-        prom_cli1_2 = prom_cli + cmd + " -i 1 | hexdump"
+        prom_cli0_2 = prom_cli + cmd2 + " -i 0 | hexdump"
+        prom_cli1_2 = prom_cli + cmd2 + " -i 1 | hexdump"
         # Timer may be required
         subprocess_command(prom_cli0, error_msg="BBB0 2D 3D toggle failed")
         subprocess_command(prom_cli1, error_msg="BBB1 2D 3D toggle failed")

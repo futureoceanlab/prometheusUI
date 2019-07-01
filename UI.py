@@ -652,7 +652,7 @@ class Application(tk.Frame):
 
 		# #Live View -- display = 5
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		liveImg = self.get_live_image('live_view.jpg')
+		liveImg = self.get_live_image('noLiveViewAvailable.jpg')
 		mainFrame.liveImg = liveImg
 		liveViewCanvas.create_image(0,0,anchor=NW, image=liveImg)
 		liveViewCanvas.pack_forget()
