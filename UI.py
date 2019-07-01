@@ -1096,7 +1096,7 @@ class Application(tk.Frame):
 	def change_display(self, val=10):
 		#10 is arbitrary display that doesn't exist
 		if val == 10:
-			self.display = (fself.display +1)%4
+			self.display = (self.display +1)%4
 		else:
 			self.display = val
 		self.update_display()
