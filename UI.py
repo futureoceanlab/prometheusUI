@@ -648,12 +648,12 @@ class Application(tk.Frame):
 		prevImageCanvas1 = tk.Canvas(mainFrame, width=800, height=480)
 		prevImg1 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
 		mainFrame.prevImg1 = prevImg1
-		prevImageCanvas1.create_image(0,0,anchor=NW, image=prevImg)
+		prevImageCanvas1.create_image(0,0,anchor=NW, image=prevImg1)
 
 		prevImageCanvas2 = tk.Canvas(mainFrame, width=800, height=480)
 		prevImg2 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage-1).resize((1440,950),Image.ANTIALIAS))
 		mainFrame.prevImg2 = prevImg2
-		prevImageCanvas1.create_image(0,0,anchor=NW, image=prevImg) 
+		prevImageCanvas1.create_image(0,0,anchor=NW, image=prevImg2) 
 
 		prevImageCanvas1.pack_forget()
 		prevImageCanvas2.pack_forget()
