@@ -543,7 +543,7 @@ class Application(tk.Frame):
 		#the display below is the display that the screen is CHANGING TO
 		#not the one that it is coming from
 		display = self.get_display()
-		
+
 		#update main area dimensions
 		#erase everything that goes in main area
 		self.menuFrame.grid_forget()
@@ -1101,6 +1101,7 @@ class Application(tk.Frame):
 		self.mode = 1 - self.mode
 		self.change_title(MODE_OPTIONS[self.mode])
 		self.display = max(-1,-1*(self.display+1))
+		self.change_display(0)
 		self.update_display()
 
 	def change_display(self, val=10):
