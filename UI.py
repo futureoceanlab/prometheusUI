@@ -817,6 +817,13 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[4].create_image(0,0,anchor=NW, image=img)
 		self.mainArea.winfo_children()[4].pack()
 
+	def setPreviousImage_2(self, img1, img2):
+		self.mainArea.prevImg1 = img1
+		self.mainArea.prevImg2 = img2
+		self.mainArea.winfo_children()[4].create_image(0,0,anchor=NW, image=img)
+		self.mainArea.winfo_children()[4].create_image(200,0,anchor=NW, image=img)
+		self.mainArea.winfo_children()[4].pack()
+
 	def setPreviousFigure(self, fig):
 		prevFigure = FigureCanvasTkAgg(fig, self.mainArea)
 		self.mainArea.previousFigure = prevFigure
@@ -884,7 +891,8 @@ class Application(tk.Frame):
 					#get the next previous image
 					# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
 					if len(self.previousImages) > 0:
-						self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
+						# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
+						self.setPreviousImage_2(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS)),ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS)))
 						print("DISPLAYING: ", self.previousImages[self.currentPreviousImage])
 						self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
 						self.update_display()
@@ -900,7 +908,7 @@ class Application(tk.Frame):
 
 		if not self.get_mode() and not self.get_video_state():  
 			self.currentPreviousImage = len(self.previousImages)-1
-			self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
+			self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS)))
 			self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
 			#capture mode and not taking video
 			self.toggle_prev_image()
