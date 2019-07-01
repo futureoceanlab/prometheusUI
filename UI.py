@@ -543,9 +543,7 @@ class Application(tk.Frame):
 		#the display below is the display that the screen is CHANGING TO
 		#not the one that it is coming from
 		display = self.get_display()
-		if display == 0:
-			self.setDCSImage()
-
+		
 		#update main area dimensions
 		#erase everything that goes in main area
 		self.menuFrame.grid_forget()
@@ -1111,6 +1109,8 @@ class Application(tk.Frame):
 			self.display = (self.display +1)%4
 		else:
 			self.display = val
+		if self.display == 0: 
+			self.setDCSImage()
 		self.update_display()
 
 	def change_exposure(self, mode):
