@@ -1083,8 +1083,9 @@ class Application(tk.Frame):
 				# img = self.get_live_image(photoLocation)
 				# self.setLiveImage(img)
 				frameCounter +=1
-				# self.nonRecursiveButtonCheck()
-				break
+				self.nonRecursiveButtonCheck()
+				if frameCounter >50:
+					break
 
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
