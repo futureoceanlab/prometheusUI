@@ -561,7 +561,7 @@ class Application(tk.Frame):
 
 		if display in [0,3]:
 			self.winfo_children()[2].grid(row=1, column=1,sticky=W+N+E+S)
-			
+
 
 
 	def create_layout(self):
@@ -645,11 +645,18 @@ class Application(tk.Frame):
 		# prevFigureCanvas.get_tk_widget().pack()
 		# prevFigureCanvas.get_tk_widget().pack_forget()
 
-		prevImageCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		prevImg = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
-		mainFrame.prevImg = prevImg
-		prevImageCanvas.create_image(0,0,anchor=NW, image=prevImg)
-		prevImageCanvas.pack_forget()
+		prevImageCanvas1 = tk.Canvas(mainFrame, width=800, height=480)
+		prevImg1 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
+		mainFrame.prevImg1 = prevImg1
+		prevImageCanvas1.create_image(0,0,anchor=NW, image=prevImg)
+
+		prevImageCanvas2 = tk.Canvas(mainFrame, width=800, height=480)
+		prevImg2 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage-1).resize((1440,950),Image.ANTIALIAS))
+		mainFrame.prevImg2 = prevImg2
+		prevImageCanvas1.create_image(0,0,anchor=NW, image=prevImg) 
+
+		prevImageCanvas1.pack_forget()
+		prevImageCanvas2.pack_forget()
 
 		# #Live View -- display = 5
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
