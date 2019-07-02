@@ -469,7 +469,10 @@ class Application(tk.Frame):
 
 	def get_previousFigure(self, x):
 		prevImagePath = self.previousImages[x%len(self.previousImages)]
-		dcsFig, heatFig = readBinary.getDCSFigures(prevImagePath, self.clockFreq)
+		try:
+			dcsFig, heatFig = readBinary.getDCSFigures(prevImagePath, self.clockFreq)
+		except:
+
 		return heatFig
 
 	def get_previousImageIndex(self, offset=0):
@@ -602,7 +605,10 @@ class Application(tk.Frame):
 		if not len(self.previousImages):
 			fourDCSImages = ImageTk.PhotoImage(Image.open('noDCS.jpg').resize((1440,950),Image.ANTIALIAS))
 		else:
-			fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((1440,950),Image.ANTIALIAS))
+			try:
+				fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((1440,950),Image.ANTIALIAS))
+			except:
+				fourDCSImages = ImageTk.PhotoImage(Image.open('noDCS.jpg').resize((1440,950),Image.ANTIALIAS))
 		mainFrame.fourDCSImages = fourDCSImages
 		dcsCanvas.create_image(0,0,anchor=NW, image=fourDCSImages)
 		dcsCanvas.pack(fill=BOTH, expand=YES)
