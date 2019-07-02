@@ -1008,7 +1008,7 @@ class Application(tk.Frame):
 		#time 
 		newFile.write(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
 
-		infoDict {}
+		infoDict = {}
 		#i2c data
 		# self.updateI2Cdata(0, i2c.getTemperature(),0)
 		for data in self.I2Cdata:
