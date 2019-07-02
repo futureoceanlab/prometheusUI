@@ -105,7 +105,11 @@ def read_2D_BINImage(img):
 
 		image = dcsData[:,:,0]
 		# fig.add_subplot(1,1,1)
-		plt.imshow(np.rot90(image, 1))
+		if img.split('.')[0][-1] == '0':
+			plt.imshow(np.rot90(image, 3))
+		else:
+			plt.imshow(np.rot90(image, 1))
+
 		plt.axis('off')
 		outputFileName = img.replace('.bin', '_depth.png')
 		# outputFileName = './images/'+outputFileName
