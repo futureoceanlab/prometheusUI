@@ -918,6 +918,8 @@ class Application(tk.Frame):
 			self.set_video_state(False)
 			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('noLiveViewAvailable.jpg').resize((1440,950),Image.ANTIALIAS)))
 			self.update_display()
+			time.sleep(1)
+			print("capture liveview")
 			self.capture_video(write_to_temp=True)
 		else:                           
 			self.EXP_short_pressed()
