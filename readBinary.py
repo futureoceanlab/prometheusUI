@@ -115,7 +115,16 @@ def read_2D_BINImage(img):
 	return outputFileName
 
 def convertBINtoPNG(binPath, freq):
+	try:
+		if os.stat(binPath).st_size == 0:
+			throw Exception("empty file {}".format(binPath))
+			return
+	except OSError:
+		throw Exception("Invalid path {}".format(binPath))
+		return
+	
 	with open(binPath, 'r') as file:
+		if 
 		if '_2D_' in binPath:
 			return read_2D_BINImage(binPath)
 		else:

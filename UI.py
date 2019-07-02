@@ -184,50 +184,47 @@ class Application(tk.Frame):
 		return fileLocation
 
 
-	def preexec_fn(self):
-		ps = psutil.Process(os.getpid())
-		ps.set_nice(15)
-
-
 	def capture_video(self, write_to_temp = False):
 		#if we are taking a video, we write to a permanent location
 		#otherwise, we are in live view and want to write to a temporary location and delete later
 		print("TAKE VIDEO")
-		# numFolders, numFiles = self.directoryCounter("./images")
-
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
 		frameCounter = 0
 		# spawn a child process to run photo collection
 		photoDim = "_3D_" if self.dimensionMode else "_2D_"
-		# photoPath = photoUtil.generate_photo_path(write_to_temp, photoDim)
 		photoFolder = "live_view_temp" if write_to_temp else "images"
 		photoDir = os.path.join(os.getcwd(), photoFolder)
 		cmdPath = os.path.join(os.getcwd(), "timelapse.py")
 		timelapse_cmd = "{} {} {}".format(cmdPath, photoDir, photoDim)
 		cmd = shlex.split(timelapse_cmd)
 		timelapse_proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=False)
-		#, preexec_fn=self.preexec_fn)
 
 		while self.showingLiveView:
-			# paths = os.listdir(photoDir)
-			# for path in paths:
-			# 	lastPhoto = os.path.join(photoDir, path)
-			fileList = glob.glob(photoDir + "/*.bin")
-			# print(photoDir + "/*.bin")
-			# print(len(fileList))
-			lastPhoto = max(fileList, key=os.path.getctime)
+			# Only display camera 0 contents
+			fileList0 = glob.glob(photoDir + "/*0.bin")
+			for f in fileList0:
+				if os.path.getsize(f) == 0:
+					os.remove(f)
+			if not len(fileList0):
+				# skip if empty
+				continue
+			lastPhoto = max(fileList0, key=os.path.getctime)
 			print(lastPhoto)
-			pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
-			img = self.get_live_image(pngPath)
-			self.setLiveImage(img)
-			frameCounter += 1
-			self.nonRecursiveButtonCheck()
-			self.update()
-			# if write_to_temp:
-			# 	# delete all photos in temp
-			# 	time.sleep(1) 
-				# self.update_display()
-
+			try:
+				pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
+				img = self.get_live_image(pngPath)
+				self.setLiveImage(img)
+				frameCounter += 1
+				self.nonRecursiveButtonCheck()
+				self.update()
+			except Exception as e:
+				print(e)
+			finally:
+				allFileList = glob.glob(photoDir+"/*.bin")
+				if write_to_temp:
+					# delete all photos in temp
+					for f in allFileList:
+						os.remove(f)
 
 		# liveview has finished, terminate endless timelapse
 		try:
@@ -245,14 +242,7 @@ class Application(tk.Frame):
 				# self.setLiveImage(img)
 				frameCounter +=1
 				self.nonRecursiveButtonCheck()
-				
-		else:
-			while self.showingLiveView:
-				photoLocation = self.take_photo(write_to_temp, timeStart)
-				# img = self.get_live_image(photoLocation)
-				# self.setLiveImage(img)
-				frameCounter +=1
-				self.nonRecursiveButtonCheck()"""
+		"""
 
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
