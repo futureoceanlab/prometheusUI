@@ -203,9 +203,9 @@ class Application(tk.Frame):
 		while self.showingLiveView:
 			# Only display camera 0 contents
 			fileList0 = glob.glob(photoDir + "/*0.bin")
-			for f in fileList0:
+			"""for f in fileList0:
 				if os.path.getsize(f) == 0:
-					os.remove(f)
+					os.remove(f)"""
 			if not len(fileList0):
 				# skip if empty
 				continue
@@ -220,7 +220,7 @@ class Application(tk.Frame):
 				self.update()
 			except Exception as e:
 				print(e)
-		
+						
 		# delete all photos in temp
 		allFileList = glob.glob(photoDir+"/*")
 		if write_to_temp:
