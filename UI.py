@@ -1105,6 +1105,8 @@ class Application(tk.Frame):
 			if write_to_temp:
 				# delete all photos in temp
 				pass 
+			self.update_display()
+
 
 		# liveview has finished, terminate endless timelapse
 		try:
