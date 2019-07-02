@@ -94,7 +94,8 @@ class Application(tk.Frame):
 		self.richData = {'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d}
 		self.menu_tree = MenuTree(gVar.MENUTREE)
 		self.temp_menu_tree = MenuTree(gVar.TEMP_MENUTREE)
-		self.previousImage = 'ocean.jpg'
+		ocean_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'ocean.jpg')
+		self.previousImage = ocean_img
 		self.currentSelectionButton = None
 		self.currentSelectionNode = None
 		self.nodeToButtonDict = {}
@@ -362,7 +363,7 @@ class Application(tk.Frame):
 		#on startup, check if the main csv exists
 		#if it does, populate the previous images
 		#otherwise, create a new one
-		self.currentCSVFile = "./mainCSV.csv"
+		self.currentCSVFile = os.path.join(os.getcwd(), gVar.CSV_LOG_DIR, "mainCSV.csv")
 		try:
 			file = open(self.currentCSVFile, 'r')
 			reader = csv.reader(file, delimiter=',')
@@ -429,7 +430,7 @@ class Application(tk.Frame):
 			print("getting bin; ", binPath)
 			pngPath = readBinary.convertBINtoPNG(binPath, self.clockFreq)
 		else: 
-			pngPath = 'noPrevImg.jpg'
+			pngPath = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'noPrevImg.jpg')
 		print("PNG PATH: ", pngPath)
 		return Image.open(pngPath)
 
@@ -442,21 +443,25 @@ class Application(tk.Frame):
 		return (self.currentPreviousImage+offset)%len(self.previousImages)
 
 	def get_PC_image(self):
-		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((1440,950),Image.ANTIALIAS))
+		whale_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'whale.jpg')
+		return ImageTk.PhotoImage(Image.open(whale_img).resize((1440,950),Image.ANTIALIAS))
 		# return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((600,450),Image.ANTIALIAS))
 
 	def get_colorMap_image(self):
-		return ImageTk.PhotoImage(Image.open('whale.jpg').resize((1440,950),Image.ANTIALIAS))
+		whale_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'whale.jpg')
+		return ImageTk.PhotoImage(Image.open(whale_img).resize((1440,950),Image.ANTIALIAS))
 		# return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
 
 	def get_live_image(self, path):
 		return ImageTk.PhotoImage(Image.open(path).resize((1440,950),Image.ANTIALIAS))
 
 	def get_live_image_temp(self, x):
+		small1 = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'small1.jpg')
+		small2 = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'small2.jpg')
 		if x%2==0:
-			img = Image.open('small1.jpg').resize((1440,950),Image.ANTIALIAS)
+			img = Image.open(small1).resize((1440,950),Image.ANTIALIAS)
 		else:
-			img = Image.open('small2.jpg').resize((1440,950),Image.ANTIALIAS)
+			img = Image.open(small2).resize((1440,950),Image.ANTIALIAS)
 		return ImageTk.PhotoImage(img)
 		
 	def get_richData_string(self):
@@ -568,14 +573,16 @@ class Application(tk.Frame):
 		# canvas.get_tk_widget().pack()
 
 		dcsCanvas = tk.Canvas(mainFrame, width=800, height=480)
+		noDCS_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'noDCS.jpg')
+
 		if not len(self.previousImages):
-			fourDCSImages = ImageTk.PhotoImage(Image.open('noDCS.jpg').resize((1440,950),Image.ANTIALIAS))
+			fourDCSImages = ImageTk.PhotoImage(Image.open(noDCS_img).resize((1440,950),Image.ANTIALIAS))
 		else:
 			try:
 				fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((1440,950),Image.ANTIALIAS))
 			except Exception as e:
 				print(e)
-				fourDCSImages = ImageTk.PhotoImage(Image.open('noDCS.jpg').resize((1440,950),Image.ANTIALIAS))
+				fourDCSImages = ImageTk.PhotoImage(Image.open(noDCS_img).resize((1440,950),Image.ANTIALIAS))
 		mainFrame.fourDCSImages = fourDCSImages
 		dcsCanvas.create_image(0,0,anchor=NW, image=fourDCSImages)
 		dcsCanvas.pack(fill=BOTH, expand=YES)
@@ -650,7 +657,9 @@ class Application(tk.Frame):
 
 		# #Live View -- display = 5
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		liveImg = self.get_live_image('noLiveViewAvailable.jpg')
+		noLive_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'noLiveViewAvailable.jpg')
+
+		liveImg = self.get_live_image(noLive_img)
 		mainFrame.liveImg = liveImg
 		liveViewCanvas.create_image(0,0,anchor=NW, image=liveImg)
 		liveViewCanvas.pack_forget()
@@ -909,7 +918,8 @@ class Application(tk.Frame):
 			self.toggle_live_view()
 			self.viewingPreviousImages = False
 			self.set_video_state(False)
-			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('noLiveViewAvailable.jpg').resize((1440,950),Image.ANTIALIAS)))
+			noLive_img = os.path.join(os.getcwd(), gvar.PLACEHOLDER_IMG_DIR, 'noLiveViewAvailable.jpg')
+			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open(noLive_img).resize((1440,950),Image.ANTIALIAS)))
 			self.update_display()
 			self.capture_video(write_to_temp=True)
 		else:                           
