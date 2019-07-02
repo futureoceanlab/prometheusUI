@@ -1113,6 +1113,7 @@ class Application(tk.Frame):
 		if self.display == 0: 
 			self.setDCSImage()
 		self.update_display()
+		
 
 	def change_exposure(self, mode):
 		if mode:
