@@ -104,8 +104,8 @@ def read_2D_BINImage(img):
 		fig = plt.figure()
 
 		image = dcsData[:,:,0]
-		# fig.add_subplot(1,1,1)
-		if img.split('.')[0][-1] == '0':
+		print(img)
+		if img.split('.bin')[0][-1] == '0':
 			plt.imshow(np.rot90(image, 3))
 		else:
 			plt.imshow(np.rot90(image, 1))
