@@ -24,6 +24,7 @@ import readBinary
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import prom_GPIO as pg
 import time
+import subprocess
 
 SCREEEN_WIDTH = 1080
 BUTTON_LONGPRESS_TIME = 1
@@ -1087,7 +1088,8 @@ class Application(tk.Frame):
 		# photoPath = photoUtil.generate_photo_path(write_to_temp, photoDim)
 		photoFolder = "live_view_temp/" if write_to_temp else "images/"
 		photoDir = os.path.join(os.getcwd(), photoFolder)
-		timelapse_cmd = "timelapse.py {} {}".format(photoDir, photoDim)
+		cmdPath = os.path.join(os.getcwd(), "timelapse.py")
+		timelapse_cmd = "{} {} {}".format(cmdPath, photoDir, photoDim)
 		timelapse_proc = subprocess.Popen(timelapse_cmd, stdin=subprocess.PIPE, shell=False)
 
 		while self.showingLiveView:
