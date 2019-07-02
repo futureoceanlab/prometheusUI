@@ -4,186 +4,38 @@
 # Prometheus UI
 # June 27, 2019
 
-import tkinter as tk
-from tkinter.ttk import Frame, Button, Label, Style 
-from tkinter import *
-from PIL import ImageTk,Image 
-import gpiozero as gpio
-import time
+# Python libraries
 import os
 import glob
-import numpy as np
-import uiFunctionCalls
-import camera_power
-import configure_camera as camera_configure
-from datetime import datetime
-import csv
-from random import randint
-import i2c_functions as i2c
-import readBinary
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import prom_GPIO as pg
 import time
 import subprocess
 import shlex
 import psutil
+import numpy as np
+from datetime import datetime
+import csv
+from random import randint
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
-SCREEEN_WIDTH = 1080
-BUTTON_LONGPRESS_TIME = 1
-EXPOSURE_OPTIONS = [30, 100, 300, 1000, 3000]
-PI_DELAY_OPTIONS = [0,1]
-MOD_FREQ_OPTIONS = [0,1]
-NUM_EXPOSURES = len(EXPOSURE_OPTIONS)
-MODE_OPTIONS = ["CAPTURE", "MENU"]
-CAPTURE_MODE_DISPLAYS = ["DCS IMAGES", "POINT CLOUD", "RICH DATA", "COLOR MAP", "PREVIOUS IMAGES", "LIVE", ""]
-HDR_SETTINGS = {0:[[1],[30,100,300,1000,3000],[0],[0]],
-			    1:[[1],[300],[0],[0,1]],
-			    2:[[0,1],[30,100,300,1000,3000],[0,1],[0,1]]}
-			    # setting 0: an exposure test
-			    #         1: mod freq test
-			    #         2: entire blast
-MENUTREE = {'root':{
-							'Camera Settings': {'CamSubsetting1': 'f22',
-												'CamSubsetting2': '1/250',
-												'CamSubsetting3': 800
-												},
-							'Physical Settings':{'PhysicalSetting1':1,
-												 'PhysicalSetting2':2,
-												 'PhysicalSetting3':3
-												} , 
-							'Light Settings':{ 'lightSetting1': 4,
-												'lightSetting2': 5,
-												'lightSetting3': 6
-											}
+# TK libraries
+import tkinter as tk
+from tkinter.ttk import Frame, Button, Label, Style 
+from tkinter import *
+from PIL import ImageTk,Image 
 
-							}
-						}
+# RPI libraries
+import gpiozero as gpio
+import i2c_functions as i2c
+import prom_GPIO as pg
 
-TEMP_MENUTREE ={'root': {
-						"DIMENSION MODE" : ('2D'  , ['2D','3D']),
-						"MODULATION FREQ": (0     , [0,1]),
-						"ENABLE PI DELAY": (0     , [0,1]),
-						"CLOCK":		   ('EXT' , ['EXT','INT']),
-						"CLOCK FREQ"	 : ('6 Hz', ['6 Hz', '12 Hz', '24 Hz']),
-						"_RESTART BBB_"  : (' '   , [' ','restarting']),
-						"_SHUTDOWN BBB_" : (' '   , [' ','BYE!']), 
-						"HDR SETTING"    : (0     , ['EXPOSURE','MOD FREQ','BLAST'])
-
-}
-	
-}
-
-
-class MenuTree():
-	# A tree is a list of nodes 
-	# Nodes have a name and a list of child nodes
-	# The purpose of the tree is to make it easy to get
-	# the previous and next level of the menu
-
-	def __init__(self, treeStructure):
-		#treeStructure is a dictionary, like the MENU_TREE above
-
-		self.root = 'root'
-		self.tree = self.makeTree(treeStructure)
-		self.currentLevel = self.tree
-
-	def makeTree(self, treeStructure):
-		#recursively make each TreeNode be a name a list of child TreeNodes
-
-		if type(treeStructure) is not dict:
-			return treeStructure
-		treeFromHere = []
-		for key in treeStructure:
-			treeFromHere.append(TreeNode(key, self.makeTree(treeStructure[key])) )
-			
-		return treeFromHere
-
-	def getSelectionLevel(self, selection):
-		return selection.getImmediateChildren()
-
-	def traverseDownToSelectionLevel(self, selection):
-		#when the user clicks on the selection, this gets the children of that selection
-		self.currentLevel = self.getSelectionLevel(selection)
-
-	def goUpLevel(self, currentListOfNodes):
-		self.currentLevel = self.findPreviousLevel()
-
-	def printCurrentLevel(self):
-		for i in self.currentLevel:
-			print("  Node: ", i.name)
-
-	def printGivenLevel(self, given):
-		for n in given:
-			print(n.name)
-
-	def isAtRoot(self):
-		return self.tree[0].getImmediateChildren() == self.currentLevel
-
-	def isAtTempRoot(self):
-		#TEMP
-		return True
-
-	def findPreviousLevel(self):
-		exploreList = [self.tree[:]]
-		if self.currentLevel == self.tree:
-			return self.tree
-		while True:
-			tempExploreList = []
-			for nodeList in exploreList:
-				for node in nodeList:
-					nodeChildren = node.getImmediateChildren()
-					if set(self.currentLevel) == set(nodeChildren):
-						return exploreList[0]
-					tempExploreList.append(nodeChildren)
-				exploreList = tempExploreList[:]
-
-
-class TreeNode():
-	def __init__(self, name, childrenOrValue):
-		self.name = name
-
-		if type(childrenOrValue)==list:
-			#a node has children
-			self.children = sorted(childrenOrValue, key=lambda x: x.name)
-			self.value = None
-		else:
-			#or it is a leaf
-			self.value = childrenOrValue
-			self.children = None
-
-	def getImmediateChildren(self):
-		return self.children
-
-	def sortLevel(self,children):        
-		for i in range(len(children)):
-			minimum = i
-			
-			for j in range(i + 1, len(children)):
-				# Select the smallest value
-				if children[j].name < children[minimum].name:
-					minimum = j
-
-			# Place it at the front of the 
-			# sorted end of the array
-			children[minimum], children[i] = children[i], children[minimum]
-				
-		return children
-
-	def isLeaf(self):
-		return self.children == None
-
-	def getValue(self):
-		return self.value
-
-	def changeValue(self, newVal):
-		if self.value:
-			self.value = newVal
-
-	def printChildren(self):
-		s = ''
-		for c in self.getImmediateChildren():
-			s += c.name+' '
-		print(s)
+# Custom libraries
+import uiFunctionCalls
+import camera_power
+import configure_camera as camera_configure
+import readBinary
+# Global Variables in global_var
+import global_var as gVar
+from menuTree import MenuTree
 
 
 class Application(tk.Frame):
@@ -198,7 +50,7 @@ class Application(tk.Frame):
 		self.piDelay = 0 
 		self.enableCapture = 0 
 		self.HDRmode = 0		#is HDR enabled
-		self.HDRTestSetting = 0	#when taking HDR, what test should we run? see HDR_SETTINGS - the key to dictionary
+		self.HDRTestSetting = 0	#when taking HDR, what test should we run? see gVar.HDR_SETTINGS - the key to dictionary
 		self.clockSource = 1	#0 internal; 1 external
 		self.setClock(self.clockSource)
 		self.clockFreq = 6
@@ -240,8 +92,8 @@ class Application(tk.Frame):
 		#data contained in the UI 
 		self.mainImportantData = {'Battery': '50%', 'Mem': str(43.2)+'GB', 'S/N ratio': 0.6, 'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d, 'VIDEO':"NO"} 
 		self.richData = {'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d}
-		self.menu_tree = MenuTree(MENUTREE)
-		self.temp_menu_tree = MenuTree(TEMP_MENUTREE)
+		self.menu_tree = MenuTree(gVar.MENUTREE)
+		self.temp_menu_tree = gVar.MENUTREE(gVar.TEMP_MENUTREE)
 		self.previousImage = 'ocean.jpg'
 		self.currentSelectionButton = None
 		self.currentSelectionNode = None
@@ -295,7 +147,7 @@ class Application(tk.Frame):
 		master.bind('q', lambda x: master.quit())
 		self.create_layout()
 
-		#setters for prom-cli
+		# prime the cameras with camera configurations
 		camera_configure.configure_camera(0)
 		camera_configure.configure_camera(1)
 
@@ -307,6 +159,107 @@ class Application(tk.Frame):
 		self.fullScreen = not self.fullScreen
 		self.master.attributes('-fullscreen', self.fullScreen)
 
+
+	""" Taking photo and video action"""
+	def take_photo(self, write_to_temp, vid_id=0):
+		#if vid_id is zero, it means we don't care about associating this picture with a video
+		#i.e. a picture is being taken or we are in live view
+		print("TAKE PHOTO")
+
+		if write_to_temp:
+			elementLocation = "./live_view_temp/"
+		else:
+			elementLocation = "./images/"
+
+		fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
+
+		if not self.dimensionMode:		#2d
+			returnedFiles = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
+			# returnedFile = [] #TEMP
+		else:
+			returnedFiles = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
+		self.previousImages += returnedFiles
+
+		self.update_csv(fileLocation, write_to_temp, vid_id, returnedFiles)
+		return fileLocation
+
+
+	def preexec_fn(self):
+		ps = psutil.Process(os.getpid())
+		ps.set_nice(15)
+
+
+	def capture_video(self, write_to_temp = False):
+		#if we are taking a video, we write to a permanent location
+		#otherwise, we are in live view and want to write to a temporary location and delete later
+		print("TAKE VIDEO")
+		# numFolders, numFiles = self.directoryCounter("./images")
+
+		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
+		frameCounter = 0
+		# spawn a child process to run photo collection
+		photoDim = "_3D_" if self.dimensionMode else "_2D_"
+		# photoPath = photoUtil.generate_photo_path(write_to_temp, photoDim)
+		photoFolder = "live_view_temp" if write_to_temp else "images"
+		photoDir = os.path.join(os.getcwd(), photoFolder)
+		cmdPath = os.path.join(os.getcwd(), "timelapse.py")
+		timelapse_cmd = "{} {} {}".format(cmdPath, photoDir, photoDim)
+		cmd = shlex.split(timelapse_cmd)
+		timelapse_proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=False)
+		#, preexec_fn=self.preexec_fn)
+
+		while self.showingLiveView:
+			paths = os.listdir(photoDir)
+			for path in paths:
+				lastPhoto = path
+				# fileList = glob.glob(photoDir + "/*.bin")
+				# print(photoDir + "/*.bin")
+				# print(len(fileList))
+				# lastPhoto = max(fileList, key=os.path.getctime)
+				print(lastPhoto)
+				# pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
+				img = self.get_live_image(pngPath)
+				self.setLiveImage(img)
+				frameCounter += 1
+				self.nonRecursiveButtonCheck()
+			# if write_to_temp:
+			# 	# delete all photos in temp
+			# 	pass 
+			# self.update_display()
+
+
+		# liveview has finished, terminate endless timelapse
+		try:
+			timelapse_proc.communicate(b"a")
+		except TimeoutError:
+			timelapse_proc.kill()
+			timelapse_proc.communicate()
+
+		""" #this looks awkward but we need two while loops because we don't want user to change
+		#HDR setting in the middle of a capture... that would be confusing
+		if self.HDRmode:
+			while self.showingLiveView:
+				photoLocation = self.HDRWrapper(self.HDRTestSetting, timeStart)
+				# img = self.get_live_image(photoLocation)
+				# self.setLiveImage(img)
+				frameCounter +=1
+				self.nonRecursiveButtonCheck()
+				
+		else:
+			while self.showingLiveView:
+				photoLocation = self.take_photo(write_to_temp, timeStart)
+				# img = self.get_live_image(photoLocation)
+				# self.setLiveImage(img)
+				frameCounter +=1
+				self.nonRecursiveButtonCheck()"""
+
+		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
+
+		if not write_to_temp and frameCounter > 0:
+			self.writeVideoMetaFile(timeStart, "./images/", timeStart, timeEnd, frameCounter)
+
+
+	""" Continuous Button check logic """
 	def nonRecursiveButtonCheck(self):
 		# The function that continuously checks the state of the buttons
 
@@ -323,14 +276,14 @@ class Application(tk.Frame):
 				#button is being released
 				self.dispBtnState = 0
 				lengthOfPress = time.time() - self.dispHeldStart 
-				if lengthOfPress < BUTTON_LONGPRESS_TIME:
+				if lengthOfPress < gVar.BUTTON_LONGPRESS_TIME:
 					#it was a short press
 					self.DISP_short_pressed()
 
 			if self.dispBtnState:
 				#check if it is longpress yet
 				lengthOfPress = time.time() - self.dispHeldStart
-				if lengthOfPress > BUTTON_LONGPRESS_TIME:
+				if lengthOfPress > gVar.BUTTON_LONGPRESS_TIME:
 					#long press
 					self.dispBtnState = 0
 					self.dispSinceLongheld = time.time()
@@ -348,14 +301,14 @@ class Application(tk.Frame):
 				#button is being released
 				self.expoBtnState = 0
 				lengthOfPress = time.time() - self.expoHeldStart 
-				if lengthOfPress < BUTTON_LONGPRESS_TIME:
+				if lengthOfPress < gVar.BUTTON_LONGPRESS_TIME:
 					#it was a short press
 					self.EXP_short_pressed()
 
 			if self.expoBtnState:
 				#check if it is longpress yet
 				lengthOfPress = time.time() - self.expoHeldStart
-				if lengthOfPress > BUTTON_LONGPRESS_TIME:
+				if lengthOfPress > gVar.BUTTON_LONGPRESS_TIME:
 					#long press
 					self.expoBtnState = 0
 					self.expoSinceLongheld = time.time()
@@ -373,14 +326,14 @@ class Application(tk.Frame):
 				#button is being released
 				self.actnBtnState = 0
 				lengthOfPress = time.time() - self.actnHeldStart 
-				if lengthOfPress < BUTTON_LONGPRESS_TIME:
+				if lengthOfPress < gVar.BUTTON_LONGPRESS_TIME:
 					#it was a short press
 					self.ACTN_short_pressed()
 
 			if self.actnBtnState:
 				#check if it is longpress yet
 				lengthOfPress = time.time() - self.actnHeldStart
-				if lengthOfPress > BUTTON_LONGPRESS_TIME:
+				if lengthOfPress > gVar.BUTTON_LONGPRESS_TIME:
 					#long press
 					self.actnBtnState = 0
 					self.actnSinceLongheld = time.time()
@@ -389,7 +342,6 @@ class Application(tk.Frame):
 
 	def buttonCheck(self):
 		# The function that continuously checks the state of the buttons
-
 		self.nonRecursiveButtonCheck()
 
 		# This allows for the button checker to run continously, 
@@ -402,6 +354,7 @@ class Application(tk.Frame):
 		#camera_power.turn_on_BBBx(1)
 		self.master.after(10000, self.buttonCheck)
 
+	""" Log Handlers """"
 	def createMainLog(self):
 		numFolders, numFiles = self.directoryCounter("./logs")
 		newFile = open("./logs/"+"log_"+str(numFiles)+".txt", "w+")
@@ -432,6 +385,25 @@ class Application(tk.Frame):
 			self.numPreviousImages = 0
 		file.close()
 
+
+	def update_csv(self, fileLocation, write_to_temp, vid_id, files):
+		csvFile = open(self.currentCSVFile, 'a')
+		writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+		for file in files: 
+			if not write_to_temp:
+				#update CSV
+				
+				#CSV FORMAT
+				#index, imageLocation, metadataLocation
+				metaFile = fileLocation+"_meta.txt"
+				self.writeImageMetaFile(metaFile)
+				writer.writerow([self.numPreviousImages, file, vid_id, metaFile])
+				self.numPreviousImages +=1
+		
+		csvFile.close()
+
+
+	""" Getters """
 	def get_mode(self):
 		return self.mode
 
@@ -445,7 +417,7 @@ class Application(tk.Frame):
 		return self.exposure3d
 
 	def get_title(self):
-		return MODE_OPTIONS[self.mode] +  '  -  ' + CAPTURE_MODE_DISPLAYS[self.get_display()]
+		return gVar.MODE_OPTIONS[self.mode] +  '  -  ' + gVar.CAPTURE_MODE_DISPLAYS[self.get_display()]
 
 	def get_mainImportantData(self):
 		return self.mainImportantData
@@ -508,6 +480,8 @@ class Application(tk.Frame):
 			s += key+' : '+str(self.mainImportantData[key])+'\n'
 		return s
 
+
+	""" Setters """
 	def update_data(self,dictionary,key,val):
 		dictionary[key] = val
 
@@ -534,6 +508,8 @@ class Application(tk.Frame):
 	def set_video_state(self, x):
 		self.isTakingVideo = x 
 
+
+	""" Display Updates """
 	def update_display(self):
 		# function that is called after every button push to update
 		# the state of the display
@@ -566,7 +542,6 @@ class Application(tk.Frame):
 
 		if display in [0,3,4]:
 			self.winfo_children()[2].grid(row=1, column=1,sticky=W+N+E+S)
-
 
 
 	def create_layout(self):
@@ -736,10 +711,6 @@ class Application(tk.Frame):
 	def makeMenu(self,parent):
 		menubar = Frame(parent)                        
 		menubar.pack(side=TOP, fill=X)
-
-
-
-		
 		button1 = Menubutton(menubar, text='Camera Settings')
 		button1.pack(side=LEFT)
 		cam = Menu(button1)
@@ -1039,118 +1010,9 @@ class Application(tk.Frame):
 		newFile.write(vid_id + '\n' + start + '\n' + end + '\n' + str(numFrames) + '\n')
 		newFile.close()
 
-	def take_photo(self, write_to_temp, vid_id=0):
-		#if vid_id is zero, it means we don't care about associating this picture with a video
-		#i.e. a picture is being taken or we are in live view
-		print("TAKE PHOTO")
-
-		if write_to_temp:
-			elementLocation = "./live_view_temp/"
-		else:
-			elementLocation = "./images/"
-
-		fileLocation = elementLocation+str(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
-
-		if not self.dimensionMode:		#2d
-			returnedFiles = uiFunctionCalls.capturePhotoCommand2D(fileLocation+"_2D_")
-			# returnedFile = [] #TEMP
-		else:
-			returnedFiles = uiFunctionCalls.capturePhotoCommand3D(fileLocation+"_3D_")
-			# returnedFile = [] #TEMP
-		self.previousImages += returnedFiles
-		# returnedFileName = str(returnedFile[0])
-		# returnedFileName = "filename"		#TEMPORARY, UNCOMMENT ABOVE LINE
-
-		csvFile = open(self.currentCSVFile, 'a')
-		writer = csv.writer(csvFile, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
-		for file in returnedFiles: 
-			if not write_to_temp:
-				#update CSV
-				
-				#CSV FORMAT
-				#index, imageLocation, metadataLocation
-				metaFile = fileLocation+"_meta.txt"
-				self.writeImageMetaFile(metaFile)
-				writer.writerow([self.numPreviousImages, file, vid_id, metaFile])
-				self.numPreviousImages +=1
-		
-		csvFile.close()
-		return fileLocation
-
-	def preexec_fn(self):
-		ps = psutil.Process(os.getpid())
-		ps.set_nice(15)
-
-
-	def capture_video(self, write_to_temp = False):
-		#if we are taking a video, we write to a permanent location
-		#otherwise, we are in live view and want to write to a temporary location and delete later
-		print("TAKE VIDEO")
-		# numFolders, numFiles = self.directoryCounter("./images")
-
-		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
-		frameCounter = 0
-		# spawn a child process to run photo collection
-		photoDim = "_3D_" if self.dimensionMode else "_2D_"
-		# photoPath = photoUtil.generate_photo_path(write_to_temp, photoDim)
-		photoFolder = "live_view_temp" if write_to_temp else "images"
-		photoDir = os.path.join(os.getcwd(), photoFolder)
-		cmdPath = os.path.join(os.getcwd(), "timelapse.py")
-		timelapse_cmd = "{} {} {}".format(cmdPath, photoDir, photoDim)
-		cmd = shlex.split(timelapse_cmd)
-		timelapse_proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=False, preexec_fn=self.preexec_fn)
-
-		while self.showingLiveView:
-			fileList = glob.iglob(photoDir + "/*.bin")
-			print(photoDir + "/*.bin")
-			print(len(fileList))
-			lastPhoto = max(fileList, key=os.path.getctime)
-			print(lastPhoto)
-			pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
-			img = self.get_live_image(pngPath)
-			self.setLiveImage(img)
-			frameCounter += 1
-			self.nonRecursiveButtonCheck()
-			if write_to_temp:
-				# delete all photos in temp
-				pass 
-			self.update_display()
-
-
-		# liveview has finished, terminate endless timelapse
-		try:
-			timelapse_proc.communicate(b"a")
-		except TimeoutError:
-			timelapse_proc.kill()
-			timelapse_proc.communicate()
-
-		""" #this looks awkward but we need two while loops because we don't want user to change
-		#HDR setting in the middle of a capture... that would be confusing
-		if self.HDRmode:
-			while self.showingLiveView:
-				photoLocation = self.HDRWrapper(self.HDRTestSetting, timeStart)
-				# img = self.get_live_image(photoLocation)
-				# self.setLiveImage(img)
-				frameCounter +=1
-				self.nonRecursiveButtonCheck()
-				
-		else:
-			while self.showingLiveView:
-				photoLocation = self.take_photo(write_to_temp, timeStart)
-				# img = self.get_live_image(photoLocation)
-				# self.setLiveImage(img)
-				frameCounter +=1
-				self.nonRecursiveButtonCheck()"""
-
-		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
-
-		if not write_to_temp and frameCounter > 0:
-			self.writeVideoMetaFile(timeStart, "./images/", timeStart, timeEnd, frameCounter)
-
-
 	def change_mode(self):
 		self.mode = 1 - self.mode
-		self.change_title(MODE_OPTIONS[self.mode])
+		self.change_title(gVar.MODE_OPTIONS[self.mode])
 		self.display = max(-1,-1*(self.display+1))
 		# if self.display == 0:
 		# 	self.setDCSImage()
@@ -1171,15 +1033,15 @@ class Application(tk.Frame):
 		if mode:
 			#3d
 			uiFunctionCalls.change3dExposure(self.exposure3d)
-			exposureIndex = EXPOSURE_OPTIONS.index(self.exposure3d)
-			self.exposure3d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
+			exposureIndex = gVar.EXPOSURE_OPTIONS.index(self.exposure3d)
+			self.exposure3d = gVar.EXPOSURE_OPTIONS[(exposureIndex+1)%gVar.NUM_EXPOSURES]
 			self.mainImportantData['EXP 3D'] = self.exposure3d
 			print("EXP3D: ", self.exposure3d)
 		else:
 			#2d
 			uiFunctionCalls.change2dExposure(self.exposure2d)
-			exposureIndex = EXPOSURE_OPTIONS.index(self.exposure2d)
-			self.exposure2d = EXPOSURE_OPTIONS[(exposureIndex+1)%NUM_EXPOSURES]
+			exposureIndex = gVar.EXPOSURE_OPTIONS.index(self.exposure2d)
+			self.exposure2d = gVar.EXPOSURE_OPTIONS[(exposureIndex+1)%gVar.NUM_EXPOSURES]
 			self.mainImportantData['EXP 2D'] = self.exposure2d
 			print("EXP2D: ", self.exposure2d)
 		self.update_display()
@@ -1245,7 +1107,7 @@ class Application(tk.Frame):
 		i2c.writeClock(mult, div)
 
 	def toggleHDRSetting(self):
-		self.HDRTestSetting = (self.HDRTestSetting + 1) % len(TEMP_MENUTREE['root']['HDR SETTING'][1])
+		self.HDRTestSetting = (self.HDRTestSetting + 1) % len(gVar.TEMP_MENUTREE['root']['HDR SETTING'][1])
 
 
 	def toggleEnableCapture(self):
@@ -1276,7 +1138,7 @@ class Application(tk.Frame):
 		return singleRepresentativePhoto
 
 	def HDRWrapper(self, setting, vid_id=0):
-		_2d3d, exp, pi, modFreq = HDR_SETTINGS[setting]
+		_2d3d, exp, pi, modFreq = gVar.HDR_SETTINGS[setting]
 		return self.doHDRtest(_2d3d, exp,pi, modFreq, vid_id)
 
 
@@ -1292,26 +1154,14 @@ class Application(tk.Frame):
 		print("AYYO TIME TO SHUTDOWN")
 		camera_power.turn_off(gpio.LED(pg.bbb0_ctrl_GPIO()), gpio.Button(pg.bbb0_reset_GPIO()))
 		camera_power.turn_off(gpio.LED(pg.bbb0_ctrl_GPIO()), gpio.Button(pg.bbb0_reset_GPIO()))
-		# camera_power.connect_both_cameras()
-		# camera_power.turn_on_BBBx(0)
-		# camera_power.turn_on_BBBx(1)
 
 
 
-
-
-
-def main():
+if __name__ == '__main__':
 	camera_power.connect_both_cameras()
-
-	# camera_power.turn_on_BBBx(0)
-	# camera_power.turn_on_BBBx(1)
 	root = tk.Tk()
 	root.overrideredirect(False)		
 	root.attributes('-fullscreen', True)
 	app = Application(master=root)
 	app.buttonCheck()
 	app.mainloop()	# turns out this is actually really important and GUI won't run otherwise
-
-if __name__ == '__main__':
-	main()
