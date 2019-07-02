@@ -220,12 +220,12 @@ class Application(tk.Frame):
 				self.update()
 			except Exception as e:
 				print(e)
-			finally:
-				allFileList = glob.glob(photoDir+"/*.bin")
-				if write_to_temp:
-					# delete all photos in temp
-					for f in allFileList:
-						os.remove(f)
+		
+		# delete all photos in temp
+		allFileList = glob.glob(photoDir+"/*")
+		if write_to_temp:
+			for f in allFileList:
+				os.remove(f)
 
 		# liveview has finished, terminate endless timelapse
 		try:

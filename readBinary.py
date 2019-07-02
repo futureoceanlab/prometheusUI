@@ -74,8 +74,8 @@ def get_4DCS_PNG(img):
 		dcsFig.tight_layout()
 		outputFileName = img.replace('.bin', '_4DCS.png')
 		plt.savefig(outputFileName)
-		# plt.clf()
-		# plot.close()
+		plt.clf()
+		plot.close()
 	return outputFileName
 
 def read_3D_BINimage(img, freq):
@@ -93,8 +93,8 @@ def read_3D_BINimage(img, freq):
 		# outputFileName = './images/'+outputFileName
 
 		plt.savefig(outputFileName)
-		# plt.clf()
-		# plot.close()
+		plt.clf()
+		plot.close()
 	return outputFileName
 
 def read_2D_BINImage(img):
@@ -110,8 +110,8 @@ def read_2D_BINImage(img):
 		outputFileName = img.replace('.bin', '_depth.png')
 		# outputFileName = './images/'+outputFileName
 		plt.savefig(outputFileName)
-		# plt.clf()
-		# plot.close()
+		plt.clf()
+		plot.close()
 	return outputFileName
 
 def convertBINtoPNG(binPath, freq):
