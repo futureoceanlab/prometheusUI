@@ -636,7 +636,10 @@ class Application(tk.Frame):
 
 		colorCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		print()
-		colorImg = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
+		try:
+			colorImg = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
+		except:
+			colorImg = self.get_colorMap_image()
 		mainFrame.colorImg = colorImg
 		colorCanvas.create_image(0,0,anchor=NW, image=colorImg)
 		colorCanvas.pack_forget()
@@ -649,8 +652,12 @@ class Application(tk.Frame):
 		# prevFigureCanvas.get_tk_widget().pack_forget()
 
 		prevImageCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		prevImg1 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS))
-		prevImg2 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage-1).resize((720,425),Image.ANTIALIAS))
+		try:
+			prevImg1 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS))
+			prevImg2 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage-1).resize((720,425),Image.ANTIALIAS))
+		except:
+			prevImg1 = self.get_colorMap_image()
+			prevImg2 = self.get_colorMap_image()
 		mainFrame.prevImg1 = prevImg1
 		mainFrame.prevImg2 = prevImg2
 		prevImageCanvas.create_image(0,0,anchor=NW, image=prevImg1)
