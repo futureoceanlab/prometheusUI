@@ -573,7 +573,8 @@ class Application(tk.Frame):
 		else:
 			try:
 				fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((1440,950),Image.ANTIALIAS))
-			except:
+			except Exception as e:
+				print(e)
 				fourDCSImages = ImageTk.PhotoImage(Image.open('noDCS.jpg').resize((1440,950),Image.ANTIALIAS))
 		mainFrame.fourDCSImages = fourDCSImages
 		dcsCanvas.create_image(0,0,anchor=NW, image=fourDCSImages)
@@ -604,10 +605,10 @@ class Application(tk.Frame):
 		# heatCanvas.get_tk_widget().pack_forget()
 
 		colorCanvas = tk.Canvas(mainFrame, width=800, height=480)
-		print()
 		try:
 			colorImg = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
-		except:
+		except Exception as e:
+			print(e)
 			colorImg = self.get_colorMap_image()
 		mainFrame.colorImg = colorImg
 		colorCanvas.create_image(0,0,anchor=NW, image=colorImg)
@@ -624,7 +625,8 @@ class Application(tk.Frame):
 		try:
 			prevImg1 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS))
 			prevImg2 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage-1).resize((720,425),Image.ANTIALIAS))
-		except:
+		except Exception as e:
+			print(e)
 			prevImg1 = self.get_colorMap_image()
 			prevImg2 = self.get_colorMap_image()
 		mainFrame.prevImg1 = prevImg1
