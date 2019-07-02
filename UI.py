@@ -93,7 +93,7 @@ class Application(tk.Frame):
 		self.mainImportantData = {'Battery': '50%', 'Mem': str(43.2)+'GB', 'S/N ratio': 0.6, 'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d, 'VIDEO':"NO"} 
 		self.richData = {'EXP 2D':self.exposure2d, 'EXP 3D': self.exposure3d}
 		self.menu_tree = MenuTree(gVar.MENUTREE)
-		self.temp_menu_tree = gVar.MENUTREE(gVar.TEMP_MENUTREE)
+		self.temp_menu_tree = MenuTree(gVar.TEMP_MENUTREE)
 		self.previousImage = 'ocean.jpg'
 		self.currentSelectionButton = None
 		self.currentSelectionNode = None
@@ -205,35 +205,35 @@ class Application(tk.Frame):
 		cmdPath = os.path.join(os.getcwd(), "timelapse.py")
 		timelapse_cmd = "{} {} {}".format(cmdPath, photoDir, photoDim)
 		cmd = shlex.split(timelapse_cmd)
-		timelapse_proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=False)
+		#timelapse_proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=False)
 		#, preexec_fn=self.preexec_fn)
 
 		while self.showingLiveView:
 			paths = os.listdir(photoDir)
 			for path in paths:
-				lastPhoto = path
+				lastPhoto = os.path.join(photoDir, path)
 				# fileList = glob.glob(photoDir + "/*.bin")
 				# print(photoDir + "/*.bin")
 				# print(len(fileList))
 				# lastPhoto = max(fileList, key=os.path.getctime)
 				print(lastPhoto)
 				# pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
-				img = self.get_live_image(pngPath)
+				img = self.get_live_image(lastPhoto)
 				self.setLiveImage(img)
 				frameCounter += 1
 				self.nonRecursiveButtonCheck()
 			# if write_to_temp:
 			# 	# delete all photos in temp
-			# 	pass 
+			# 	time.sleep(1) 
 			# self.update_display()
 
 
 		# liveview has finished, terminate endless timelapse
-		try:
-			timelapse_proc.communicate(b"a")
-		except TimeoutError:
-			timelapse_proc.kill()
-			timelapse_proc.communicate()
+		#try:
+		#	timelapse_proc.communicate(b"a")
+		#except TimeoutError:
+		#	timelapse_proc.kill()
+		#	timelapse_proc.communicate()
 
 		""" #this looks awkward but we need two while loops because we don't want user to change
 		#HDR setting in the middle of a capture... that would be confusing
