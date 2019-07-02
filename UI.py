@@ -1096,6 +1096,8 @@ class Application(tk.Frame):
 
 		while self.showingLiveView:
 			fileList = glob.iglob(photoDir + "/*.bin")
+			print(photoDir + "/*.bin")
+			print(len(fileList))
 			lastPhoto = max(fileList, key=os.path.getctime)
 			print(lastPhoto)
 			pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
