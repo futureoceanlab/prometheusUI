@@ -1210,14 +1210,13 @@ class Application(tk.Frame):
 		for dimMode in _2d3dModeOptions:			#2d and 3d mode
 			self.set_2d3d(dimMode)
 			for exp in expOptions:
-				self.change_exposure(self.dimensionMode)
+				self.set_exposure(self.dimensionMode, exp)
 				for pi in piOptions:
-					self.setPiDelay(pi)
+					# self.setPiDelay(pi)
 					for freq in modFreqOptions:
-						self.setModulationFrequency(freq)
+						# self.setModulationFrequency(freq)
 						singleRepresentativePhoto = self.take_photo(False, vid_id)
-						time.sleep(1)
-						#if you're doing an HDR test, you always want to store the image (ie temp write is False)
+		#if you're doing an HDR test, you always want to store the image (ie temp write is False)
 		#an HDR test takes a LOT of images, but we only return one (doesn't matter which)
 		#to display to the user in the live view
 		#it might be really trippy to be baraded by images with different exposures
