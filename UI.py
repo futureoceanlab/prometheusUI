@@ -458,7 +458,9 @@ class Application(tk.Frame):
 		# return ImageTk.PhotoImage((self.get_previousImage(self.get_previousImageIndex())).resize((800,480),Image.ANTIALIAS))
 
 	def get_live_image(self, path):
-		return ImageTk.PhotoImage(Image.open(path).resize((1440,950),Image.ANTIALIAS))
+		# return ImageTk.PhotoImage(Image.open(path).resize((1440,950),Image.ANTIALIAS))
+		return ImageTk.PhotoImage(Image.open(path).resize((720,425),Image.ANTIALIAS))
+
 
 	def get_live_image_temp(self, x):
 		small1 = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'small1.jpg')
@@ -647,19 +649,6 @@ class Application(tk.Frame):
 		prevImageCanvas.create_image(100,0, anchor=NW, image=prevImg2)
 		prevImageCanvas.pack_forget()
 
-
-
-		# prevImgCanvas = tk.Frame(mainFrame, width=800, height=480)
-		# prevImg1 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
-		# prevImg2 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage-1).resize((1440,950),Image.ANTIALIAS))
-
-		# mainFrame.prevImgCanvas.prevImg1 = prevImg1
-		# mainFrame.prevImgCanvas.prevImg2 = prevImg2
-		# prevImgCanvas.create_image(0,0,anchor=NW, image=prevImg1)
-		# prevImgCanvas.create_image(400,0,anchor=NW, image=prevImg1)
-
-		# prevImgCanvas.pack_forget()
-
 		# #Live View -- display = 5
 		liveViewCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		noLive_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'noLiveViewAvailable.jpg')
@@ -827,10 +816,10 @@ class Application(tk.Frame):
 	def setLiveImage(self, img1, img2):
 		self.mainArea.liveImg1 = img1
 		self.mainArea.liveImg2 = img2
-		self.mainArea.winfo_children()[5].pack_forget()
-		self.mainArea.winfo_children()[5].create_image(0,200,anchor=NW, image=img1)
-		self.mainArea.winfo_children()[5].create_image(720,200,anchor=NW, image=img2)
-		self.mainArea.winfo_children()[5].pack()
+		# self.mainArea.winfo_children()[5].pack_forget()
+		self.mainArea.winfo_children()[4].create_image(0,200,anchor=NW, image=img1)
+		self.mainArea.winfo_children()[4].create_image(720,200,anchor=NW, image=img2)
+		self.mainArea.winfo_children()[4].pack()
 
 	def setCapturingVideoImage(self, img):
 		self.mainArea.liveImg = img
