@@ -205,24 +205,24 @@ class Application(tk.Frame):
 		cmdPath = os.path.join(os.getcwd(), "timelapse.py")
 		timelapse_cmd = "{} {} {}".format(cmdPath, photoDir, photoDim)
 		cmd = shlex.split(timelapse_cmd)
-		#timelapse_proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=False)
+		timelapse_proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=False)
 		#, preexec_fn=self.preexec_fn)
 
 		while self.showingLiveView:
-			paths = os.listdir(photoDir)
-			for path in paths:
-				lastPhoto = os.path.join(photoDir, path)
-				# fileList = glob.glob(photoDir + "/*.bin")
-				# print(photoDir + "/*.bin")
-				# print(len(fileList))
-				# lastPhoto = max(fileList, key=os.path.getctime)
-				print(lastPhoto)
-				# pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
-				img = self.get_live_image(lastPhoto)
-				self.setLiveImage(img)
-				frameCounter += 1
-				self.nonRecursiveButtonCheck()
-				self.update()
+			# paths = os.listdir(photoDir)
+			# for path in paths:
+			# 	lastPhoto = os.path.join(photoDir, path)
+			fileList = glob.glob(photoDir + "/*.bin")
+			# print(photoDir + "/*.bin")
+			# print(len(fileList))
+			lastPhoto = max(fileList, key=os.path.getctime)
+			print(lastPhoto)
+			pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
+			img = self.get_live_image(pngPath)
+			self.setLiveImage(img)
+			frameCounter += 1
+			self.nonRecursiveButtonCheck()
+			self.update()
 			# if write_to_temp:
 			# 	# delete all photos in temp
 			# 	time.sleep(1) 
@@ -230,11 +230,11 @@ class Application(tk.Frame):
 
 
 		# liveview has finished, terminate endless timelapse
-		#try:
-		#	timelapse_proc.communicate(b"a")
-		#except TimeoutError:
-		#	timelapse_proc.kill()
-		#	timelapse_proc.communicate()
+		try:
+			timelapse_proc.communicate(b"a")
+		except TimeoutError:
+			timelapse_proc.kill()
+			timelapse_proc.communicate()
 
 		""" #this looks awkward but we need two while loops because we don't want user to change
 		#HDR setting in the middle of a capture... that would be confusing
