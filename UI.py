@@ -945,7 +945,8 @@ class Application(tk.Frame):
 					self.HDRWrapper(self.HDRTestSetting)
 				else:
 					print("PHOTO exp", self.exposure2d)
-					self.take_photo(False)
+					path, info = self.take_photo(False)
+					self.mainImportantData = info
 				
 				if self.viewingPreviousImages:
 					self.setPreviousImage_2(ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-1).resize((720,425),Image.ANTIALIAS)),ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-2).resize((720,425),Image.ANTIALIAS)))
@@ -1007,15 +1008,20 @@ class Application(tk.Frame):
 		#time 
 		newFile.write(datetime.utcnow().strftime("%m%d%H%M%S.%f"))
 
+		infoDict {}
 		#i2c data
 		# self.updateI2Cdata(0, i2c.getTemperature(),0)
 		for data in self.I2Cdata:
 			newFile.write(str(data) + ":" + str(self.I2Cdata[data])+'\n')
+			infoDict[data] = self.I2Cdata[data]
 
 		#cam settings
 		for data in self.mainImportantData:
 			newFile.write(str(data) + ":" + str(self.mainImportantData[data])+'\n')
+			infoDict[data]= self.mainImportantData
 		newFile.close()
+
+		return infoDict
 
 	def writeVideoMetaFile(self, vid_id, path, start, end, numFrames):
 		newFile = open(path+"video_"+str(vid_id)+"_meta.txt", 'w+')
@@ -1056,12 +1062,12 @@ class Application(tk.Frame):
 				#CSV FORMAT
 				#index, imageLocation, metadataLocation
 				metaFile = fileLocation+"_meta.txt"
-				self.writeImageMetaFile(metaFile)
+				photoInfo = self.writeImageMetaFile(metaFile)
 				writer.writerow([self.numPreviousImages, file, vid_id, metaFile])
 				self.numPreviousImages +=1
 		
 		csvFile.close()
-		return fileLocation
+		return fileLocation, photoInfo
 
 	def capture_video(self, write_to_temp = False):
 		#if we are taking a video, we write to a permanent location
@@ -1084,7 +1090,7 @@ class Application(tk.Frame):
 				
 		else:
 			while self.showingLiveView:
-				photoLocation = self.take_photo(write_to_temp, timeStart)
+				photoLocation, info = self.take_photo(write_to_temp, timeStart)
 				# img = self.get_live_image(photoLocation)
 				# self.setLiveImage(img)
 				frameCounter +=1
@@ -1215,12 +1221,12 @@ class Application(tk.Frame):
 					# self.setPiDelay(pi)
 					for freq in modFreqOptions:
 						# self.setModulationFrequency(freq)
-						singleRepresentativePhoto = self.take_photo(False, vid_id)
+						singleRepresentativePhoto, photoInfo = self.take_photo(False, vid_id)
 		#if you're doing an HDR test, you always want to store the image (ie temp write is False)
 		#an HDR test takes a LOT of images, but we only return one (doesn't matter which)
 		#to display to the user in the live view
 		#it might be really trippy to be baraded by images with different exposures
-		return singleRepresentativePhoto
+		return singleRepresentativePhoto, photoInfo
 
 	def HDRWrapper(self, setting, vid_id=0):
 		_2d3d, exp, pi, modFreq = HDR_SETTINGS[setting]
