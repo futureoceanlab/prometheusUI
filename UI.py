@@ -1100,7 +1100,7 @@ class Application(tk.Frame):
 			pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
 			img = self.get_live_image(pngPath)
 			self.setLiveImage(img)
-			frameCount += 1
+			frameCounter += 1
 			self.nonRecursiveButtonCheck()
 			if write_to_temp:
 				# delete all photos in temp
