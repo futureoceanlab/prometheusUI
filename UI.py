@@ -26,6 +26,7 @@ import prom_GPIO as pg
 import time
 import subprocess
 import shlex
+import psutil
 
 SCREEEN_WIDTH = 1080
 BUTTON_LONGPRESS_TIME = 1
@@ -1076,6 +1077,11 @@ class Application(tk.Frame):
 		csvFile.close()
 		return fileLocation
 
+	def preexec_fn(self):
+		ps = psutil.Process(os.getpid())
+		ps.set_nice(15)
+
+
 	def capture_video(self, write_to_temp = False):
 		#if we are taking a video, we write to a permanent location
 		#otherwise, we are in live view and want to write to a temporary location and delete later
@@ -1092,7 +1098,7 @@ class Application(tk.Frame):
 		cmdPath = os.path.join(os.getcwd(), "timelapse.py")
 		timelapse_cmd = "{} {} {}".format(cmdPath, photoDir, photoDim)
 		cmd = shlex.split(timelapse_cmd)
-		timelapse_proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=False)
+		timelapse_proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=False, preexec_fn=self.preexec_fn)
 
 		while self.showingLiveView:
 			fileList = glob.iglob(photoDir + "/*.bin")
