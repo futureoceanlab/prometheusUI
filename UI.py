@@ -354,7 +354,7 @@ class Application(tk.Frame):
 		#camera_power.turn_on_BBBx(1)
 		self.master.after(10000, self.buttonCheck)
 
-	""" Log Handlers """"
+	""" Log Handlers """
 	def createMainLog(self):
 		numFolders, numFiles = self.directoryCounter("./logs")
 		newFile = open("./logs/"+"log_"+str(numFiles)+".txt", "w+")
