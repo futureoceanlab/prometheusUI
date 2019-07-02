@@ -543,7 +543,7 @@ class Application(tk.Frame):
 		else:
 			self.mainArea.winfo_children()[display].pack(fill=BOTH, expand=YES)
 
-		if display in [0,3,4]:
+		if display in [0,3,4,5]:
 			self.winfo_children()[2].grid(row=1, column=1,sticky=W+N+E+S)
 
 
