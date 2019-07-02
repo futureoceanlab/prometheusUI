@@ -210,17 +210,22 @@ class Application(tk.Frame):
 				# skip if empty
 				continue
 			try:
-				lastPhoto = max(fileList0, key=os.path.getctime)
-				print(lastPhoto)
-				pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
-				img = self.get_live_image(pngPath)
-				self.setLiveImage(img)
+				lastPhoto0 = max(fileList0, key=os.path.getctime)
+				lastPhoto1 = lastPhoto0.replace("0.bin", "1.bin")
+				if not os.path.exists(lastPhoto1):
+					continue
+				pngPath0 = readBinary.convertBINtoPNG(0, self.clockFreq)
+				pngPath1 = readBinary.convertBINtoPNG(1, self.clockFreq)
+
+				img1 = self.get_live_image(pngPath0)
+				img2 = self.get_live_image(pngPath1)
+				self.setLiveImage(img1, img2)
 				frameCounter += 1
 				self.nonRecursiveButtonCheck()
 				self.update()
 			except Exception as e:
 				print(e)
-						
+
 		# delete all photos in temp
 		allFileList = glob.glob(photoDir+"/*")
 		if write_to_temp:
@@ -660,8 +665,10 @@ class Application(tk.Frame):
 		noLive_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'noLiveViewAvailable.jpg')
 
 		liveImg = self.get_live_image(noLive_img)
-		mainFrame.liveImg = liveImg
+		mainFrame.liveImg1 = liveImg
+		mainFrame.liveImg2 = liveImg
 		liveViewCanvas.create_image(0,0,anchor=NW, image=liveImg)
+		liveViewCanvas.create_image(100, 0, anchor=NW, image=liveImg)
 		liveViewCanvas.pack_forget()
 
 
@@ -817,10 +824,12 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[0].create_image(0,0,anchor=NW, image=fourDCSImages)
 
 
-	def setLiveImage(self, img):
-		self.mainArea.liveImg = img
+	def setLiveImage(self, img1, img2):
+		self.mainArea.liveImg1 = img1
+		self.mainArea.liveImg2 = img2
 		self.mainArea.winfo_children()[5].pack_forget()
-		self.mainArea.winfo_children()[5].create_image(0,0,anchor=NW, image=img)
+		self.mainArea.winfo_children()[5].create_image(0,200,anchor=NW, image=img1)
+		self.mainArea.winfo_children()[5].create_image(720,200,anchor=NW, image=img2)
 		self.mainArea.winfo_children()[5].pack()
 
 	def setCapturingVideoImage(self, img):
