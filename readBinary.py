@@ -38,7 +38,10 @@ def getDCSFigures(img, freq):
 		#DCS figure
 		for i in range(0,4):
 			image = dcsData[:,:,i]
-			rotatedImg = np.rot90(image, 1)
+			if img.split('.bin')[0][-1] == '0':
+				rotatedImg = np.rot90(image, 3)
+			else:
+				rotatedIMg = np.rot90(image, 1))
 			dcsFig.add_subplot(2,2,i+1)
 			plt.axis('off')
 			plt.imshow(rotatedImg)
@@ -46,7 +49,10 @@ def getDCSFigures(img, freq):
 
 		#depth image figure
 		heatmap = tofAnalysis.analyze(dcsData, freq)
-		rotatedHeatMap = np.rot90(heatmap, 1)
+		if img.split('.bin')[0][-1] == '0':
+			rotatedHeatMap = np.rot90(heatmap, 3)
+		else:
+			rotatedHeatMap = np.rot90(heatmap, 1)
 		heatFig = plt.figure(figsize=(7.5,5.625), dpi=80)
 		# heatFig.tight_layout()
 		plt.imshow(rotatedHeatMap)
@@ -67,7 +73,10 @@ def get_4DCS_PNG(img):
 		#DCS figure
 		for i in range(0,4):
 			image = dcsData[:,:,i]
-			rotatedImg = np.rot90(image, 1)
+			if img.split('.bin')[0][-1] == '0':
+				rotatedImg = np.rot90(image, 3)
+			else:
+				rotatedIMg = np.rot90(image, 1))
 			dcsFig.add_subplot(2,2,i+1)
 			plt.axis('off')
 			plt.imshow(rotatedImg)
@@ -86,7 +95,10 @@ def read_3D_BINimage(img, freq):
 		#depth image figure
 		heatmap = tofAnalysis.analyze(dcsData, freq)
 		heatFig = plt.figure(figsize=(7.5,5.625), dpi=80)
-		plt.imshow(np.rot90(heatmap, 1))
+		if img.split('.bin')[0][-1] == '0':
+			plt.imshow(np.rot90(heatmap, 3))
+		else:
+			plt.imshow(np.rot90(heatmap, 1))
 		plt.axis('off')
 		
 		outputFileName = img.replace('.bin', '_depth.png')
@@ -104,7 +116,6 @@ def read_2D_BINImage(img):
 		fig = plt.figure()
 
 		image = dcsData[:,:,0]
-		print(img)
 		if img.split('.bin')[0][-1] == '0':
 			plt.imshow(np.rot90(image, 3))
 		else:
