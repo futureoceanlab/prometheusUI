@@ -222,10 +222,11 @@ class Application(tk.Frame):
 				self.setLiveImage(img)
 				frameCounter += 1
 				self.nonRecursiveButtonCheck()
+				self.update()
 			# if write_to_temp:
 			# 	# delete all photos in temp
 			# 	time.sleep(1) 
-				self.update_display()
+				# self.update_display()
 
 
 		# liveview has finished, terminate endless timelapse
@@ -917,9 +918,7 @@ class Application(tk.Frame):
 			self.viewingPreviousImages = False
 			self.set_video_state(False)
 			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('noLiveViewAvailable.jpg').resize((1440,950),Image.ANTIALIAS)))
-			# self.update_display()
-			time.sleep(1)
-			print("capture liveview")
+			self.update_display()
 			self.capture_video(write_to_temp=True)
 		else:                           
 			self.EXP_short_pressed()
