@@ -75,7 +75,7 @@ def get_4DCS_PNG(img):
 		outputFileName = img.replace('.bin', '_4DCS.png')
 		plt.savefig(outputFileName)
 		plt.clf()
-		plt.close()
+		# plt.close()
 	return outputFileName
 
 def read_3D_BINimage(img, freq):
@@ -94,7 +94,7 @@ def read_3D_BINimage(img, freq):
 
 		plt.savefig(outputFileName)
 		plt.clf()
-		plt.close()
+		# plt.close()
 	return outputFileName
 
 def read_2D_BINImage(img):
@@ -111,7 +111,7 @@ def read_2D_BINImage(img):
 		# outputFileName = './images/'+outputFileName
 		plt.savefig(outputFileName)
 		plt.clf()
-		plt.close()
+		# plt.close()
 	return outputFileName
 
 def convertBINtoPNG(binPath, freq):
