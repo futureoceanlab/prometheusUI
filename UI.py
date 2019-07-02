@@ -11,6 +11,7 @@ from PIL import ImageTk,Image
 import gpiozero as gpio
 import time
 import os
+import glob
 import numpy as np
 import uiFunctionCalls
 import camera_power
@@ -933,7 +934,7 @@ class Application(tk.Frame):
 			self.set_video_state(False)
 			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('noLiveViewAvailable.jpg').resize((1440,950),Image.ANTIALIAS)))
 			self.update_display()
-			self.capture_video(True)
+			self.capture_video(write_to_temp=True)
 		else:                           
 			self.EXP_short_pressed()
 
@@ -978,7 +979,7 @@ class Application(tk.Frame):
 			# self.change_display(5) #to live view/video capture image
 			self.mainImportantData['VIDEO'] = 'YES'
 			self.update_display()
-			self.capture_video(False)
+			self.capture_video(write_to_temp=False)
 		else:                               
 			#else is same as short press
 			self.ACTN_short_pressed()
@@ -1070,9 +1071,35 @@ class Application(tk.Frame):
 		# numFolders, numFiles = self.directoryCounter("./images")
 
 		timeStart = datetime.utcnow().strftime("%m%d%H%M%S")
-		frameCounter =0
+		frameCounter = 0
+		# spawn a child process to run photo collection
+		photoDim = "_3D_" if self.dimensionMode else "_2D_"
+		# photoPath = photoUtil.generate_photo_path(write_to_temp, photoDim)
+		photoFolder = "live_view_temp/" if write_to_temp else "images/"
+		photoDir = os.path.join(os.getcwd(), photoFolder)
+		timelapse_cmd = "timelapse.py {} {}".format(photoDir, photoDim)
+		timelapse_proc = subprocess.Popen(timelapse_cmd, stdin=subprocess.PIPE, shell=False)
 
-		#this looks awkward but we need two while loops because we don't want user to change
+		while self.showingLiveView:
+			fileList = glob.iglob(photoDir + "/*.bin")
+			lastPhoto = max(fileList, key=os.path.getctime)
+			pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
+			img = self.get_live_image(lastPhoto)
+			self.setLiveImage(img)
+			frameCount += 1
+			self.nonRecursiveButtonCheck()
+			if write_to_temp:
+				# delete all photos in temp
+				pass 
+
+		# liveview has finished, terminate endless timelapse
+		try:
+			timelapse_proc.communicate(b"a")
+		except TimeoutError:
+			timelapse_proc.kill()
+			timelapse_proc.communicate()
+
+		""" #this looks awkward but we need two while loops because we don't want user to change
 		#HDR setting in the middle of a capture... that would be confusing
 		if self.HDRmode:
 			while self.showingLiveView:
@@ -1088,11 +1115,11 @@ class Application(tk.Frame):
 				# img = self.get_live_image(photoLocation)
 				# self.setLiveImage(img)
 				frameCounter +=1
-				self.nonRecursiveButtonCheck()
+				self.nonRecursiveButtonCheck()"""
 
 		timeEnd = datetime.utcnow().strftime("%m%d%H%M%S")
 
-		if frameCounter > 0:
+		if not write_to_temp and frameCounter > 0:
 			self.writeVideoMetaFile(timeStart, "./images/", timeStart, timeEnd, frameCounter)
 
 
@@ -1113,7 +1140,7 @@ class Application(tk.Frame):
 		if self.display == 0: 
 			self.setDCSImage()
 		self.update_display()
-		
+
 
 	def change_exposure(self, mode):
 		if mode:
