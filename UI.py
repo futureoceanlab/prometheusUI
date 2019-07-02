@@ -1098,7 +1098,7 @@ class Application(tk.Frame):
 			fileList = glob.iglob(photoDir + "/*.bin")
 			lastPhoto = max(fileList, key=os.path.getctime)
 			pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
-			img = self.get_live_image(lastPhoto)
+			img = self.get_live_image(pngPath)
 			self.setLiveImage(img)
 			frameCount += 1
 			self.nonRecursiveButtonCheck()
