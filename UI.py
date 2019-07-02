@@ -918,7 +918,7 @@ class Application(tk.Frame):
 			self.toggle_live_view()
 			self.viewingPreviousImages = False
 			self.set_video_state(False)
-			noLive_img = os.path.join(os.getcwd(), gvar.PLACEHOLDER_IMG_DIR, 'noLiveViewAvailable.jpg')
+			noLive_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'noLiveViewAvailable.jpg')
 			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open(noLive_img).resize((1440,950),Image.ANTIALIAS)))
 			self.update_display()
 			self.capture_video(write_to_temp=True)
