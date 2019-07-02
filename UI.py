@@ -816,10 +816,10 @@ class Application(tk.Frame):
 	def setLiveImage(self, img1, img2):
 		self.mainArea.liveImg1 = img1
 		self.mainArea.liveImg2 = img2
-		self.mainArea.winfo_children()[4].pack_forget()
-		self.mainArea.winfo_children()[4].create_image(0,200,anchor=NW, image=img1)
-		self.mainArea.winfo_children()[4].create_image(720,200,anchor=NW, image=img2)
-		self.mainArea.winfo_children()[4].pack()
+		self.mainArea.winfo_children()[5].pack_forget()
+		self.mainArea.winfo_children()[5].create_image(0,200,anchor=NW, image=img1)
+		self.mainArea.winfo_children()[5].create_image(720,200,anchor=NW, image=img2)
+		self.mainArea.winfo_children()[5].pack()
 
 	def setCapturingVideoImage(self, img):
 		self.mainArea.liveImg = img
