@@ -25,6 +25,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import prom_GPIO as pg
 import time
 import subprocess
+import shlex
 
 SCREEEN_WIDTH = 1080
 BUTTON_LONGPRESS_TIME = 1
@@ -1090,7 +1091,8 @@ class Application(tk.Frame):
 		photoDir = os.path.join(os.getcwd(), photoFolder)
 		cmdPath = os.path.join(os.getcwd(), "timelapse.py")
 		timelapse_cmd = "{} {} {}".format(cmdPath, photoDir, photoDim)
-		timelapse_proc = subprocess.Popen(timelapse_cmd, stdin=subprocess.PIPE, shell=False)
+		cmd = shlex.split(timelapse_cmd)
+		timelapse_proc = subprocess.Popen(cmd, stdin=subprocess.PIPE, shell=False)
 
 		while self.showingLiveView:
 			fileList = glob.iglob(photoDir + "/*.bin")
