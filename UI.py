@@ -650,14 +650,12 @@ class Application(tk.Frame):
 		prevImageCanvas.pack_forget()
 
 		# #Live View -- display = 5
-		liveViewCanvas = tk.Canvas(mainFrame, width=1500, height=480)
+		liveViewCanvas = tk.Canvas(mainFrame, width=1500, height=900)
 		noLive_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'noLiveViewAvailable.jpg')
 
 		liveImg = self.get_live_image(noLive_img)
 		mainFrame.liveImg1 = liveImg
 		mainFrame.liveImg2 = liveImg
-		liveViewCanvas.create_image(0,0,anchor=NW, image=liveImg)
-		liveViewCanvas.create_image(100, 0, anchor=NW, image=liveImg)
 		liveViewCanvas.pack_forget()
 
 
@@ -817,8 +815,8 @@ class Application(tk.Frame):
 		self.mainArea.liveImg1 = img1
 		self.mainArea.liveImg2 = img2
 		self.mainArea.winfo_children()[5].pack_forget()
-		self.mainArea.winfo_children()[5].create_image(0,20,anchor=NW, image=img1)
-		self.mainArea.winfo_children()[5].create_image(800,20,anchor=NW, image=img2)
+		self.mainArea.winfo_children()[5].create_image(0,200,anchor=NW, image=img1)
+		self.mainArea.winfo_children()[5].create_image(800,200, anchor=NW, image=img2)
 		self.mainArea.winfo_children()[5].pack()
 
 	def setCapturingVideoImage(self, img):
