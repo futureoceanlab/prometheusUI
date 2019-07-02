@@ -212,8 +212,10 @@ class Application(tk.Frame):
 			try:
 				lastPhoto0 = max(fileList0, key=os.path.getctime)
 				lastPhoto1 = lastPhoto0.replace("0.bin", "1.bin")
-				if not os.path.exists(lastPhoto1):
-					continue
+				print(lastPhoto0)
+				print(lastPhoto1)
+				# if not os.path.exists(lastPhoto1):
+				# 	continue
 				pngPath0 = readBinary.convertBINtoPNG(0, self.clockFreq)
 				pngPath1 = readBinary.convertBINtoPNG(1, self.clockFreq)
 
