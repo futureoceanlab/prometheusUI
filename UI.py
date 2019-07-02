@@ -1216,6 +1216,7 @@ class Application(tk.Frame):
 					for freq in modFreqOptions:
 						self.setModulationFrequency(freq)
 						singleRepresentativePhoto = self.take_photo(False, vid_id)
+						time.sleep(1)
 						#if you're doing an HDR test, you always want to store the image (ie temp write is False)
 		#an HDR test takes a LOT of images, but we only return one (doesn't matter which)
 		#to display to the user in the live view
