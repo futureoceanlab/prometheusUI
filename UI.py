@@ -1087,7 +1087,7 @@ class Application(tk.Frame):
 		# spawn a child process to run photo collection
 		photoDim = "_3D_" if self.dimensionMode else "_2D_"
 		# photoPath = photoUtil.generate_photo_path(write_to_temp, photoDim)
-		photoFolder = "live_view_temp/" if write_to_temp else "images/"
+		photoFolder = "live_view_temp" if write_to_temp else "images"
 		photoDir = os.path.join(os.getcwd(), photoFolder)
 		cmdPath = os.path.join(os.getcwd(), "timelapse.py")
 		timelapse_cmd = "{} {} {}".format(cmdPath, photoDir, photoDim)
@@ -1097,6 +1097,7 @@ class Application(tk.Frame):
 		while self.showingLiveView:
 			fileList = glob.iglob(photoDir + "/*.bin")
 			lastPhoto = max(fileList, key=os.path.getctime)
+			print(lastPhoto)
 			pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
 			img = self.get_live_image(pngPath)
 			self.setLiveImage(img)
