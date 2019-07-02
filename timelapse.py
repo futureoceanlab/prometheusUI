@@ -1,4 +1,4 @@
-#!?usr/bin/env python3
+#!/usr/bin/env python3
 
 import os
 import sys
@@ -19,11 +19,9 @@ def timelapse(photoDir, photoDim):
 		# if line:
 		# 	print(line)
 		# 	break
-		if select.select([sys.stdin,],[],[],0.0)[0]:
-			# parent communicated end of timelapse
-			print("Bye!")
-		    break
 		time.sleep(.05)
+		if select.select([sys.stdin,],[],[],0.0)[0]:
+		    break
 
 
 
@@ -31,3 +29,4 @@ if __name__=="__main__":
 	photoDir = sys.argv[1]
 	photoDim = sys.argv[2]
 	timelapse(photoDir, photoDim)
+	print("Bye!")
