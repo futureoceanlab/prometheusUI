@@ -209,9 +209,9 @@ class Application(tk.Frame):
 			if not len(fileList0):
 				# skip if empty
 				continue
-			lastPhoto = max(fileList0, key=os.path.getctime)
-			print(lastPhoto)
 			try:
+				lastPhoto = max(fileList0, key=os.path.getctime)
+				print(lastPhoto)
 				pngPath = readBinary.convertBINtoPNG(lastPhoto, self.clockFreq)
 				img = self.get_live_image(pngPath)
 				self.setLiveImage(img)
