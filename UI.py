@@ -78,6 +78,8 @@ class Application(tk.Frame):
 		self.previousImages = []
 		self.numPreviousImages = 0
 		self.createMainCSV()	
+		self.load_prev_png_images()
+
 		# self.previousImages = ['DCS08_3D_.bin', 'DCS09_3D_.bin','DCS10_3D_.bin','image13_2D_.bin'] #TEMPORARY OVERRIDE OF PREVIOUS IMAGES
 		self.currentPreviousImage = max(0, len(self.previousImages)-1)
 		self.dimensionMode = 0
@@ -96,6 +98,7 @@ class Application(tk.Frame):
 		self.temp_menu_tree = MenuTree(gVar.TEMP_MENUTREE)
 		ocean_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'ocean.jpg')
 		self.previousImage = ocean_img
+
 		self.currentSelectionButton = None
 		self.currentSelectionNode = None
 		self.nodeToButtonDict = {}
@@ -140,7 +143,9 @@ class Application(tk.Frame):
 		self.JS1_HDR_BTN  = gpio.Button(pg.js1_hdrGPIO())
 
 		self.JS1_MENU_BTN.when_pressed = self.MENU_pressed
-		self.JS1_HDR_BTN.when_pressed = self.HDR_pressed
+		self.JS1_HDR_BTN.when_pressed = self.MENU_pressed
+
+		# self.JS1_HDR_BTN.when_pressed = self.HDR_pressed
 
 		self.JS2_MENU_BTN = gpio.Button(pg.js2_menuGPIO())
 		self.JS2_DISP_BTN = gpio.Button(pg.js2_dispGPIO())
@@ -149,7 +154,9 @@ class Application(tk.Frame):
 		self.JS2_HDR_BTN  = gpio.Button(pg.js2_hdrGPIO())
 
 		self.JS2_MENU_BTN.when_pressed = self.MENU_pressed
-		self.JS2_HDR_BTN.when_pressed = self.HDR_pressed
+		self.JS2_HDR_BTN.when_pressed = self.MENU_pressed
+
+		# self.JS2_HDR_BTN.when_pressed = self.HDR_pressed
 
 		self.dispBtnState = 0
 		self.expoBtnState = 0
@@ -237,7 +244,7 @@ class Application(tk.Frame):
 				# 	continue
 				pngPath0 = readBinary.convertBINtoPNG(lastPhoto0, self.clockFreq)
 				pngPath1 = readBinary.convertBINtoPNG(lastPhoto1, self.clockFreq)
-
+				self.previousImagesPNG += [pngPath0, pngPath1]
 				img1 = self.get_live_image(pngPath0)
 				img2 = self.get_live_image(pngPath1)
 				self.setLiveImage(img1, img2)
@@ -403,6 +410,11 @@ class Application(tk.Frame):
 			self.numPreviousImages = 0
 		file.close()
 
+	def load_prev_png_images(self):
+		imageDir = os.path.join(os.getcwd(), "images")
+		pngImages = glob.glob(imageDir + "/*.png")
+		self.previousImagesPNG = pngImages
+		self.curPrevImgPNG = 0 if not len(self.previousImagesPNG) else len(self.previousImagesPNG)-1
 
 	def update_csv(self, fileLocation, write_to_temp, vid_id, files):
 		csvFile = open(self.currentCSVFile, 'a')
@@ -458,7 +470,7 @@ class Application(tk.Frame):
 		else: 
 			pngPath = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'noPrevImg.jpg')
 		print("PNG PATH: ", pngPath)
-		return Image.open(pngPath)
+		return pngPath #Image.open(pngPath)
 
 	def get_previousFigure(self, x):
 		prevImagePath = self.previousImages[x%len(self.previousImages)]
@@ -641,7 +653,9 @@ class Application(tk.Frame):
 
 		colorCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		try:
-			colorImg = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS))
+			binPath = self.get_previousImage_BIN(self.currentPreviousImage)
+			tempColorImg = Image.open(binPath).resize((1440,950),Image.ANTIALIAS)
+			colorImg = ImageTk.PhotoImage(tempColorImg)
 		except Exception as e:
 			print(e)
 			colorImg = self.get_colorMap_image()
@@ -658,8 +672,12 @@ class Application(tk.Frame):
 
 		prevImageCanvas = tk.Canvas(mainFrame, width=800, height=480)
 		try:
-			prevImg1 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS))
-			prevImg2 = ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage-1).resize((720,425),Image.ANTIALIAS))
+			binPath1 = self.get_previousImage_BIN(self.currentPreviousImage)
+			binPath2 = self.get_previousImage_BIN(self.currentPreviousImage-1)
+			tempPrevImg1 = Image.open(binPath1).resize((720,425),Image.ANTIALIAS)
+			tempPrevImg2 = Image.open(binPath2).resize((720,425),Image.ANTIALIAS)
+			prevImg1 = ImageTk.PhotoImage(tempPrevImg1)
+			prevImg2 = ImageTk.PhotoImage(tempPrevImg2)
 		except Exception as e:
 			print(e)
 			prevImg1 = self.get_colorMap_image()
@@ -827,7 +845,16 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[4].pack()
 
 	def setDCSImage(self):
-		fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((1440,950),Image.ANTIALIAS))
+		noDCS_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'noDCS.jpg')
+
+		if not len(self.previousImages):
+			fourDCSImages = ImageTk.PhotoImage(Image.open(noDCS_img).resize((1440,950),Image.ANTIALIAS))
+		else:
+			try:
+				fourDCSImages = ImageTk.PhotoImage(Image.open(readBinary.get_4DCS_PNG(self.previousImages[self.currentPreviousImage])).resize((1440,950),Image.ANTIALIAS))
+			except Exception as e:
+				print(e)
+				fourDCSImages = ImageTk.PhotoImage(Image.open(noDCS_img).resize((1440,950),Image.ANTIALIAS))
 		self.mainArea.fourDCSImages = fourDCSImages
 		self.mainArea.winfo_children()[0].create_image(0,0,anchor=NW, image=fourDCSImages)
 
@@ -898,11 +925,17 @@ class Application(tk.Frame):
 				if self.viewingPreviousImages:
 					#get the next previous image
 					# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
-					if len(self.previousImages) > 0:
+					if len(self.previousImagesPNG) > 1:
 						# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
-						self.setPreviousImage_2(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS)),ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage-1).resize((720,425),Image.ANTIALIAS)))
-						print("DISPLAYING: ", self.previousImages[self.currentPreviousImage])
-						self.currentPreviousImage = (self.currentPreviousImage-2)%len(self.previousImages)
+						binPath1 = self.previousImagesPNG[self.curPrevImgPNG]
+						binPath2 = self.previousImagesPNG[self.curPrevImgPNG-1]
+						# binPath1 = self.get_previousImage_BIN(self.currentPreviousImage)
+						# binPath2 =self.get_previousImage_BIN(self.currentPreviousImage-1)
+						img1 = ImageTk.PhotoImage(Image.open(binPath1).resize((720,425),Image.ANTIALIAS))
+						img2 = ImageTk.PhotoImage(Image.open(binPath2).resize((720,425),Image.ANTIALIAS))
+						self.setPreviousImage_2(img1, img2)
+						# print("DISPLAYING: ", self.previousImages[self.currentPreviousImage])
+						self.curPrevImgPNG = (self.curPrevImgPNG-2)%len(self.previousImagesPNG)
 						self.update_display()
 				else:
 					self.change_display()
@@ -913,12 +946,17 @@ class Application(tk.Frame):
 		# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage(self.currentPreviousImage).resize((600,450),Image.ANTIALIAS)))
 
 		if not self.get_mode() and not self.get_video_state():
-			if not self.viewingPreviousImages: 
-				self.currentPreviousImage = len(self.previousImages)-1
-				# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS)))
-				self.setPreviousImage_2(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((720,425),Image.ANTIALIAS)),ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage-1).resize((720,425),Image.ANTIALIAS)))
-							
-				self.currentPreviousImage = (self.currentPreviousImage-1)%len(self.previousImages)
+			if not self.viewingPreviousImages and len(self.previousImagesPNG) > 1:
+				# self.setPreviousImage(ImageTk.PhotoImage(self.get_previousImage_BIN(self.currentPreviousImage).resize((1440,950),Image.ANTIALIAS)))
+				self.curPrevImgPNG = len(self.previousImagesPNG)-1
+				binPath1 = self.previousImagesPNG[self.curPrevImgPNG]
+				binPath2 = self.previousImagesPNG[self.curPrevImgPNG-1]
+				# binPath1 = self.get_previousImage_BIN(self.currentPreviousImage)
+				# binPath2 =self.get_previousImage_BIN(self.currentPreviousImage-1)img1 = ImageTk.PhotoImage(Image.open(binPath1).resize((720,425),Image.ANTIALIAS))
+				img1 = ImageTk.PhotoImage(Image.open(binPath1).resize((720,425),Image.ANTIALIAS))
+				img2 = ImageTk.PhotoImage(Image.open(binPath2).resize((720,425),Image.ANTIALIAS))
+				self.setPreviousImage_2(img1, img2)							
+				self.curPrevImgPNG = (self.curPrevImgPNG-2)%len(self.previousImagesPNG)
 				#capture mode and not taking video
 			self.toggle_prev_image()
 			self.set_live_view(False)
@@ -928,10 +966,10 @@ class Application(tk.Frame):
 		print("EXPO PRESSED")
 		if self.get_mode() == 0:            #capture
 			self.change_exposure(self.dimensionMode)
-		else if self.get_mode() == -1:      # menu mode
-			self.selectDown(self.currentSelectionNode)
-		else if self.get_mode() == 5:
+		elif self.get_mode() == 5:
 			self.end_live_view()
+		else:      # menu mode
+			self.selectDown(self.currentSelectionNode)
 
 
 	def EXP_long_pressed(self):
@@ -951,7 +989,11 @@ class Application(tk.Frame):
 					print("PHOTO exp", self.exposure2d)
 					self.take_photo(False)
 				# Set the previous images to the photos just taken by the two cameras
-				self.setPreviousImage_2(ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-1).resize((720,425),Image.ANTIALIAS)),ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-2).resize((720,425),Image.ANTIALIAS)))
+				binPath1 = self.get_previousImage_BIN(len(self.previousImages)-1)
+				binPath2 =self.get_previousImage_BIN(len(self.previousImages)-2)
+				img1 = ImageTk.PhotoImage(Image.open(binPath1).resize((720,425),Image.ANTIALIAS))
+				img2 = ImageTk.PhotoImage(Image.open(binPath2).resize((720,425),Image.ANTIALIAS))
+				self.setPreviousImage_2(img1, img2)
 				self.currentPreviousImage = (self.currentPreviousImage-2)%len(self.previousImages)
 				# Update to the previous image viewing display
 				if not self.viewingPreviousImages:
@@ -960,7 +1002,7 @@ class Application(tk.Frame):
 				self.update_display()
 			else:
 				self.end_video()
-		else if self.get_mode() == -1:      #menu mode
+		else:      #menu mode
 			self.changeMenuValue(self.currentSelectionNode, self.nodeToButtonDict[self.currentSelectionNode][1])
 
 
@@ -987,7 +1029,11 @@ class Application(tk.Frame):
 		self.set_video_state(False)
 		self.set_live_view(False)
 		self.change_display(4)
-		self.setPreviousImage_2(ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-1).resize((720,425),Image.ANTIALIAS)),ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-2).resize((720,425),Image.ANTIALIAS)))
+		binPath1 = self.get_previousImage_BIN(len(self.previousImages)-1)
+		binPath2 =self.get_previousImage_BIN(len(self.previousImages)-2)
+		img1 = ImageTk.PhotoImage(Image.open(binPath1).resize((720,425),Image.ANTIALIAS))
+		img2 = ImageTk.PhotoImage(Image.open(binPath2).resize((720,425),Image.ANTIALIAS))
+		self.setPreviousImage_2(img1, img2)
 		self.currentPreviousImage = (self.currentPreviousImage-2)%len(self.previousImages)
 		self.update_display()
 
@@ -1004,6 +1050,14 @@ class Application(tk.Frame):
 
 
 	def end_live_view(self):
+		print("END LIVE VIEW")
+		self.set_live_view(False)
+		self.viewingPreviousImages = False
+		self.set_video_state(False)
+		noLive_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'noLiveViewAvailable.jpg')
+		self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open(noLive_img).resize((1440,950),Image.ANTIALIAS)))
+		self.mode = 0
+		self.update_display()
 
 	def directoryCounter(self, path):
 

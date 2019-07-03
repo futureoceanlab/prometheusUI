@@ -41,7 +41,7 @@ def getDCSFigures(img, freq):
 			if img.split('.bin')[0][-1] == '0':
 				rotatedImg = np.rot90(image, 3)
 			else:
-				rotatedIMg = np.rot90(image, 1))
+				rotatedIMg = np.rot90(image, 1)
 			dcsFig.add_subplot(2,2,i+1)
 			plt.axis('off')
 			plt.imshow(rotatedImg)
@@ -76,7 +76,7 @@ def get_4DCS_PNG(img):
 			if img.split('.bin')[0][-1] == '0':
 				rotatedImg = np.rot90(image, 3)
 			else:
-				rotatedIMg = np.rot90(image, 1))
+				rotatedIMg = np.rot90(image, 1)
 			dcsFig.add_subplot(2,2,i+1)
 			plt.axis('off')
 			plt.imshow(rotatedImg)
