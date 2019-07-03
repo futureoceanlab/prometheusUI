@@ -102,6 +102,27 @@ class Application(tk.Frame):
 		self.I2Cdata = {'direction': None, 'temperature': None, 'pressure':None}
 		self.currentLogFile = ""
 
+		"""json_file = "original_joystick_pin.json"
+		if os.path.exists(os.path.join(os.getcwd(), "new_joystick_pin.json")):
+			json_file = "new_joystick_pin.json"
+		with open(os.path.join(os.getcwd(), json_file), 'r') as jf:
+			btn_pins = json.load(jf)
+			self.MENU_BTN = gpio.Button(btn_pins['MENU_BTN'])
+			self.DISP_BTN = gpio.Button(btn_pins['DISP_BTN'])
+			self.EXPO_BTN = gpio.Button(btn_pins['EXPO_BTN'])
+			self.ACTN_BTN = gpio.Button(btn_pins['ACTN_BTN'])
+			self.HDR_BTN =  gpio.Button(btn_pins['HDR_BTN'])
+			self.JS1_MENU_BTN = gpio.Button(btn_pins['JS1_MENU_BTN'])
+			self.JS1_DISP_BTN = gpio.Button(btn_pins['JS1_DISP_BTN'])
+			self.JS1_EXPO_BTN = gpio.Button(btn_pins['JS1_EXPO_BTN'])
+			self.JS1_ACTN_BTN = gpio.Button(btn_pins['JS1_ACTN_BTN'])
+			self.JS1_HDR_BTN  = gpio.Button(btn_pins['JS1_HDR_BTN'])
+			self.JS2_MENU_BTN = gpio.Button(btn_pins['JS2_MENU_BTN'])
+			self.JS2_DISP_BTN = gpio.Button(btn_pins['JS2_DISP_BTN'])
+			self.JS2_EXPO_BTN = gpio.Button(btn_pins['JS2_EXPO_BTN'])
+			self.JS2_ACTN_BTN = gpio.Button(btn_pins['JS2_ACTN_BTN'])
+			self.JS2_HDR_BTN  = gpio.Button(btn_pins['JS2_HDR_BTN'])"""
+			
 		#button information
 		self.MENU_BTN = gpio.Button(pg.menuGPIO(), pull_up=True)
 		self.DISP_BTN = gpio.Button(pg.dispGPIO(), pull_up=True)

@@ -1,0 +1,17 @@
+{
+    "MENU_BTN":10,
+    "DISP_BTN":9,
+    "EXPO_BTN":0,
+    "ACTN_BTN":11,
+    "HDR_BTN":0,
+    "JS1_MENU_BTN":14,
+    "JS1_DISP_BTN":15,
+    "JS1_EXPO_BTN":18,
+    "JS1_ACTN_BTN":23,
+    "JS1_HDR_BTN":24,
+    "JS2_MENU_BTN":5,
+    "JS2_DISP_BTN":6,
+    "JS2_EXPO_BTN":13,
+    "JS2_ACTN_BTN":19,
+    "JS2_HDR_BTN":26
+}
