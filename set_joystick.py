@@ -1,5 +1,14 @@
 #!/usr/bin/env python3
+"""
+The idea of the code to reconfigure is the following:
+There is an existing joystick pin dictionary look up table as a json file.
+For each gpio pins that could be used as a button gpio, we register a callback function.
+The call back function will set a value for each keyword (i.e. button)
+and save it into a new json file (new_joystick_pin.json). 
 
+In UI.py Application.__init__(), we can read the json file to configure the buttons
+with the newly set pins. 
+"""
 from gpiozero import Button
 import json
 
