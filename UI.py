@@ -825,9 +825,6 @@ class Application(tk.Frame):
 		self.mainArea.winfo_children()[5].create_image(0,0,anchor=NW, image=img)
 		self.mainArea.winfo_children()[5].pack()
 
-
-	# def openChildMenu(self, node):
-
 	def selectUp(self, currentSelectionNode):
 		currentSelectionIndex = self.menu_tree.currentLevel.index(currentSelectionNode)
 		newIndex = max(0, currentSelectionIndex - 1)
@@ -865,6 +862,11 @@ class Application(tk.Frame):
 	def HDR_pressed(self):
 		print("HDR pressed")
 		self.HDRmode = 1 - self.HDRmode
+
+		if self.HDRmode == 0:
+			print("Normal Capture")
+		else:
+			print("HDR Test Capture")
 
 	def DISP_short_pressed(self):
 		print("DISP SHORT")
@@ -905,76 +907,82 @@ class Application(tk.Frame):
 		print("EXPO PRESSED")
 		if self.get_mode() == 0:            #capture
 			self.change_exposure(self.dimensionMode)
-		else:                               #menu mode
+		else if self.get_mode() == -1:      # menu mode
 			self.selectDown(self.currentSelectionNode)
+		else if self.get_mode() == 5:
+			self.end_live_view()
+
 
 	def EXP_long_pressed(self):
 		if self.get_mode() == 0:            #capture
-			print("TOGGLE LIVE VIEW")
-			self.toggle_live_view()
-			self.viewingPreviousImages = False
-			self.set_video_state(False)
-			noLive_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'noLiveViewAvailable.jpg')
-			self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open(noLive_img).resize((1440,950),Image.ANTIALIAS)))
-			self.update_display()
-			self.capture_video(write_to_temp=True)
+			self.start_live_view()
 		else:                           
-			self.EXP_short_pressed()
+			self.end_live_view()
+
 
 	def ACTN_short_pressed(self):
 		print("ACTN PRESSED")
-		if self.get_mode() == 0:            #capture
+		if self.get_mode() == 0 or self.get_mode() == 4: #capture
 			if not self.isTakingVideo:  #ready to take photo
 				if self.HDRmode:
 					self.HDRWrapper(self.HDRTestSetting)
 				else:
 					print("PHOTO exp", self.exposure2d)
 					self.take_photo(False)
-				
-				if self.viewingPreviousImages:
-					self.setPreviousImage_2(ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-1).resize((720,425),Image.ANTIALIAS)),ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-2).resize((720,425),Image.ANTIALIAS)))
-					self.currentPreviousImage = (self.currentPreviousImage-2)%len(self.previousImages)
-					self.update_display()
-				else:
-					self.DISP_long_pressed()
-			else:
-				print("END VIDEO")          #currently taking video
-				self.mainImportantData["VIDEO"] = 'NO'
-				self.set_video_state(False)
-				self.set_live_view(False)
-				self.change_display(4)
+				# Set the previous images to the photos just taken by the two cameras
 				self.setPreviousImage_2(ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-1).resize((720,425),Image.ANTIALIAS)),ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-2).resize((720,425),Image.ANTIALIAS)))
 				self.currentPreviousImage = (self.currentPreviousImage-2)%len(self.previousImages)
+				# Update to the previous image viewing display
+				if not self.viewingPreviousImages:
+					self.toggle_prev_image()
+					self.set_live_view(False)
 				self.update_display()
-		else:                               #menu mode
+			else:
+				self.end_video()
+		else if self.get_mode() == -1:      #menu mode
 			self.changeMenuValue(self.currentSelectionNode, self.nodeToButtonDict[self.currentSelectionNode][1])
 
 
 	def ACTN_long_pressed(self):
-		if not self.get_mode() and not self.get_video_state():  
-			#capture mode and ready to take video
-
-			self.set_video_state(True)
-			self.set_live_view(True)
-			self.viewingPreviousImages = False
-
-			# self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open('video.jpg').resize((1440,950),Image.ANTIALIAS)))
-			# self.change_display(5) #to live view/video capture image
-			self.mainImportantData['VIDEO'] = 'YES'
-			self.update_display()
-			self.capture_video(write_to_temp=False)
+		if not self.get_mode() and not self.get_video_state():
+			self.start_video()  
 		else:                               
-			#else is same as short press
-			self.ACTN_short_pressed()
+			self.end_video()
+			
+	""" Video live view start/end handler"""
+	def start_video(self):
+		#capture mode and ready to take video
+		self.set_video_state(True)
+		self.set_live_view(True)
+		self.viewingPreviousImages = False
+		self.mainImportantData['VIDEO'] = 'YES'
+		self.update_display()
+		self.capture_video(write_to_temp=False)
 
-	# def rapidFireUpdate(self):
-	# 	r = randint(0,1)
-	# 	if self.showingLiveView:
-	# 		img = self.get_live_image_temp(r)
-	# 		self.setLiveImage(img)
-	# 		self.after(50, self.rapidFireUpdate)	
-		#absolute  ^ minimum delay is 3ms, below that it drops frames
-		#keep high until we need to push it
+
+	def end_video(self):
+		print("END VIDEO")          #currently taking video
+		self.mainImportantData["VIDEO"] = 'NO'
+		self.set_video_state(False)
+		self.set_live_view(False)
+		self.change_display(4)
+		self.setPreviousImage_2(ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-1).resize((720,425),Image.ANTIALIAS)),ImageTk.PhotoImage(self.get_previousImage_BIN(len(self.previousImages)-2).resize((720,425),Image.ANTIALIAS)))
+		self.currentPreviousImage = (self.currentPreviousImage-2)%len(self.previousImages)
+		self.update_display()
+
+
+	def start_live_view(self):
+		print("START LIVE VIEW")
+		self.set_live_view(True)
+		self.viewingPreviousImages = False
+		self.set_video_state(False)
+		noLive_img = os.path.join(os.getcwd(), gVar.PLACEHOLDER_IMG_DIR, 'noLiveViewAvailable.jpg')
+		self.setCapturingVideoImage(ImageTk.PhotoImage(Image.open(noLive_img).resize((1440,950),Image.ANTIALIAS)))
+		self.update_display()
+		self.capture_video(write_to_temp=True)
+
+
+	def end_live_view(self):
 
 	def directoryCounter(self, path):
 
