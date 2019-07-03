@@ -1144,7 +1144,7 @@ class Application(tk.Frame):
 	def restartBBB(self):
 		print("YO IM RESTARTING THE BBB")
 		camera_power.turn_off(gpio.LED(pg.bbb0_ctrl_GPIO()), gpio.Button(pg.bbb0_reset_GPIO()))
-		camera_power.turn_off(gpio.LED(pg.bbb0_ctrl_GPIO()), gpio.Button(pg.bbb0_reset_GPIO()))
+		camera_power.turn_off(gpio.LED(pg.bbb1_ctrl_GPIO()), gpio.Button(pg.bbb1_reset_GPIO()))
 		# camera_power.connect_both_cameras()
 		# camera_power.turn_on_BBBx(0)
 		# camera_power.turn_on_BBBx(1)
@@ -1152,7 +1152,7 @@ class Application(tk.Frame):
 	def shutdownBBB(self):
 		print("AYYO TIME TO SHUTDOWN")
 		camera_power.turn_off(gpio.LED(pg.bbb0_ctrl_GPIO()), gpio.Button(pg.bbb0_reset_GPIO()))
-		camera_power.turn_off(gpio.LED(pg.bbb0_ctrl_GPIO()), gpio.Button(pg.bbb0_reset_GPIO()))
+		camera_power.turn_off(gpio.LED(pg.bbb1_ctrl_GPIO()), gpio.Button(pg.bbb1_reset_GPIO()))
 
 
 
