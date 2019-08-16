@@ -1,0 +1,160 @@
+version
+getIcVersion
+getModulationFrequencies
+getCalibrationTypeForFreqIdx 0
+getCalibrationTypeForFreqIdx 1
+getCalibrationTypeForFreqIdx 2
+getCalibrationTypeForFreqIdx 3
+getCalibrationTypeForFreqIdx 4
+getCalibrationTypeForFreqIdx 5
+getCalibrationTypeForFreqIdx 6
+w 11 FA
+r 12
+getPartVersion
+getOffset
+setImageAveraging 0
+getBadPixels
+isGrayscaleCorrectionAvailable
+isDRNUAvailable
+correctAmbientLight 1
+setAmbientLightFactor 250
+enableDefaultOffset 0
+setOffset 0
+enableDefaultOffset 0
+enableDefaultOffset 1
+enableDefaultOffset 1
+correctDRNU 2
+correctTemperature 2
+setKalmanK 0.1000
+setKalmanQ 2.0000
+setKalmanKdiff 0.10
+setKalmanThreshold 600
+setKalmanNumCheck 2
+nloopFilter 10
+setModulationFrequency 1
+correctAmbientLight 0
+enableDefaultOffset 0
+correctDRNU 0
+correctTemperature 0
+setKalmanThreshold 600
+setKalmanThreshold2 600
+enableDefaultOffset 0
+setModulationFrequency 0
+enableDefaultOffset 0
+setKalmanThreshold 1200
+setKalmanThreshold2 1200
+selectMode -1
+selectMode 0
+setABS 0
+enablePiDelay 1
+enableDualMGX 0
+enableHDR 1
+loadConfig 1
+enableHDR 0
+setMinAmplitude 100
+setHysteresis 20
+setIntegrationTime2D 15000
+setIntegrationTime3DHDR 1800
+setIntegrationTime3D 1800
+setIntegrationTime3DHDR 500
+setKalmanK 0.5000
+setKalmanK 0.5000
+enableSaturation 1
+enableAdcOverflow 1
+enableVerticalBinning 0
+setRowReduction 0
+enableHorizontalBinning 0
+setRowReduction 0
+correctAmbientLight 1
+setAmbientLightFactor 250
+enableDefaultOffset 0
+enableDefaultOffset 1
+enableDefaultOffset 1
+correctDRNU 2
+correctTemperature 2
+enableDualMGX 0
+enableHDR 1
+loadConfig 1
+correctAmbientLight 0
+enableDefaultOffset 1
+correctDRNU 0
+correctTemperature 0
+enableHDR 0
+loadConfig 1
+loadConfig 1
+loadConfig 1
+enableAdcOverflow 0
+enableAdcOverflow 1
+loadConfig 1
+setModulationFrequency 1
+setKalmanThreshold 600
+setKalmanThreshold2 600
+setModulationFrequency 0
+setKalmanThreshold 1200
+setKalmanThreshold2 1200
+selectMode -1
+selectMode 0
+setABS 1
+enablePiDelay 0
+enablePiDelay 1
+enableDualMGX 0
+enableHDR 1
+loadConfig 1
+enableHDR 0
+loadConfig 1
+loadConfig 1
+loadConfig 1
+setHysteresis -1
+setMinAmplitude 0
+setMinAmplitude 50
+setHysteresis -1
+setHysteresis 0
+setHysteresis 20
+getBadPixels
+setKalmanK 0.2500
+setKalmanK 0.2500
+enableSaturation 0
+enableSaturation 1
+enableAdcOverflow 0
+enableAdcOverflow 1
+setRowReduction 0
+selectPolynomial 1 0
+selectPolynomial 4 0
+selectPolynomial 4 1
+selectPolynomial 4 0
+correctAmbientLight 1
+setAmbientLightFactor 250
+correctDRNU 2
+correctTemperature 2
+correctAmbientLight 0
+correctDRNU 0
+correctTemperature 0
+getSpeedOfLight
+stopVideo
+setModulationFrequency 1
+setKalmanThreshold 600
+setKalmanThreshold2 600
+selectMode 0
+setABS 1
+enablePiDelay 1
+enableDualMGX 0
+enableHDR 0
+loadConfig 1
+setMinAmplitude 0
+setMinAmplitude 50
+getBadPixels
+enableSaturation 1
+enableAdcOverflow 1
+setROI 4 323 6 125
+enableVerticalBinning 0
+setRowReduction 0
+enableHorizontalBinning 0
+setAmbientLightFactor 250
+correctDRNU 2
+correctTemperature 2
+correctAmbientLight 0
+enableDefaultOffset 0
+correctDRNU 0
+correctTemperature 0
+loadConfig 0
+getBWSorted
