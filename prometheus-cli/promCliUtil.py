@@ -69,7 +69,8 @@ class promSession:
             outputpath= '../../images',
             buildpath='./build',
             cams=0,
-            currSet = None
+            currSet = None,
+            debugMode = False
             ):
         self.cams = cams;
         self.cmdpath = os.path.abspath(os.path.join(buildpath,'prom-cli'))
@@ -80,6 +81,7 @@ class promSession:
         self.startup(startupfilename,cams)
         self.numimages=0
         self.numvideos=0
+        self.debugMode = debugMode
         if currSet is None:
             self.currSet = captureSetting()
         
@@ -95,8 +97,10 @@ class promSession:
     
     def writecommand(self,commandstring,output):
         modcom = "{} \"{}\" -i {} {}".format(self.cmdpath, commandstring, self.cams, output)
-        print(modcom)
-        #os.system(mod_com)
+        if self.debugMode:
+            print(modcom)
+        else:
+            os.system(mod_com)
         
     def captureImage(self,capSet,filename=None):        
         #This is a bit of funky logic to allow captureHDRImage to make calls to capture Image
