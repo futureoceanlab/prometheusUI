@@ -70,8 +70,11 @@ class promSession:
             buildpath='./build',
             cams=0,
             currSet = None,
-            debugMode = False
+            debugMode = False,
+            verbose = True
             ):
+        self.debugMode = debugMode
+        self.verbose = verbose
         self.cams = cams;
         self.cmdpath = os.path.abspath(os.path.join(buildpath,'prom-cli'))
         self.outputpath = os.path.abspath(os.path.normpath(outputpath))
@@ -80,8 +83,7 @@ class promSession:
         self.timestamp = datetime.now().strftime('%y%m%d%H%M')
         self.startup(startupfilename,cams)
         self.numimages=0
-        self.numvideos=0
-        self.debugMode = debugMode
+        self.numvideos=0        
         if currSet is None:
             self.currSet = captureSetting()
         
@@ -96,17 +98,17 @@ class promSession:
         self.metafile.close()
     
     def writecommand(self,commandstring,output):
-        modcom = "{} \"{}\" -i {} {}".format(self.cmdpath, commandstring, self.cams, output)
-        if self.debugMode:
+        modcom = "{} -a \"{}\" -i {} {}".format(self.cmdpath, commandstring, self.cams, output)
+        if self.verbose:
             print(modcom)
-        else:
-            os.system(mod_com)
+        if not(self.debugMode):
+            os.system(modcom)
         
     def captureImage(self,capSet,filename=None):        
         #This is a bit of funky logic to allow captureHDRImage to make calls to capture Image
         if (filename is None):
             self.numimages = self.numimages+1
-            filename = 'image{}_{1:03d}.bin'.format(self.timestamp,self.numimages)
+            filename = 'image{0}_{1:03d}.bin'.format(self.timestamp,self.numimages)
         #
         cmdlist = capSet.listCmds(self.currSet)
         imgCmd = capSet.imgCmd()        

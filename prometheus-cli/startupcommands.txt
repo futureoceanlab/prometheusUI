@@ -157,4 +157,3 @@ enableDefaultOffset 0
 correctDRNU 0
 correctTemperature 0
 loadConfig 0
-getBWSorted
