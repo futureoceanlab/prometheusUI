@@ -113,7 +113,7 @@ class promSession:
         self.writecommand(imgCmd,'> {}.bin'.format(os.path.join(self.outputpath,filename)))
         #
         capAtts = vars(self.currSet)
-        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3]] + list(itertools.chain(*capAtts.items())))
+        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(itertools.chain(*capAtts.items())))
         
     
     def captureHDRImage(self,capSets):
