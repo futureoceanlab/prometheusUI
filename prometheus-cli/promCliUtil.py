@@ -9,7 +9,7 @@ Created on Fri Aug 16 19:52:17 2019
 import os
 import csv
 from datetime import datetime
-import itertools
+#import itertools
 
 class captureSetting:
     
@@ -72,18 +72,22 @@ class promSession:
             currSet = None,
             debugMode = False
             ):
+        if currSet is None:
+            self.currSet = captureSetting()
         self.cams = cams;
         self.cmdpath = os.path.abspath(os.path.join(buildpath,'prom-cli'))
         self.outputpath = os.path.abspath(os.path.normpath(outputpath))
+        #
         self.metafile = open(os.path.join(self.outputpath,metadatafilename),'a',newline='')
         self.metawriter = csv.writer(self.metafile)            
+        self.metawriter.writerow(['Filename','Time','Camera'] + list(vars(currSet).keys()))
+        #
         self.timestamp = datetime.now().strftime('%y%m%d%H%M')
         self.startup(startupfilename,cams)
         self.numimages=0
         self.numvideos=0
         self.debugMode = debugMode
-        if currSet is None:
-            self.currSet = captureSetting()
+
         
     def startup(self,startupfile,cams):
         with open(startupfile, "r") as log:
@@ -117,7 +121,8 @@ class promSession:
         self.writecommand(imgCmd,'> {}.bin'.format(os.path.join(self.outputpath,filename)))
         #
         capAtts = vars(self.currSet)
-        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(itertools.chain(*capAtts.items())))
+        #self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(itertools.chain(*capAtts.items())))
+        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(capAtts.values()))
         
     
     def captureHDRImage(self,capSets):
