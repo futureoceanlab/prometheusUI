@@ -73,33 +73,26 @@ class promSession:
             debugMode = False,
             verbose = True
             ):
-<<<<<<< HEAD
         if currSet is None:
             self.currSet = captureSetting()
-=======
         self.debugMode = debugMode
         self.verbose = verbose
->>>>>>> 67124845214004fd78f68cffbfcbe60975c81e38
         self.cams = cams;
         self.cmdpath = os.path.abspath(os.path.join(buildpath,'prom-cli'))
         self.outputpath = os.path.abspath(os.path.normpath(outputpath))
         #
         self.metafile = open(os.path.join(self.outputpath,metadatafilename),'a',newline='')
         self.metawriter = csv.writer(self.metafile)            
-        self.metawriter.writerow(['Filename','Time','Camera'] + list(vars(currSet).keys()))
+        self.metawriter.writerow(['Filename','Time','Camera','filenum','framenum','vidnum'] + list(vars(self.currSet).keys()))
         #
         self.timestamp = datetime.now().strftime('%y%m%d%H%M')
         self.startup(startupfilename,cams)
         self.numimages=0
-<<<<<<< HEAD
+        self.numframes=0
         self.numvideos=0
         self.debugMode = debugMode
-
-=======
-        self.numvideos=0        
         if currSet is None:
             self.currSet = captureSetting()
->>>>>>> 67124845214004fd78f68cffbfcbe60975c81e38
         
     def startup(self,startupfile,cams):
         with open(startupfile, "r") as log:
@@ -120,9 +113,10 @@ class promSession:
         
     def captureImage(self,capSet,filename=None):        
         #This is a bit of funky logic to allow captureHDRImage to make calls to capture Image
+        self.numimages = self.numimages + 1
         if (filename is None):
-            self.numimages = self.numimages+1
-            filename = 'image{0}_{1:03d}.bin'.format(self.timestamp,self.numimages)
+            self.numframes = self.numframes+1
+            filename = 'image{0}_{1:03d}.bin'.format(self.timestamp,self.numframes)
         #
         cmdlist = capSet.listCmds(self.currSet)
         imgCmd = capSet.imgCmd()        
@@ -134,12 +128,12 @@ class promSession:
         #
         capAtts = vars(self.currSet)
         #self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(itertools.chain(*capAtts.items())))
-        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(capAtts.values()))
+        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), str(self.numimages), str(self.numframes), str(self.numvideos)] + list(capAtts.values()))
         
     
     def captureHDRImage(self,capSets):
-        self.numimages = self.numimages + 1
-        fileprefix = 'image{0}_{1:03d}'.format(self.timestamp,self.numimages)
+        self.numframes = self.numframes + 1
+        fileprefix = 'image{0}_{1:03d}'.format(self.timestamp,self.numframes)
         for i in range(len(capSets)):
             filename = fileprefix + '-{0:02d}'.format(i)
             self.captureImage(capSets[i],filename)
