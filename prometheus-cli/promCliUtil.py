@@ -48,7 +48,7 @@ class captureSetting:
             if (self.mode == 0):
                 return "setIntegrationTime2D {}".format(val)
             else:
-                return "setIntregrationTime3D {}".format(val)
+                return "setIntegrationTime3D {}".format(val)
         else:
             return valDict[key].format(val)
             
