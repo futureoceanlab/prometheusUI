@@ -83,7 +83,7 @@ class promSession:
         #
         self.metafile = open(os.path.join(self.outputpath,metadatafilename),'a',newline='')
         self.metawriter = csv.writer(self.metafile)            
-        self.metawriter.writerow(['Filename','Time','Camera','filenum','framenum','vidnum'] + list(vars(self.currSet).keys()))
+        self.metawriter.writerow(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys()))
         #
         self.timestamp = datetime.now().strftime('%y%m%d%H%M')
         self.startup(startupfilename,cams)
@@ -93,7 +93,8 @@ class promSession:
         self.debugMode = debugMode
         if currSet is None:
             self.currSet = captureSetting()
-        
+        self.frametag
+
     def startup(self,startupfile,cams):
         with open(startupfile, "r") as log:
     	    cmd = log.readline().strip('\n')
@@ -116,6 +117,7 @@ class promSession:
         self.numimages = self.numimages + 1
         if (filename is None):
             self.numframes = self.numframes+1
+            self.frametag = 'single'
             filename = 'image{0}_{1:03d}.bin'.format(self.timestamp,self.numframes)
         #
         cmdlist = capSet.listCmds(self.currSet)
@@ -128,11 +130,12 @@ class promSession:
         #
         capAtts = vars(self.currSet)
         #self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(itertools.chain(*capAtts.items())))
-        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), str(self.numimages), str(self.numframes), str(self.numvideos)] + list(capAtts.values()))
+        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), str(self.numimages), str(self.numframes), str(self.numvideos), self.frametag] + list(capAtts.values()))
         
     
     def captureHDRImage(self,capSets):
         self.numframes = self.numframes + 1
+        self.frametag = 'HDR'
         fileprefix = 'image{0}_{1:03d}'.format(self.timestamp,self.numframes)
         for i in range(len(capSets)):
             filename = fileprefix + '-{0:02d}'.format(i)
