@@ -26,7 +26,7 @@ class captureSetting:
         self.modFreq=modFreq
         
     def listCmds(self, prevSet=None):
-        cmdlist = [];
+        cmdlist = []
         if (prevSet is None):
             prevSet = captureSetting()
         prevAtts = vars(prevSet)
@@ -77,7 +77,7 @@ class promSession:
             self.currSet = captureSetting()
         self.debugMode = debugMode
         self.verbose = verbose
-        self.cams = cams;
+        self.cams = cams
         self.cmdpath = os.path.abspath(os.path.join(buildpath,'prom-cli'))
         self.outputpath = os.path.abspath(os.path.normpath(outputpath))
         #
@@ -93,7 +93,8 @@ class promSession:
         self.debugMode = debugMode
         if currSet is None:
             self.currSet = captureSetting()
-        self.frametag
+        self.frametag = 'single'
+        self.currvideo = -1
 
     def startup(self,startupfile,cams):
         with open(startupfile, "r") as log:
@@ -130,7 +131,7 @@ class promSession:
         #
         capAtts = vars(self.currSet)
         #self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(itertools.chain(*capAtts.items())))
-        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), str(self.numimages), str(self.numframes), str(self.numvideos), self.frametag] + list(capAtts.values()))
+        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), str(self.numimages), str(self.numframes), str(self.currvideo), self.frametag] + list(capAtts.values()))
         
     
     def captureHDRImage(self,capSets):
@@ -148,12 +149,18 @@ class promSession:
                 setattr(self.currSet,attkey,capAtts[attkey])
                 
     def captureVideo(self,capSet,nImag):
+        self.numvideos = self.numvideos + 1
+        self.currvideo = self.numvideos
         for i in range(nImag):
             self.captureImage(capSet)
+        self.currvideo = -1
         
     def captureHDRVideo(self,capSets,nImag):
+        self.numvideos = self.numvideos + 1
+        self.currvideo = self.numvideos
         for i in range(nImag):
             self.captureHDRImage(capSets)
+        self.currvideo = -1
         
 
     
