@@ -37,11 +37,12 @@ class captureSetting:
             prevSet = captureSetting()
         prevAtts = vars(prevSet)
         currAtts = vars(self)
-        #measureTemp is a special case, handled differently
-        currAtts.pop('measureTemp',None)
+        keys = list(currAtts.keys())
+        #Treat temperature measurement differently
+        keys.remove('measureTemp')
         if not(currAtts['mode'] == prevAtts['mode']):
             prevAtts['exposureTime'] = None
-        for key in currAtts:
+        for key in keys:
             if not(currAtts[key] == prevAtts[key]):
                 cmdlist.append(self.attrCmd(key, currAtts[key]))
         #cmdlist.append(self.imgCmd())
@@ -51,7 +52,8 @@ class captureSetting:
         valDict = {
                 "mode": "loadConfig {}",
                 "piDelay": "enablePiDelay {}",
-                "modFreq": "setModulationFrequency {}"}
+                "modFreq": "setModulationFrequency {}",
+                "dll": "writeRegister 73 {}"}
         if (key == "exposureTime"):
             if (self.mode == 0):
                 return "setIntegrationTime2D {}".format(val)
@@ -91,7 +93,7 @@ class promSession:
         #
         self.metafile = open(os.path.join(self.outputpath,metadatafilename),'a',newline='')
         self.metawriter = csv.writer(self.metafile)            
-        self.metawriter.writerow(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys())) + ['Temp']
+        self.metawriter.writerow(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys()) + ['Temp'])
         #
         self.timestamp = datetime.now().strftime('%y%m%d%H%M')
         self.startup(startupfilename,cams)
@@ -116,10 +118,12 @@ class promSession:
     
     def writecommand(self,commandstring,output=None):
         modcom = "{} -a \"{}\" -i {} {}".format(self.cmdpath, commandstring, self.cams, output)
-        print(modcom)
+        #print(modcom)
         if self.verbose:
+            print(commandstring)
+        if self.debugMode:
             return modcom
-        if not(self.debugMode):
+        else:
             #os.system(modcom)
             return subprocess.run(modcom, shell=True, stdout=subprocess.PIPE).stdout
         
@@ -150,7 +154,7 @@ class promSession:
         #
         capAtts = vars(self.currSet)
         #self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(itertools.chain(*capAtts.items())))
-        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), str(self.numimages), str(self.numframes), str(self.currvideo), self.frametag] + list(capAtts.values())) + [currTemp]
+        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), str(self.numimages), str(self.numframes), str(self.currvideo), self.frametag] + list(capAtts.values()) + [currTemp])
         
     
     def captureHDRImage(self,capSets):
@@ -188,10 +192,10 @@ class promSession:
         temps = np.zeros(numtemps)
         for i in range(0,numtemps):
             temps[i] = int.from_bytes(tempbytes[2*i:2*(i+1)],'little')
-        return temps.mean()
+        return temps.mean()/10
 
-    def self.hexdump(self, chararray)
+    def hexdump(self, chararray):
         outline = ''
-        for i in range(0,len(chararray)/2):
-            outline.append('{:x}{:x} '.format(chararray[2*i+1], chararray[2*i]))
+        for i in range(0,int(len(chararray)/2)):
+            outline = outline + '{:02x}{:02x} '.format(chararray[2*i+1], chararray[2*i])
         print(outline)
