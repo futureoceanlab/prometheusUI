@@ -9,6 +9,8 @@ Created on Fri Aug 16 19:52:17 2019
 import os
 import csv
 from datetime import datetime
+import subprocess
+import numpy as np
 #import itertools
 
 class captureSetting:
@@ -18,12 +20,16 @@ class captureSetting:
             mode=None,
             piDelay=None,
             exposureTime=None,
-            modFreq=None
+            modFreq=None,
+            dll=None,
+            measureTemp=False
             ):
         self.mode = mode
         self.piDelay=piDelay
         self.exposureTime=exposureTime
         self.modFreq=modFreq
+        self.dll=dll
+        self.measureTemp = measureTemp
         
     def listCmds(self, prevSet=None):
         cmdlist = []
@@ -31,6 +37,8 @@ class captureSetting:
             prevSet = captureSetting()
         prevAtts = vars(prevSet)
         currAtts = vars(self)
+        #measureTemp is a special case, handled differently
+        currAtts.pop('measureTemp',None)
         if not(currAtts['mode'] == prevAtts['mode']):
             prevAtts['exposureTime'] = None
         for key in currAtts:
@@ -83,7 +91,7 @@ class promSession:
         #
         self.metafile = open(os.path.join(self.outputpath,metadatafilename),'a',newline='')
         self.metawriter = csv.writer(self.metafile)            
-        self.metawriter.writerow(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys()))
+        self.metawriter.writerow(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys())) + ['Temp']
         #
         self.timestamp = datetime.now().strftime('%y%m%d%H%M')
         self.startup(startupfilename,cams)
@@ -106,12 +114,14 @@ class promSession:
     def shutdown(self):
         self.metafile.close()
     
-    def writecommand(self,commandstring,output):
+    def writecommand(self,commandstring,output=None):
         modcom = "{} -a \"{}\" -i {} {}".format(self.cmdpath, commandstring, self.cams, output)
+        print(modcom)
         if self.verbose:
-            print(modcom)
+            return modcom
         if not(self.debugMode):
-            os.system(modcom)
+            #os.system(modcom)
+            return subprocess.run(modcom, shell=True, stdout=subprocess.PIPE).stdout
         
     def captureImage(self,capSet,filename=None):        
         #This is a bit of funky logic to allow captureHDRImage to make calls to capture Image
@@ -125,13 +135,22 @@ class promSession:
         imgCmd = capSet.imgCmd()        
         self.updateCapSet(capSet)
         #
+        if self.currSet.measureTemp:
+            currTemp = self.getTemp()
+        else:
+            currTemp = None
+        #
         for cmd in cmdlist:
-            self.writecommand(cmd,'| hexdump')
+            #self.writecommand(cmd,'| hexdump')
+            returnval = self.writecommand(cmd)
+            if not(self.debugMode):
+                self.hexdump(returnval)
+
         self.writecommand(imgCmd,'> {}.bin'.format(os.path.join(self.outputpath,filename)))
         #
         capAtts = vars(self.currSet)
         #self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(itertools.chain(*capAtts.items())))
-        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), str(self.numimages), str(self.numframes), str(self.currvideo), self.frametag] + list(capAtts.values()))
+        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), str(self.numimages), str(self.numframes), str(self.currvideo), self.frametag] + list(capAtts.values())) + [currTemp]
         
     
     def captureHDRImage(self,capSets):
@@ -162,5 +181,17 @@ class promSession:
             self.captureHDRImage(capSets)
         self.currvideo = -1
         
+    def getTemp(self):
+        tempCmd = 'getTemperature'
+        tempbytes = self.writecommand(tempCmd)
+        numtemps = 4
+        temps = np.zeros(numtemps)
+        for i in range(0,numtemps):
+            temps[i] = int.from_bytes(tempbytes[2*i:2*(i+1)],'little')
+        return temps.mean()
 
-    
+    def self.hexdump(self, chararray)
+        outline = ''
+        for i in range(0,len(chararray)/2):
+            outline.append('{:x}{:x} '.format(chararray[2*i+1], chararray[2*i]))
+        print(outline)
