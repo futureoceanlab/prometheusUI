@@ -11,6 +11,7 @@ import csv
 from datetime import datetime
 import subprocess
 import numpy as np
+import matplotlib.pyplot as plt
 #import itertools
 
 class captureSetting:
@@ -91,7 +92,7 @@ class promSession:
         #
         self.metafile = open(os.path.join(self.outputpath,metadatafilename),'a',newline='')
         self.metawriter = csv.writer(self.metafile)            
-        self.metawriter.writerow(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys())) + ['Temp']
+        self.metawriter.writerow(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys()) + ['Temp'])
         #
         self.timestamp = datetime.now().strftime('%y%m%d%H%M')
         self.startup(startupfilename,cams)
@@ -190,8 +191,26 @@ class promSession:
             temps[i] = int.from_bytes(tempbytes[2*i:2*(i+1)],'little')
         return temps.mean()
 
-    def self.hexdump(self, chararray)
+    def hexdump(self, chararray):
         outline = ''
         for i in range(0,len(chararray)/2):
             outline.append('{:x}{:x} '.format(chararray[2*i+1], chararray[2*i]))
         print(outline)
+        
+    def calCapSet(self, exposureTime):
+        capvals = {'mode': 1, 'piDelay': 1, 'exposureTime': exposureTime, 'modFreq': 1,'measureTemp':False, 'dll':0}
+        capSet = []
+        for i in range(0,50):
+            capvals['dll'] = i
+        capSet.append(captureSetting(**capvals))
+            
+class binfile:
+    
+    def meanDCS(self, filename):
+        raw = np.fromfile(filename, dtype='uint16')
+        DCS = raw.astype('int32') - 2**11
+        DCS = np.absolute(DCS)
+        DCS = DCS.reshape(320,240,-1).transpose(1,0,2)
+        amp = DCS.mean(axis=2)
+        print('Mean pixel amplitude is {}'.format(amp.mean().round(2)))
+        
