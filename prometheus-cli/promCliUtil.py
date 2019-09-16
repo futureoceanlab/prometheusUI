@@ -203,10 +203,15 @@ class promSession:
         
     def calCapSet(self, exposureTime):
         capvals = {'mode': 1, 'piDelay': 1, 'exposureTime': exposureTime, 'modFreq': 1,'measureTemp':False, 'dll':0}
-        capSet = []
+        capSet = list()
         for i in range(0,50):
             capvals['dll'] = i
+            capSet.append(captureSetting(**capvals))
+        capvals['mode'] = 0
+        capvals['measureTemp'] = True
         capSet.append(captureSetting(**capvals))
+        return capSet
+        
             
 class binfile:
     
