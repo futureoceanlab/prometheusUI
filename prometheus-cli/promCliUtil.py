@@ -79,7 +79,7 @@ class promSession:
             metadatafilename='capturemetadata.csv',
             outputpath= '../../images',
             buildpath='./build',
-            cams=0,
+            cams=2,
             currSet = None,
             debugMode = False,
             verbose = True
@@ -106,6 +106,7 @@ class promSession:
             self.currSet = captureSetting()
         self.frametag = 'single'
         self.currvideo = -1
+        self.filenames = list()
 
     def startup(self,startupfile,cams):
         with open(startupfile, "r") as log:
@@ -127,6 +128,12 @@ class promSession:
         else:
             #os.system(modcom)
             return subprocess.run(modcom, shell=True, stdout=subprocess.PIPE).stdout
+        
+    def enabledll(self):
+        self.writecommand('w ae 4')
+        
+    def disabledll(self):
+        self.writecommand('w ae 1')
         
     def captureImage(self,capSet,filename=None):        
         #This is a bit of funky logic to allow captureHDRImage to make calls to capture Image
@@ -151,7 +158,11 @@ class promSession:
             if not(self.debugMode):
                 self.hexdump(returnval)
 
-        self.writecommand(imgCmd,'> {}.bin'.format(os.path.join(self.outputpath,filename)))
+        #self.writecommand(imgCmd,'> {}.bin'.format(os.path.join(self.outputpath,filename)))
+        #self.writecommand(imgCmd,'> {}.bin'.format(newfilename))
+        newfilename = os.path.join(self.outputpath,filename) + '.bin'
+        self.writecommand(imgCmd,'> {}'.format(newfilename))
+        self.filenames.append(newfilename)
         #
         capAtts = vars(self.currSet)
         #self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(itertools.chain(*capAtts.items())))
@@ -205,15 +216,12 @@ class promSession:
         capvals = {'mode': 1, 'piDelay': 1, 'exposureTime': exposureTime, 'modFreq': 1,'measureTemp':False, 'dll':0}
         capSet = list()
         for i in range(0,50):
-            capvals['dll'] = i
+            capvals['dll'] = format(i,'x')
             capSet.append(captureSetting(**capvals))
         capvals['mode'] = 0
         capvals['measureTemp'] = True
         capSet.append(captureSetting(**capvals))
         return capSet
-        
-            
-class binfile:
     
     def meanDCS(self, filename):
         raw = np.fromfile(filename, dtype='uint16')
