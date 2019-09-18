@@ -12,6 +12,7 @@ from datetime import datetime
 import subprocess
 import numpy as np
 import matplotlib.pyplot as plt
+import threading
 #import itertools
 
 class captureSetting:
@@ -107,6 +108,7 @@ class promSession:
         self.frametag = 'single'
         self.currvideo = -1
         self.filenames = list()
+        self.framerate = 1
 
     def startup(self,startupfile,cams):
         with open(startupfile, "r") as log:
@@ -173,9 +175,16 @@ class promSession:
         self.numframes = self.numframes + 1
         self.frametag = 'HDR'
         fileprefix = 'image{0}_{1:03d}'.format(self.timestamp,self.numframes)
-        for i in range(len(capSets)):
-            filename = fileprefix + '-{0:02d}'.format(i)
-            self.captureImage(capSets[i],filename)
+        self.HDRtimer(capSets, fileprefix, 0)
+        #for i in range(len(capSets)):
+        #    filename = fileprefix + '-{0:02d}'.format(i)
+        #    self.captureImage(capSets[i],filename)
+            
+    def HDRtimer(self,capSets,fileprefix,i):
+        if i < len(capSets) - 1:
+            threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, fileprefix, i+1]).start()
+        filename = fileprefix + '-{0:02d}'.format(i)
+        self.captureImage(capSets[i],filename)
             
     def updateCapSet(self,newcapSet):
         capAtts = vars(newcapSet)
@@ -186,9 +195,18 @@ class promSession:
     def captureVideo(self,capSet,nImag):
         self.numvideos = self.numvideos + 1
         self.currvideo = self.numvideos
-        for i in range(nImag):
-            self.captureImage(capSet)
-        self.currvideo = -1
+        self.videoTimer(capSet, nImag)
+        #for i in range(nImag):
+        #    self.captureImage(capSet)
+        #self.currvideo = -1
+        
+    def videoTimer(self,capSet,i):
+        if i > 1:
+            threading.Timer(1/self.framerate, self.videoTimer,args=[capSet, i-1]).start()
+        self.captureImage(capSet)
+        if i == 1:
+            self.currvideo = -1
+            
         
     def captureHDRVideo(self,capSets,nImag):
         self.numvideos = self.numvideos + 1
