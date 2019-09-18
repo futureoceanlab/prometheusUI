@@ -11,8 +11,9 @@ import csv
 from datetime import datetime
 import subprocess
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 import threading
+import time
 #import itertools
 
 class captureSetting:
@@ -223,6 +224,28 @@ class promSession:
         for i in range(0,numtemps):
             temps[i] = int.from_bytes(tempbytes[2*i:2*(i+1)],'little')
         return temps.mean()/10
+    
+    def preHeat(self,target):
+        maxcycles = 20
+        cycletime = 1
+        temps = []
+        temps.append(self.getTemp())
+        i = 0
+        self.illumDisable()
+        while temps[-1] < target and i < maxcycles:            
+            
+            
+            self.illumEnable()
+            temps.append(self.getTemp())
+            i = i+1
+        print('Start: {}, End: {}, Cycles: {}'.format(temps[0],temps[-1],i))
+        self.illumEnable()
+
+    def illumDisable(self):
+        print('Illumination Disabled')
+        
+    def illumEnable(self):
+        print('Illumination Enabled')
 
     def hexdump(self, chararray):
         outline = ''
