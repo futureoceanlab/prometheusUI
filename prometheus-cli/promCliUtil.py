@@ -110,7 +110,8 @@ class promSession:
         self.currvideo = -1
         self.filenames = list()
         self.framerate = 3
-        self.threadlock = threading.Lock()
+        self.imagelock = threading.Lock()
+        self.movielock = threading.Lock()
 
     def startup(self,startupfile,cams):
         with open(startupfile, "r") as log:
@@ -141,7 +142,7 @@ class promSession:
         
     def captureImage(self,capSet,filename=None):        
         #This is a bit of funky logic to allow captureHDRImage to make calls to capture Image
-        with self.threadlock:
+        with self.imagelock:
             self.numimages = self.numimages + 1
             if (filename is None):
                 self.numframes = self.numframes+1
@@ -175,6 +176,7 @@ class promSession:
             
     
     def captureHDRImage(self,capSets):
+        self.movielock.acquire()
         self.numframes = self.numframes + 1
         self.frametag = 'HDR'
         fileprefix = 'image{0}_{1:03d}'.format(self.timestamp,self.numframes)
@@ -183,12 +185,14 @@ class promSession:
         #    filename = fileprefix + '-{0:02d}'.format(i)
         #    self.captureImage(capSets[i],filename)
         
-    def captureCalImage(self, numframes=10, exposureTime=3000, calTemp=40):
+    def captureCalImage(self, numframes=10, exposureTime=3000, calTemp=42):
         self.enabledll()
         cS = self.calCapSet(exposureTime)
         self.preHeat(calTemp)
         self.captureHDRVideo(cS, numframes)
-        self.disabledll()
+        with self.movielock:
+            self.disabledll()
+            print('Finished Calibration Capture')
             
     def HDRtimer(self,capSets,fileprefix,i, j):
         if i < len(capSets) - 1:
@@ -201,6 +205,7 @@ class promSession:
         self.captureImage(capSets[i],filename)
         if (i == len(capSets) - 1) and j == 1:
             self.currvideo = -1
+            self.movielock.release()
             
     def updateCapSet(self,newcapSet):
         capAtts = vars(newcapSet)
@@ -225,6 +230,7 @@ class promSession:
             
         
     def captureHDRVideo(self,capSets,nImag):
+        self.movielock.acquire()
         self.numvideos = self.numvideos + 1
         self.currvideo = self.numvideos
         self.numframes = self.numframes + 1
@@ -234,6 +240,7 @@ class promSession:
         #    self.captureHDRImage(capSets)
         #self.currvideo = -1
         self.HDRtimer(capSets,fileprefix,0,nImag)
+        #print('Finished HDR Video')
         
     def getTemp(self):
         tempCmd = 'getTemperature'
