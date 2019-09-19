@@ -109,7 +109,7 @@ class promSession:
         self.frametag = 'single'
         self.currvideo = -1
         self.filenames = list()
-        self.framerate = 1
+        self.framerate = 3
 
     def startup(self,startupfile,cams):
         with open(startupfile, "r") as log:
@@ -180,6 +180,12 @@ class promSession:
         #for i in range(len(capSets)):
         #    filename = fileprefix + '-{0:02d}'.format(i)
         #    self.captureImage(capSets[i],filename)
+        
+    def captureCalImage(self, numframes=10, exposureTime=3000, calTemp=40):
+        cS = self.calCapSet(exposureTime)
+        self.preHeat(calTemp)
+        self.captureHDRVideo(cS, numframes)
+        
             
     def HDRtimer(self,capSets,fileprefix,i):
         if i < len(capSets) - 1:
@@ -230,21 +236,24 @@ class promSession:
         cycletime = 1
         temps = []
         temps.append(self.getTemp())
-        i = 0
-        self.illumDisable()
+        i = 0        
         while temps[-1] < target and i < maxcycles:            
-            
-            
-            self.illumEnable()
+            self.illumDisable()
+            self.writecommand('w a4 3')
+            time.sleep(cycletime)
+            self.writecommand('w a4 0')
             temps.append(self.getTemp())
             i = i+1
         print('Start: {}, End: {}, Cycles: {}'.format(temps[0],temps[-1],i))
+        print(temps)
         self.illumEnable()
 
     def illumDisable(self):
+        self.writecommand('w 90 c8')
         print('Illumination Disabled')
         
     def illumEnable(self):
+        self.writecommand('w 90 cc')
         print('Illumination Enabled')
 
     def hexdump(self, chararray):
@@ -263,6 +272,7 @@ class promSession:
         capvals['measureTemp'] = True
         capSet.append(captureSetting(**capvals))
         return capSet
+    
     
     def meanDCS(self, filename):
         raw = np.fromfile(filename, dtype='uint16')
