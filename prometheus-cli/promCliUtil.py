@@ -110,6 +110,7 @@ class promSession:
         self.currvideo = -1
         self.filenames = list()
         self.framerate = 3
+        self.threadlock = threading.Lock()
 
     def startup(self,startupfile,cams):
         with open(startupfile, "r") as log:
@@ -140,37 +141,38 @@ class promSession:
         
     def captureImage(self,capSet,filename=None):        
         #This is a bit of funky logic to allow captureHDRImage to make calls to capture Image
-        self.numimages = self.numimages + 1
-        if (filename is None):
-            self.numframes = self.numframes+1
-            self.frametag = 'single'
-            filename = 'image{0}_{1:03d}.bin'.format(self.timestamp,self.numframes)
-        #
-        cmdlist = capSet.listCmds(self.currSet)
-        imgCmd = capSet.imgCmd()        
-        self.updateCapSet(capSet)
-        #
-        if self.currSet.measureTemp:
-            currTemp = self.getTemp()
-        else:
-            currTemp = None
-        #
-        for cmd in cmdlist:
-            #self.writecommand(cmd,'| hexdump')
-            returnval = self.writecommand(cmd)
-            if not(self.debugMode):
-                self.hexdump(returnval)
-
-        #self.writecommand(imgCmd,'> {}.bin'.format(os.path.join(self.outputpath,filename)))
-        #self.writecommand(imgCmd,'> {}.bin'.format(newfilename))
-        newfilename = os.path.join(self.outputpath,filename) + '.bin'
-        self.writecommand(imgCmd,'> {}'.format(newfilename))
-        self.filenames.append(newfilename)
-        #
-        capAtts = vars(self.currSet)
-        #self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(itertools.chain(*capAtts.items())))
-        self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), str(self.numimages), str(self.numframes), str(self.currvideo), self.frametag] + list(capAtts.values()) + [currTemp])
-        
+        with self.threadlock:
+            self.numimages = self.numimages + 1
+            if (filename is None):
+                self.numframes = self.numframes+1
+                self.frametag = 'single'
+                filename = 'image{0}_{1:03d}.bin'.format(self.timestamp,self.numframes)
+            #
+            cmdlist = capSet.listCmds(self.currSet)
+            imgCmd = capSet.imgCmd()        
+            self.updateCapSet(capSet)
+            #
+            if self.currSet.measureTemp:
+                currTemp = self.getTemp()
+            else:
+                currTemp = None
+            #
+            for cmd in cmdlist:
+                #self.writecommand(cmd,'| hexdump')
+                returnval = self.writecommand(cmd)
+                if not(self.debugMode):
+                    self.hexdump(returnval)
+    
+            #self.writecommand(imgCmd,'> {}.bin'.format(os.path.join(self.outputpath,filename)))
+            #self.writecommand(imgCmd,'> {}.bin'.format(newfilename))
+            newfilename = os.path.join(self.outputpath,filename) + '.bin'
+            self.writecommand(imgCmd,'> {}'.format(newfilename))
+            self.filenames.append(newfilename)
+            #
+            capAtts = vars(self.currSet)
+            #self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(itertools.chain(*capAtts.items())))
+            self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), str(self.numimages), str(self.numframes), str(self.currvideo), self.frametag] + list(capAtts.values()) + [currTemp])
+            
     
     def captureHDRImage(self,capSets):
         self.numframes = self.numframes + 1
@@ -190,14 +192,14 @@ class promSession:
             
     def HDRtimer(self,capSets,fileprefix,i, j):
         if i < len(capSets) - 1:
-            threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, fileprefix, i+1]).start()
-        elif (i = len(capSets) - 1) and j > 1:
+            threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, fileprefix, i+1, j]).start()
+        elif (i == len(capSets) - 1) and j > 1:
             self.numframes = self.numframes + 1
             fileprefix = 'image{0}_{1:03d}'.format(self.timestamp,self.numframes)
             threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, fileprefix, 0, j-1]).start()
         filename = fileprefix + '-{0:02d}'.format(i)
         self.captureImage(capSets[i],filename)
-        if (i = len(capSets) - 1) and j == 1:
+        if (i == len(capSets) - 1) and j == 1:
             self.currvideo = -1
             
     def updateCapSet(self,newcapSet):
