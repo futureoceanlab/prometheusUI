@@ -39,12 +39,18 @@ void handleApiCall(char *cmd, int target, int oflag, char *outfile) {
     	responseLength = recv_lengthPrefixed(sock0, &response);
 
 		if (oflag == 1) {
-			char fulloutfile = "~/images/";
-			char *filesuffix;
-			sprintf(filesuffix, "_%d.bin");
+			char fulloutfile[80];
+			//strcpy(fulloutfile, "~/images/");
+			strcpy(fulloutfile, "/home/pi/images/");
+			char filesuffix[10];
+			sprintf(filesuffix, "_%d.bin",i);
+			//printf(outfile);
+			//printf("Print test");
 			strcat(fulloutfile, outfile);
 			strcat(fulloutfile, filesuffix);
-			int filedesc = open(fulloutfile, O_WRONLY | O_APPEND);
+			printf("Full file name: %s\n",fulloutfile);
+			int filedesc = open(fulloutfile, O_WRONLY | O_CREAT);
+			printf("fd = %d\n", filedesc);
 			write(filedesc, response, responseLength);
 			close(filedesc);
 		} else {

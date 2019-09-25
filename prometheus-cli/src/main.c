@@ -12,12 +12,13 @@ int main(int argc, char **argv) {
     char *outfile = "";
     int target=0;
 
-    while((c = getopt(argc, argv, "a:m:c:i:o::")) != -1) {
+    while((c = getopt(argc, argv, "a:m:c:i:o:")) != -1) {
 
         switch(c) {
             case 'a':
                 aflag=1;
                 cmd = optarg;
+                //printf("a flag called, argrument: %s\n",cmd);
                 //handleApiCall(optarg);
                 didSomething = 1;
                 break;
@@ -38,7 +39,7 @@ int main(int argc, char **argv) {
             case 'o':
                 oflag = 1;
                 outfile = optarg;
-                didSomething = 1;
+                //printf("o flag called, argument: %s\n",outfile);
                 break;
         }
 

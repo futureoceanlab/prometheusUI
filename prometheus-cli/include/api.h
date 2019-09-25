@@ -1,4 +1,4 @@
 #include <pigpio.h>
 #include "network.h"
 
-void handleApiCall(char*, int);
+void handleApiCall(char*, int, int, char*);
