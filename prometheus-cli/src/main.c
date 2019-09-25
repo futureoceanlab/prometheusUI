@@ -7,11 +7,12 @@ int main(int argc, char **argv) {
     extern char *optarg;
     int c;
     int didSomething = 0;
-    int aflag=0, mflag=0, cflag=0, iflag=0;
+    int aflag=0, mflag=0, cflag=0, iflag=0, oflag=0;
     char *cmd; // target first cam as default
+    char *outfile = "";
     int target=0;
 
-    while((c = getopt(argc, argv, "a:m:c:i:")) != -1) {
+    while((c = getopt(argc, argv, "a:m:c:i:o::")) != -1) {
 
         switch(c) {
             case 'a':
@@ -34,11 +35,16 @@ int main(int argc, char **argv) {
                 iflag=1;
                 target = atoi(optarg);
                 break;
+            case 'o':
+                oflag = 1;
+                outfile = optarg;
+                didSomething = 1;
+                break;
         }
 
     }
     if (aflag == 1 && iflag == 1) {
-        handleApiCall(cmd, target);
+        handleApiCall(cmd, target, oflag, outfile);
     } else if (mflag == 1) {
         handleModclk(cmd);
     } else if (cflag == 1 &&  iflag == 1) {

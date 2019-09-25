@@ -1,11 +1,13 @@
 #include "api.h"
 #include <string.h>
+#include <fcntl.h>
 
-void handleApiCall(char *cmd, int target) {
+void handleApiCall(char *cmd, int target, int oflag, char *outfile) {
     char *hostnames[2]= {NODE0_HOSTNAME, NODE1_HOSTNAME};
     int portnos[2] = {NODE0_PORTNO, NODE1_PORTNO};
     int nTargets = target < 2 ? 1 : 2;
     int start = target == 1 ? 1 : 0;
+	FILE *ofp;
     //printf("Target = %d, nTarget = %d\n", start, nTargets);
     /*int isCapture = strcmp(cmd, "getBWSorted") == 0;
     if (isCapture > 0) {
@@ -36,8 +38,18 @@ void handleApiCall(char *cmd, int target) {
     	unsigned char* response = NULL;
     	responseLength = recv_lengthPrefixed(sock0, &response);
 
-    	write(STDOUT_FILENO, response, responseLength);
-
+		if (oflag == 1) {
+			char fulloutfile = "~/images/";
+			char *filesuffix;
+			sprintf(filesuffix, "_%d.bin");
+			strcat(fulloutfile, outfile);
+			strcat(fulloutfile, filesuffix);
+			int filedesc = open(fulloutfile, O_WRONLY | O_APPEND);
+			write(filedesc, response, responseLength);
+			close(filedesc);
+		} else {
+			write(STDOUT_FILENO, response, responseLength);
+		}
     	free(response);
     	close(sock0);
     }
