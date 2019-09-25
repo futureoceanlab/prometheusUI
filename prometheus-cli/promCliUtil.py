@@ -124,15 +124,19 @@ class promSession:
         self.metafile.close()
     
     def writecommand(self,commandstring,output=None):
-        modcom = "{} -a \"{}\" -i {} {}".format(self.cmdpath, commandstring, self.cams, output)
+        #modcom = "{} -a \"{}\" -i {} {}".format(self.cmdpath, commandstring, self.cams, output)
         #print(modcom)
+        if output is None:
+            comlist = [self.cmdpath, '-a', commandstring, '-i', self.cams]
+        else:
+            comlist = [self.cmdpath, '-a', commandstring, '-i', self.cams, '-o', output]
         if self.verbose:
             print(commandstring)
         if self.debugMode:
             return modcom
         else:
             #os.system(modcom)
-            return subprocess.run(modcom, shell=True, stdout=subprocess.PIPE).stdout
+            return subprocess.run(comlist, shell=False, stdout=subprocess.PIPE).stdout
         
     def enabledll(self):
         self.writecommand('w ae 4')
@@ -140,12 +144,14 @@ class promSession:
     def disabledll(self):
         self.writecommand('w ae 1')
         
-    def captureImage(self,capSet,filename=None):        
+    def captureImage(self,capSet,framenum=None, filename=None):        
         #This is a bit of funky logic to allow captureHDRImage to make calls to capture Image
-        with self.imagelock:
+        with self.imagelock:            
             self.numimages = self.numimages + 1
+            if (framenum is None):                
+                self.numframes = self.numframes + 1
+                framenum = self.numframes
             if (filename is None):
-                self.numframes = self.numframes+1
                 self.frametag = 'single'
                 filename = 'image{0}_{1:03d}'.format(self.timestamp,self.numframes)
             #
@@ -153,7 +159,7 @@ class promSession:
             imgCmd = capSet.imgCmd()        
             self.updateCapSet(capSet)
             #
-            if self.currSet.measureTemp:
+            if capSet.measureTemp:
                 currTemp = self.getTemp()
             else:
                 currTemp = None
@@ -166,24 +172,21 @@ class promSession:
     
             #self.writecommand(imgCmd,'> {}.bin'.format(os.path.join(self.outputpath,filename)))
             #self.writecommand(imgCmd,'> {}.bin'.format(newfilename))
-            newfilename = os.path.join(self.outputpath,filename) + '.bin'
-            self.writecommand(imgCmd,'> {}'.format(newfilename))
-            self.filenames.append(newfilename)
+            #newfilename = os.path.join(self.outputpath,filename)
+            self.writecommand(imgCmd, filename)
+            self.filenames.append(filename)
             #
-            capAtts = vars(self.currSet)
+            capAtts = vars(capSet)
             #self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(itertools.chain(*capAtts.items())))
-            self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), str(self.numimages), str(self.numframes), str(self.currvideo), self.frametag] + list(capAtts.values()) + [currTemp])
+            self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), self.numimages, framenum, str(self.currvideo), self.frametag] + list(capAtts.values()) + [currTemp])
             
     
     def captureHDRImage(self,capSets):
         self.movielock.acquire()
         self.numframes = self.numframes + 1
         self.frametag = 'HDR'
-        fileprefix = 'image{0}_{1:03d}'.format(self.timestamp,self.numframes)
-        self.HDRtimer(capSets, fileprefix, 0, 1)
-        #for i in range(len(capSets)):
-        #    filename = fileprefix + '-{0:02d}'.format(i)
-        #    self.captureImage(capSets[i],filename)
+        self.HDRtimer(capSets, 1, 0, 1)
+
         
     def captureCalImage(self, numframes=10, exposureTime=3000, calTemp=42):
         self.enabledll()
@@ -194,18 +197,18 @@ class promSession:
             self.disabledll()
             print('Finished Calibration Capture')
             
-    def HDRtimer(self,capSets,fileprefix,i, j):
+    def HDRtimer(self,capSets, nImag, i, j):
+        filename = 'image{0}_{1:03d}-{2:02d}'.format(self.timestamp,self.numframes+j, i)
         if i < len(capSets) - 1:
-            threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, fileprefix, i+1, j]).start()
-        elif (i == len(capSets) - 1) and j > 1:
-            self.numframes = self.numframes + 1
-            fileprefix = 'image{0}_{1:03d}'.format(self.timestamp,self.numframes)
-            threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, fileprefix, 0, j-1]).start()
-        filename = fileprefix + '-{0:02d}'.format(i)
-        self.captureImage(capSets[i],filename)
-        if (i == len(capSets) - 1) and j == 1:
+            threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, nImag, i+1, j]).start()
+        elif (i == len(capSets) - 1) and j < nImag:
+            threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, nImag, 0, j+1]).start()
+        self.captureImage(capSets[i], self.numframes + j, filename)
+        if (i == len(capSets) - 1) and j == nImag:
             self.currvideo = -1
+            self.numframes = self.numframes + nImag
             self.movielock.release()
+            print('Finished HDR Capture')
             
     def updateCapSet(self,newcapSet):
         capAtts = vars(newcapSet)
@@ -217,9 +220,6 @@ class promSession:
         self.numvideos = self.numvideos + 1
         self.currvideo = self.numvideos
         self.videoTimer(capSet, nImag)
-        #for i in range(nImag):
-        #    self.captureImage(capSet)
-        #self.currvideo = -1
         
     def videoTimer(self,capSet,i):
         if i > 1:
@@ -235,12 +235,7 @@ class promSession:
         self.currvideo = self.numvideos
         self.numframes = self.numframes + 1
         self.frametag = 'HDR'
-        fileprefix = 'image{0}_{1:03d}'.format(self.timestamp,self.numframes)
-        #for i in range(nImag):
-        #    self.captureHDRImage(capSets)
-        #self.currvideo = -1
-        self.HDRtimer(capSets,fileprefix,0,nImag)
-        #print('Finished HDR Video')
+        self.HDRtimer(capSets,nImag, 0, 1)
         
     def getTemp(self):
         tempCmd = 'getTemperature'
