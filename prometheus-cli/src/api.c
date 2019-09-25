@@ -1,6 +1,7 @@
 #include "api.h"
 #include <string.h>
 #include <fcntl.h>
+#include <stdio.h>
 
 void handleApiCall(char *cmd, int target, int oflag, char *outfile) {
     char *hostnames[2]= {NODE0_HOSTNAME, NODE1_HOSTNAME};
@@ -40,17 +41,13 @@ void handleApiCall(char *cmd, int target, int oflag, char *outfile) {
 
 		if (oflag == 1) {
 			char fulloutfile[80];
-			//strcpy(fulloutfile, "~/images/");
 			strcpy(fulloutfile, "/home/pi/images/");
 			char filesuffix[10];
 			sprintf(filesuffix, "_%d.bin",i);
-			//printf(outfile);
-			//printf("Print test");
 			strcat(fulloutfile, outfile);
 			strcat(fulloutfile, filesuffix);
-			printf("Full file name: %s\n",fulloutfile);
+			printf("Saving file %s\n",fulloutfile);
 			int filedesc = open(fulloutfile, O_WRONLY | O_CREAT);
-			printf("fd = %d\n", filedesc);
 			write(filedesc, response, responseLength);
 			close(filedesc);
 		} else {

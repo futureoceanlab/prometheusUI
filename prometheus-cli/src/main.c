@@ -18,8 +18,6 @@ int main(int argc, char **argv) {
             case 'a':
                 aflag=1;
                 cmd = optarg;
-                //printf("a flag called, argrument: %s\n",cmd);
-                //handleApiCall(optarg);
                 didSomething = 1;
                 break;
             case 'm':
@@ -39,7 +37,6 @@ int main(int argc, char **argv) {
             case 'o':
                 oflag = 1;
                 outfile = optarg;
-                //printf("o flag called, argument: %s\n",outfile);
                 break;
         }
 
