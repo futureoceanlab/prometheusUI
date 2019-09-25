@@ -147,7 +147,7 @@ class promSession:
             if (filename is None):
                 self.numframes = self.numframes+1
                 self.frametag = 'single'
-                filename = 'image{0}_{1:03d}.bin'.format(self.timestamp,self.numframes)
+                filename = 'image{0}_{1:03d}'.format(self.timestamp,self.numframes)
             #
             cmdlist = capSet.listCmds(self.currSet)
             imgCmd = capSet.imgCmd()        
