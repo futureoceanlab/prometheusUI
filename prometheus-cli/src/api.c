@@ -2,6 +2,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <time.h>
 
 void handleApiCall(char *cmd, int target, int oflag, char *outfile) {
     char *hostnames[2]= {NODE0_HOSTNAME, NODE1_HOSTNAME};
@@ -40,15 +41,21 @@ void handleApiCall(char *cmd, int target, int oflag, char *outfile) {
     	responseLength = recv_lengthPrefixed(sock0, &response);
 
 		if (oflag == 1) {
+			clock_t start, end;
+			double cpu_time_used;
 			char fulloutfile[80];
 			strcpy(fulloutfile, "/home/pi/images/");
 			char filesuffix[10];
 			sprintf(filesuffix, "_%d.bin",i);
 			strcat(fulloutfile, outfile);
 			strcat(fulloutfile, filesuffix);
-			printf("Saving file %s\n",fulloutfile);
+			//printf("Saving file %s\n",fulloutfile);
 			int filedesc = open(fulloutfile, O_WRONLY | O_CREAT);
+			start = clock();
 			write(filedesc, response, responseLength);
+			end = clock();
+			cpu_time_used = 1000000 * ((double) (end - start)) / CLOCKS_PER_SEC;
+			printf("%.0f", cpu_time_used)
 			close(filedesc);
 		} else {
 			write(STDOUT_FILENO, response, responseLength);
