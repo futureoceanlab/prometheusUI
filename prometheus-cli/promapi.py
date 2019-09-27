@@ -14,7 +14,7 @@ def apiCall(command, camnum):
         responselength = int.from_bytes(s.recv(4),'little')
         startrec = time.time()
         response = s.recv(responselength,socket.MSG_WAITALL)
-        rectime = time.time-startrec
+        rectime = time.time()-startrec
         return [response, rectime]
 
 

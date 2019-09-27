@@ -214,9 +214,9 @@ class promSession:
     def captureHDRImage(self,capSets):
         self.numframes = self.numframes + 1
         self.frametag = 'HDR'
-        for i in range(0,capSets):
+        for i in range(0,len(capSets)):
                 filename = 'image{0}_{1:03d}-{2:02d}'.format(self.timestamp,self.numframes, i)
-                if i == capSets - 1:
+                if i == len(capSets) - 1:
                     lastimagestart = time.time()
                 imagestart = time.time()
                 self.captureImage(capSets[i], self.numframes, filename)
@@ -322,18 +322,22 @@ def startsaving(q, outputpath, metadatafilename, verbosity):
     keepgoing = True
     while keepgoing:    
         filename = q.get()
-        print('got filename {}'.format(filename))
+        if verbosity.value > 1:
+            print('got filename {}'.format(filename))
         if filename == 'EOF':
             keepgoing = False
-            print('Caught EOF, shutting down')
+            if verbosity.value > 0:
+                print('Caught EOF, shutting down')
             metafile.close()
         elif filename == 'metadata':
             data = q.get()
             metawriter.writerow(data)
         else:            
             data = q.get()
-            print('writing data, save queue = {}'.format(q.qsize()))
+            if verbosity.value > 1:
+                print('writing data, save queue = {}'.format(q.qsize()))
             f = open('/home/pi/images/' + filename + '.bin','wb')
             f.write(data)
             f.close
-            print('wrote data')
+            if verbosity.value > 1:
+                print('wrote data')
