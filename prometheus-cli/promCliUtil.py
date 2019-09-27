@@ -15,6 +15,8 @@ import numpy as np
 import time
 import promapi as papi
 import multiprocessing as mp
+import struct
+import statistics
 
 class captureSetting:
     
@@ -141,9 +143,9 @@ class promSession:
         elif savefile is None:
             for camnum in self.cams:                
                 response = papi.apiCall(commandstring, camnum)
-                ret.append(int.from_bytes(response[0],'little'))
+                ret.append(response[0])
             if self.verbosity.value > 1:
-                print('{}: {}'.format(commandstring,ret))   
+                print('{}: {}'.format(commandstring,[b.hex() for b in ret]))   
         else:
             for camnum in self.cams:
                 response = papi.apiCall(commandstring, camnum)
@@ -258,10 +260,17 @@ class promSession:
         tempCmd = 'getTemperature'
         tempbytes = self.writecommand(tempCmd)
         numtemps = 4
-        temps = np.zeros(numtemps)
-        for i in range(0,numtemps):
-            temps[i] = int.from_bytes(tempbytes[2*i:2*(i+1)],'little')
-        return temps.mean()/10
+        camtemps = []
+        for cam in tempbytes:
+            temps = struct.unpack('<HHHHHH',cam)
+            camtemps.append(statistics.mean(temps[0:numtemps])/10)
+        if self.verbosity.value > 1:
+            print('Camera temp(s): {}'.format(camtemps))
+        return camtemps
+        #temps = np.zeros(numtemps)
+        #for i in range(0,numtemps):
+        #    temps[i] = int.from_bytes(tempbytes[2*i:2*(i+1)],'little')
+        #return temps.mean()/10
     
     def preHeat(self,target):
         maxcycles = 20
