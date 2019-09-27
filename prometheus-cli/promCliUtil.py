@@ -99,6 +99,7 @@ class promSession:
         self.metawriter.writerow(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys()) + ['Temp'])
         #        
         self.timestamp = datetime.now().strftime('%y%m%d%H%M')
+        self.filequeue = mp.Queue()   
         self.startup(startupfilename,cams)
         self.numimages=0
         self.numframes=0
@@ -112,7 +113,7 @@ class promSession:
         self.framerate = 3
         self.imagelock = threading.Lock()
         self.movielock = threading.Lock()
-        self.filequeue = mp.Queue()       
+           
 
     def startup(self,startupfile,cams):
         with open(startupfile, "r") as log:
@@ -120,11 +121,12 @@ class promSession:
     	    while cmd:
                 self.writecommand(cmd)
                 cmd = log.readline().strip('\n')
-        os.system('taskset -p 0 {0:d}'.format(os.getpid()))
-        mp.Process(target= startsaving, args = (self.filequeue, ))
+        os.system('taskset -cp 0 {0:d}'.format(os.getpid()))
+        mp.Process(target= startsaving, args = (self.filequeue, )).start()
 
     def shutdown(self):
         self.metafile.close()
+        self.filequeue.put('EOF')
     
     def writecommand(self,commandstring, savefile = None):
         if self.debugMode:
@@ -132,8 +134,8 @@ class promSession:
         elif savefile is None:
             for camnum in self.cams:
                 response = papi.apiCall(commandstring, camnum)
-            print('{}: {}'.format(commandstring,response.decode()))
-            return int.from_bytes(response,'little')
+            print('{}: {}'.format(commandstring,int.from_bytes(response,'little')))
+            return response
         else:
             for camnum in self.cams:
                 data = papi.apiCall(commandstring, camnum)
@@ -301,15 +303,19 @@ class promSession:
         print('Mean pixel amplitude is {}'.format(amp.mean().round(2)))
         
 def startsaving(q):
-    os.system('taskset -p 1 {0:d}'.format(os.getpid()))
+    os.system('taskset -cp 1 {0:d}'.format(os.getpid()))
     os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
     keepgoing = True
     while keepgoing:    
         filename = q.get()
+        print('got filename {}'.format(filename))
         if filename is 'EOF':
             keepgoing = False
-        else:
+            print('Caught EOF, shutting down')
+        else:            
             data = q.get()
-            f = open(filename,'wb')
+            print('writing data, save queue = {}'.format(q.qsize()))
+            f = open('/home/pi/images/' + filename + '.bin','wb')
             f.write(data)
             f.close
+            print('wrote data')
