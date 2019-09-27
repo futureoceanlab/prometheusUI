@@ -14,6 +14,7 @@ import numpy as np
 #import matplotlib.pyplot as plt
 import threading
 import time
+import promapi
 #import itertools
 
 class captureSetting:
@@ -97,8 +98,9 @@ class promSession:
         self.metafile = open(os.path.join(self.outputpath,metadatafilename),'a',newline='')
         self.metawriter = csv.writer(self.metafile)            
         self.metawriter.writerow(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys()) + ['Temp'])
-        #
+        #        
         self.timestamp = datetime.now().strftime('%y%m%d%H%M')
+        self.apiHandler = promapi.apiHandler()
         self.startup(startupfilename,cams)
         self.numimages=0
         self.numframes=0
@@ -111,13 +113,15 @@ class promSession:
         self.filenames = list()
         self.framerate = 3
         self.imagelock = threading.Lock()
-        self.movielock = threading.Lock()
+        self.movielock = threading.Lock()        
 
     def startup(self,startupfile,cams):
         with open(startupfile, "r") as log:
     	    cmd = log.readline().strip('\n')
     	    while cmd:
-                self.writecommand(cmd,'| hexdump')
+                #self.writecommand(cmd)
+                self.apiHandler(cmd,0)
+                self.apiHandler(cmd,1)
                 cmd = log.readline().strip('\n')
                 
     def shutdown(self):
@@ -127,9 +131,9 @@ class promSession:
         #modcom = "{} -a \"{}\" -i {} {}".format(self.cmdpath, commandstring, self.cams, output)
         #print(modcom)
         if output is None:
-            comlist = [self.cmdpath, '-a', commandstring, '-i', self.cams]
+            comlist = [self.cmdpath, '-a', commandstring, '-i', str(self.cams)]
         else:
-            comlist = [self.cmdpath, '-a', commandstring, '-i', self.cams, '-o', output]
+            comlist = [self.cmdpath, '-a', commandstring, '-i', str(self.cams), '-o', output]
         if self.verbose:
             print(commandstring)
         if self.debugMode:
