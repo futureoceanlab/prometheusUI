@@ -242,14 +242,20 @@ class promSession:
             print('Finished Video Capture')
 
         
-    def captureCalImage(self, numframes=10, exposureTime=3000, calTemp=42):
+    def captureCalImage(self, numframes=10, exposureTime=3000, calTemp=None):
         self.enabledll()
         cS = self.calCapSet(exposureTime)
-        self.preHeat(calTemp)
+        if calTemp is not None:
+            self.preHeat(calTemp)
         self.captureHDRVideo(cS, numframes)
         self.disabledll()
         print('Finished Calibration Capture')            
-              
+
+    def calTemperatureSweep(self, nframes, exTime, numsweeps, breaktime):
+        for _ in range(numsweeps):
+            self.captureCalImage(nframes, exTime)
+            time.sleep(breaktime)
+
     def updateCapSet(self,newcapSet):
         capAtts = vars(newcapSet)
         for attkey in capAtts.keys():
