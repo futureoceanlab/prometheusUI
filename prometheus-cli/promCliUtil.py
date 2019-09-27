@@ -122,6 +122,7 @@ class promSession:
                 self.writecommand(cmd)
                 cmd = log.readline().strip('\n')
         os.system('taskset -cp 0 {0:d}'.format(os.getpid()))
+        os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
         mp.Process(target= startsaving, args = (self.filequeue, )).start()
 
     def shutdown(self):
@@ -202,18 +203,29 @@ class promSession:
             self.disabledll()
             print('Finished Calibration Capture')
             
-    def HDRtimer(self,capSets, nImag, i, j):
-        filename = 'image{0}_{1:03d}-{2:02d}'.format(self.timestamp,self.numframes+j, i)
-        if i < len(capSets) - 1:
-            threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, nImag, i+1, j]).start()
-        elif (i == len(capSets) - 1) and j < nImag:
-            threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, nImag, 0, j+1]).start()
-        self.captureImage(capSets[i], self.numframes + j, filename)
-        if (i == len(capSets) - 1) and j == nImag:
-            self.currvideo = -1
-            self.numframes = self.numframes + nImag
-            self.movielock.release()
-            print('Finished HDR Capture')
+#    def HDRtimer(self,capSets, nImag, i, j):
+#        filename = 'image{0}_{1:03d}-{2:02d}'.format(self.timestamp,self.numframes+j, i)
+#        if i < len(capSets) - 1:
+#            threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, nImag, i+1, j]).start()
+#        elif (i == len(capSets) - 1) and j < nImag:
+#            threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, nImag, 0, j+1]).start()
+#        self.captureImage(capSets[i], self.numframes + j, filename)
+#        if (i == len(capSets) - 1) and j == nImag:
+#            self.currvideo = -1
+#            self.numframes = self.numframes + nImag
+#            self.movielock.release()
+#            print('Finished HDR Capture') 
+   
+    def HDRtimer(self, capSets, nImag, i, j):
+        for j in range(1, nImag+1):
+            for i in range(0,capSets):
+                filename = 'image{0}_{1:03d}-{2:02d}'.format(self.timestamp,self.numframes+j, i)
+                self.captureImage(capSets[i], self.numframes + j, filename)
+        self.currvideo = -1
+        self.numframes = self.numframes + nImag
+        self.movielock.release()
+        print('Finished HDR Capture')
+
             
     def updateCapSet(self,newcapSet):
         capAtts = vars(newcapSet)
