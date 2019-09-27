@@ -11,7 +11,7 @@ import csv
 from datetime import datetime
 import numpy as np
 #import matplotlib.pyplot as plt
-import threading
+#import threading
 import time
 import promapi as papi
 import multiprocessing as mp
@@ -84,63 +84,76 @@ class promSession:
             cams=[0, 1],
             currSet = None,
             debugMode = False,
-            verbose = True
+            verbosity = 1,
+            framerate = 5,
+            HDRvideopause = 0.5
             ):
+
+        #Populate self from input args
+        self.debugMode = debugMode
+        self.verbosity = mp.Value('i')
+        self.verbosity.value = verbosity
+        self.cams = cams
+        self.debugMode = debugMode
+        self.framerate = framerate
+        self.HDRvideopause = HDRvideopause
+        self.outputpath = os.path.abspath(os.path.normpath(outputpath))
         if currSet is None:
             self.currSet = captureSetting()
-        self.debugMode = debugMode
-        self.verbose = verbose
-        self.cams = cams
-        self.cmdpath = os.path.abspath(os.path.join(buildpath,'prom-cli'))
-        self.outputpath = os.path.abspath(os.path.normpath(outputpath))
-        #
-        self.metafile = open(os.path.join(self.outputpath,metadatafilename),'a',newline='')
-        self.metawriter = csv.writer(self.metafile)            
-        self.metawriter.writerow(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys()) + ['Temp'])
-        #        
-        self.timestamp = datetime.now().strftime('%y%m%d%H%M')
-        self.filequeue = mp.Queue()   
-        self.startup(startupfilename,cams)
+        else:
+            self.currSet = currSet
+        
+        #Populate self with tracking variables
         self.numimages=0
         self.numframes=0
         self.numvideos=0
-        self.debugMode = debugMode
-        if currSet is None:
-            self.currSet = captureSetting()
         self.frametag = 'single'
         self.currvideo = -1
         self.filenames = list()
-        self.framerate = 3
-        self.imagelock = threading.Lock()
-        self.movielock = threading.Lock()
-           
+        self.timestamp = datetime.now().strftime('%y%m%d%H%M')
+
+        #Start filesaving worker
+        os.system('taskset -cp 0 {0:d}'.format(os.getpid()))
+        os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
+        self.filequeue = mp.Queue()   
+        mp.Process(target= startsaving, args = (self.filequeue,self.outputpath,metadatafilename, self.verbosity)).start()
+        
+        #Save first metadata line
+        self.metawrite(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys()) + ['Temp'])
+        
+        #Startup the server
+        self.startup(startupfilename,cams)
 
     def startup(self,startupfile,cams):
         with open(startupfile, "r") as log:
     	    cmd = log.readline().strip('\n')
     	    while cmd:
                 self.writecommand(cmd)
-                cmd = log.readline().strip('\n')
-        os.system('taskset -cp 0 {0:d}'.format(os.getpid()))
-        os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
-        mp.Process(target= startsaving, args = (self.filequeue, )).start()
+                cmd = log.readline().strip('\n')        
 
     def shutdown(self):
-        self.metafile.close()
         self.filequeue.put('EOF')
     
     def writecommand(self,commandstring, savefile = None):
+        ret = []
         if self.debugMode:
             print(commandstring)
         elif savefile is None:
-            for camnum in self.cams:
+            for camnum in self.cams:                
                 response = papi.apiCall(commandstring, camnum)
-            print('{}: {}'.format(commandstring,int.from_bytes(response,'little')))
-            return response
+                ret.append(int.from_bytes(response[0],'little'))
+            if self.verbosity.value > 1:
+                print('{}: {}'.format(commandstring,ret))   
         else:
             for camnum in self.cams:
-                data = papi.apiCall(commandstring, camnum)
-                self.enqueue(savefile, data)
+                response = papi.apiCall(commandstring, camnum)
+                self.enqueue(savefile, response[0])
+                ret.append(response[1])
+        return ret
+
+    def metawrite(self, row):
+        self.filequeue.put('metadata')
+        self.filequeue.put(row)
             
     def enqueue(self, savefile, data):
         self.filequeue.put(savefile)
@@ -154,44 +167,77 @@ class promSession:
         self.writecommand('w ae 1')
         
     def captureImage(self,capSet,framenum=None, filename=None):        
-        #This is a bit of funky logic to allow captureHDRImage to make calls to capture Image
-        with self.imagelock:            
-            self.numimages = self.numimages + 1
-            if (framenum is None):                
-                self.numframes = self.numframes + 1
-                framenum = self.numframes
-            if (filename is None):
-                self.frametag = 'single'
-                filename = 'image{0}_{1:03d}'.format(self.timestamp,self.numframes)
-            #
-            cmdlist = capSet.listCmds(self.currSet)
-            imgCmd = capSet.imgCmd()        
-            self.updateCapSet(capSet)
-            #
-            if capSet.measureTemp:
-                currTemp = self.getTemp()
-            else:
-                currTemp = None
-            #
-            for cmd in cmdlist:                
-                self.writecommand(cmd)
-    
-            #self.writecommand(imgCmd,'> {}.bin'.format(os.path.join(self.outputpath,filename)))
-            #self.writecommand(imgCmd,'> {}.bin'.format(newfilename))
-            #newfilename = os.path.join(self.outputpath,filename)
-            self.writecommand(imgCmd, filename)
-            self.filenames.append(filename)
-            #
-            capAtts = vars(capSet)
-            #self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], 'cams', str(self.cams)] + list(itertools.chain(*capAtts.items())))
-            self.metawriter.writerow([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), self.numimages, framenum, str(self.currvideo), self.frametag] + list(capAtts.values()) + [currTemp])
+        #This is a bit of funky logic to allow captureHDRImage to make calls to capture Image                 
+        self.numimages = self.numimages + 1
+        if (framenum is None):                
+            self.numframes = self.numframes + 1
+            framenum = self.numframes
+        if (filename is None):
+            self.frametag = 'single'
+            filename = 'image{0}_{1:03d}'.format(self.timestamp,self.numframes)
+        #
+        cmdlist = capSet.listCmds(self.currSet)
+        imgCmd = capSet.imgCmd()        
+        self.updateCapSet(capSet)
+        #
+        if capSet.measureTemp:
+            currTemp = self.getTemp()
+        else:
+            currTemp = None
+        #
+        for cmd in cmdlist:                
+            self.writecommand(cmd)
+
+        self.writecommand(imgCmd, filename)
+        self.filenames.append(filename)
+        #
+        capAtts = vars(capSet)    
+        self.metawrite([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), self.numimages, framenum, str(self.currvideo), self.frametag] + list(capAtts.values()) + [currTemp])
             
-    
+    def captureHDRVideo(self,capSets,nImag):
+        self.numvideos = self.numvideos + 1
+        self.currvideo = self.numvideos        
+        for j in range(0, nImag):
+            lastimagetime = self.captureHDRImage(capSets)
+            if self.verbosity.value > 0:
+                print('Finished HDR Image Capture {} of {}'.format(j+1, nImag))
+            if self.HDRvideopause > 0:
+                pausetime = self.HDRvideopause - (time.time() - lastimagetime)
+                if pausetime > 0:
+                    time.sleep(pausetime)
+                elif self.verbosity.value > 0:
+                    print('Cannot keep up with HDR pause, fell behind by {}'.format(pausetime))
+        self.currvideo = -1
+        if self.verbosity.value > 0:
+            print('Finished HDR Video Capture')
+
     def captureHDRImage(self,capSets):
-        self.movielock.acquire()
         self.numframes = self.numframes + 1
         self.frametag = 'HDR'
-        self.HDRtimer(capSets, 1, 0, 1)
+        for i in range(0,capSets):
+                filename = 'image{0}_{1:03d}-{2:02d}'.format(self.timestamp,self.numframes, i)
+                if i == capSets - 1:
+                    lastimagestart = time.time()
+                imagestart = time.time()
+                self.captureImage(capSets[i], self.numframes, filename)
+                if self.framerate > 0:
+                    pausetime = 1/self.framerate - (time.time() - imagestart)
+                    if pausetime > 0:
+                        time.sleep(pausetime)
+                    elif self.verbosity.value > 0:
+                        print('Cannot keep up with framerate, fell behind by {}'.format(pausetime))
+
+        if self.verbosity.value > 0 and self.currvideo == -1:
+            print('Finished HDR Image Capture')
+        return lastimagestart
+
+    def captureVideo(self,capSet,nImag):
+        self.numvideos = self.numvideos + 1
+        self.currvideo = self.numvideos
+        for i in range(0,nImag):
+            self.captureImage(capSet)
+        if self.verbosity.value > 0:
+            print('Finished Video Capture')
 
         
     def captureCalImage(self, numframes=10, exposureTime=3000, calTemp=42):
@@ -199,60 +245,14 @@ class promSession:
         cS = self.calCapSet(exposureTime)
         self.preHeat(calTemp)
         self.captureHDRVideo(cS, numframes)
-        with self.movielock:
-            self.disabledll()
-            print('Finished Calibration Capture')
-            
-#    def HDRtimer(self,capSets, nImag, i, j):
-#        filename = 'image{0}_{1:03d}-{2:02d}'.format(self.timestamp,self.numframes+j, i)
-#        if i < len(capSets) - 1:
-#            threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, nImag, i+1, j]).start()
-#        elif (i == len(capSets) - 1) and j < nImag:
-#            threading.Timer(1/self.framerate, self.HDRtimer,args=[capSets, nImag, 0, j+1]).start()
-#        self.captureImage(capSets[i], self.numframes + j, filename)
-#        if (i == len(capSets) - 1) and j == nImag:
-#            self.currvideo = -1
-#            self.numframes = self.numframes + nImag
-#            self.movielock.release()
-#            print('Finished HDR Capture') 
-   
-    def HDRtimer(self, capSets, nImag, i, j):
-        for j in range(1, nImag+1):
-            for i in range(0,capSets):
-                filename = 'image{0}_{1:03d}-{2:02d}'.format(self.timestamp,self.numframes+j, i)
-                self.captureImage(capSets[i], self.numframes + j, filename)
-        self.currvideo = -1
-        self.numframes = self.numframes + nImag
-        self.movielock.release()
-        print('Finished HDR Capture')
-
-            
+        self.disabledll()
+        print('Finished Calibration Capture')            
+              
     def updateCapSet(self,newcapSet):
         capAtts = vars(newcapSet)
         for attkey in capAtts.keys():
             if not(capAtts[attkey] is None):
-                setattr(self.currSet,attkey,capAtts[attkey])
-                
-    def captureVideo(self,capSet,nImag):
-        self.numvideos = self.numvideos + 1
-        self.currvideo = self.numvideos
-        self.videoTimer(capSet, nImag)
-        
-    def videoTimer(self,capSet,i):
-        if i > 1:
-            threading.Timer(1/self.framerate, self.videoTimer,args=[capSet, i-1]).start()
-        self.captureImage(capSet)
-        if i == 1:
-            self.currvideo = -1
-            
-        
-    def captureHDRVideo(self,capSets,nImag):
-        self.movielock.acquire()
-        self.numvideos = self.numvideos + 1
-        self.currvideo = self.numvideos
-        self.numframes = self.numframes + 1
-        self.frametag = 'HDR'
-        self.HDRtimer(capSets,nImag, 0, 1)
+                setattr(self.currSet,attkey,capAtts[attkey])                        
         
     def getTemp(self):
         tempCmd = 'getTemperature'
@@ -314,16 +314,22 @@ class promSession:
         amp = DCS.mean(axis=2)
         print('Mean pixel amplitude is {}'.format(amp.mean().round(2)))
         
-def startsaving(q):
+def startsaving(q, outputpath, metadatafilename, verbosity):
     os.system('taskset -cp 1 {0:d}'.format(os.getpid()))
     os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
+    metafile = open(os.path.join(outputpath, metadatafilename),'a',newline='')
+    metawriter = csv.writer(metafile) 
     keepgoing = True
     while keepgoing:    
         filename = q.get()
         print('got filename {}'.format(filename))
-        if filename is 'EOF':
+        if filename == 'EOF':
             keepgoing = False
             print('Caught EOF, shutting down')
+            metafile.close()
+        elif filename == 'metadata':
+            data = q.get()
+            metawriter.writerow(data)
         else:            
             data = q.get()
             print('writing data, save queue = {}'.format(q.qsize()))

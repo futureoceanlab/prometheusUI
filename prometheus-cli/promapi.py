@@ -2,6 +2,7 @@
 #!/usr/bin/env python3
 
 import socket
+import time
 
 HOSTS = [('192.168.66.66', 50660), ('192.168.66.67', 50660)]
 
@@ -11,8 +12,10 @@ def apiCall(command, camnum):
         s.connect(HOSTS[camnum])
         s.sendall(command.encode(), socket.MSG_NOSIGNAL)
         responselength = int.from_bytes(s.recv(4),'little')
+        startrec = time.time()
         response = s.recv(responselength,socket.MSG_WAITALL)
-        return response
+        rectime = time.time-startrec
+        return [response, rectime]
 
 
     
