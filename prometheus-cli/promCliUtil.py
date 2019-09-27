@@ -9,13 +9,12 @@ Created on Fri Aug 16 19:52:17 2019
 import os
 import csv
 from datetime import datetime
-import subprocess
 import numpy as np
 #import matplotlib.pyplot as plt
 import threading
 import time
-import promapi
-#import itertools
+import promapi as papi
+import multiprocessing as mp
 
 class captureSetting:
     
@@ -82,7 +81,7 @@ class promSession:
             metadatafilename='capturemetadata.csv',
             outputpath= '../../images',
             buildpath='./build',
-            cams=2,
+            cams=[0, 1],
             currSet = None,
             debugMode = False,
             verbose = True
@@ -100,7 +99,6 @@ class promSession:
         self.metawriter.writerow(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys()) + ['Temp'])
         #        
         self.timestamp = datetime.now().strftime('%y%m%d%H%M')
-        self.apiHandler = promapi.apiHandler()
         self.startup(startupfilename,cams)
         self.numimages=0
         self.numframes=0
@@ -113,34 +111,38 @@ class promSession:
         self.filenames = list()
         self.framerate = 3
         self.imagelock = threading.Lock()
-        self.movielock = threading.Lock()        
+        self.movielock = threading.Lock()
+        self.filequeue = mp.Queue()       
 
     def startup(self,startupfile,cams):
         with open(startupfile, "r") as log:
     	    cmd = log.readline().strip('\n')
     	    while cmd:
-                #self.writecommand(cmd)
-                self.apiHandler(cmd,0)
-                self.apiHandler(cmd,1)
+                self.writecommand(cmd)
                 cmd = log.readline().strip('\n')
-                
+        os.system('taskset -p 0 {0:d}'.format(os.getpid()))
+        mp.Process(target= startsaving, args = (self.filequeue, ))
+
     def shutdown(self):
         self.metafile.close()
     
-    def writecommand(self,commandstring,output=None):
-        #modcom = "{} -a \"{}\" -i {} {}".format(self.cmdpath, commandstring, self.cams, output)
-        #print(modcom)
-        if output is None:
-            comlist = [self.cmdpath, '-a', commandstring, '-i', str(self.cams)]
-        else:
-            comlist = [self.cmdpath, '-a', commandstring, '-i', str(self.cams), '-o', output]
-        if self.verbose:
-            print(commandstring)
+    def writecommand(self,commandstring, savefile = None):
         if self.debugMode:
-            return modcom
+            print(commandstring)
+        elif savefile is None:
+            for camnum in self.cams:
+                response = papi.apiCall(commandstring, camnum)
+            print('{}: {}'.format(commandstring,response.decode()))
+            return int.from_bytes(response,'little')
         else:
-            #os.system(modcom)
-            return subprocess.run(comlist, shell=False, stdout=subprocess.PIPE).stdout
+            for camnum in self.cams:
+                data = papi.apiCall(commandstring, camnum)
+                self.enqueue(savefile, data)
+            
+    def enqueue(self, savefile, data):
+        self.filequeue.put(savefile)
+        self.filequeue.put(data)
+
         
     def enabledll(self):
         self.writecommand('w ae 4')
@@ -168,11 +170,8 @@ class promSession:
             else:
                 currTemp = None
             #
-            for cmd in cmdlist:
-                #self.writecommand(cmd,'| hexdump')
-                returnval = self.writecommand(cmd)
-                if not(self.debugMode):
-                    self.hexdump(returnval)
+            for cmd in cmdlist:                
+                self.writecommand(cmd)
     
             #self.writecommand(imgCmd,'> {}.bin'.format(os.path.join(self.outputpath,filename)))
             #self.writecommand(imgCmd,'> {}.bin'.format(newfilename))
@@ -301,3 +300,16 @@ class promSession:
         amp = DCS.mean(axis=2)
         print('Mean pixel amplitude is {}'.format(amp.mean().round(2)))
         
+def startsaving(q):
+    os.system('taskset -p 1 {0:d}'.format(os.getpid()))
+    os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
+    keepgoing = True
+    while keepgoing:    
+        filename = q.get()
+        if filename is 'EOF':
+            keepgoing = False
+        else:
+            data = q.get()
+            f = open(filename,'wb')
+            f.write(data)
+            f.close
