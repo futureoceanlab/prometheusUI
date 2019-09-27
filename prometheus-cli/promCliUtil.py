@@ -87,8 +87,8 @@ class promSession:
             currSet = None,
             debugMode = False,
             verbosity = 1,
-            framerate = 5,
-            HDRvideopause = 0.5
+            framerate = 6,
+            HDRvideopause = 0
             ):
 
         #Populate self from input args
@@ -272,30 +272,37 @@ class promSession:
         #    temps[i] = int.from_bytes(tempbytes[2*i:2*(i+1)],'little')
         #return temps.mean()/10
     
-    def preHeat(self,target):
+    def preHeat(self, targettemp, camnum = None):
         maxcycles = 20
         cycletime = 1
         temps = []
-        temps.append(self.getTemp())
+        if camnum is None:
+            camind = 0
+        else:
+            camind = self.cams.index(camnum)            
+        temps.append(self.getTemp()[camind])
         i = 0        
-        while temps[-1] < target and i < maxcycles:            
+        while temps[-1] < targettemp and i < maxcycles:            
             self.illumDisable()
             self.writecommand('w a4 3')
             time.sleep(cycletime)
             self.writecommand('w a4 0')
-            temps.append(self.getTemp())
+            temps.append(self.getTemp()[camind])
             i = i+1
-        print('Start: {}, End: {}, Cycles: {}'.format(temps[0],temps[-1],i))
-        print(temps)
+        if self.verbosity.value > 0
+            print('Start: {}, End: {}, Cycles: {}'.format(temps[0],temps[-1],i))
+            print(temps)
         self.illumEnable()
 
     def illumDisable(self):
         self.writecommand('w 90 c8')
-        print('Illumination Disabled')
+        if self.verbosity.value > 0:
+            print('Illumination Disabled')
         
     def illumEnable(self):
         self.writecommand('w 90 cc')
-        print('Illumination Enabled')
+        if self.verbosity.value > 0:
+            print('Illumination Enabled')
 
     def hexdump(self, chararray):
         outline = ''
