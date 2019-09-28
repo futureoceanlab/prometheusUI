@@ -119,6 +119,9 @@ class promSession:
         os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
         self.filequeue = mp.Queue()   
         mp.Process(target= startsaving, args = (self.filequeue,self.outputpath,metadatafilename, self.verbosity)).start()
+        fig = plt.figure()
+        fig.add_subplot(1,1,1)
+        fig.show()
         self.drawqueue = mp.Queue()
         mp.Process(target= startdrawing, args = (self.drawqueue, self.verbosity)).start()
 
@@ -150,17 +153,19 @@ class promSession:
                 response = papi.apiCall(commandstring, camnum)
                 if savefile is None:
                     ret.append(response[0])
-                    if self.verbosity.value > 1:
-                        print('{}: {}'.format(commandstring,[b.hex() for b in ret]))   
                 else:                    
                     self.enqueue(savefile, response[0])
                     ret.append(response[1])
                     if drawimage is not None:
+                        if self.verbosity.value > 1:
+                            print('Sending image to queue')                        
                         self.drawqueue.put([drawimage, response[0]])
+        if (savefile is None) and (self.verbosity.value > 1):
+            print('{}: {}'.format(commandstring,[b.hex() for b in ret]))   
         return ret
 
     def metawrite(self, row):
-        self.filequeue.put(['metadata',self.filequeue.put(row)])
+        self.filequeue.put(['metadata',row])
             
     def enqueue(self, savefile, data):
         self.filequeue.put([savefile,data])
@@ -207,7 +212,7 @@ class promSession:
             else:
                 camtemp = currTemp[i]
             fullfname = '{}_{}.bin'.format(filename,camnum)
-            self.writecommand(imgCmd, camnum, fullfname, drawtype)
+            self.writecommand(imgCmd, [camnum], fullfname, drawtype)
             self.filenames.append(fullfname)               
             self.metawrite([fullfname, datetime.now().strftime('%H%M%S.%f)')[:-3], camnum, self.numimages, framenum, str(self.currvideo), self.frametag] + list(capAtts.values()) + [camtemp])
             
@@ -367,8 +372,9 @@ def startsaving(q, outputpath, metadatafilename, verbosity):
         message = q.get()    
         filename = message[0]
         if verbosity.value > 1:
-            print('got filename {}'.format(filename))
+            print('File Saver got filename {}'.format(filename))
         if filename == 'EOF':
+            data = None
             keepgoing = False
             if verbosity.value > 0:
                 print('File Saver caught EOF, shutting down')
@@ -390,13 +396,26 @@ def startsaving(q, outputpath, metadatafilename, verbosity):
 def startdrawing(q, verbosity):
     os.system('taskset -cp 2 {0:d}'.format(os.getpid()))
     os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
-    fig = plt.figure()
-    fig.add_subplot(1,1,1)
+    #import matplotlib.pyplot as plt
+    import matplotlib as mpl
+    #fig = plt.figure()
+    #fig.add_subplot(1,1,1)
+    #fig.show()
+    time.sleep(4)
+    plt.plot(range(5))
+    plt.show(block=False)
+    if verbosity.value > 1:
+        print('matplotlib backend {}'.format(mpl.get_backend()))
+        print('Tried to plot a straight line')
+        plt.savefig('WorkerTest')
     keepgoing = True
     while keepgoing:
         message = q.get()
         imagetype = message[0]
+        if verbosity.value > 1:            
+            print('Image Drawer got message {}'.format(message[0]))
         if imagetype == 'EOF':
+            bytedata = None
             keepgoing = False
             if verbosity.value > 0:
                 print('Image Drawer caught EOF, shutting down')
@@ -405,6 +424,10 @@ def startdrawing(q, verbosity):
             data = np.frombuffer(bytedata, dtype=np.uint16)
             data = np.transpose(data.reshape(320, 240, order='F'),(1,0))
             plt.imshow(data)
+            plt.show(block=False)
+            plt.savefig('GrayImage')
+            if verbosity.value > 1:
+                print('Image Drawer tried to draw an image')
         else:
             print("Image Drawer doesn't know about imagetype {}".format(imagetype))
         del message,imagetype, bytedata
