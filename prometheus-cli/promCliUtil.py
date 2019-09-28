@@ -249,12 +249,18 @@ class promSession:
             self.preHeat(calTemp)
         self.captureHDRVideo(cS, numframes)
         self.disabledll()
-        print('Finished Calibration Capture')            
+        if self.verbosity.value > 0:
+            print('Finished Calibration Capture')            
 
-    def calTemperatureSweep(self, nframes, exTime, numsweeps, breaktime):
-        for _ in range(numsweeps):
+    def calTemperatureSweep(self, nframes, exTime, framerates, breaktime):
+        startrate = self.framerate
+        for rate in framerates:
+            self.framerate = rate
             self.captureCalImage(nframes, exTime)
             time.sleep(breaktime)
+        self.framerate = startrate
+        if self.verbosity.value > 0:
+            print('Finished Calibration Temperature Sweep')
 
     def updateCapSet(self,newcapSet):
         capAtts = vars(newcapSet)
@@ -295,7 +301,7 @@ class promSession:
             self.writecommand('w a4 0')
             temps.append(self.getTemp()[camind])
             i = i+1
-        if self.verbosity.value > 0
+        if self.verbosity.value > 0:
             print('Start: {}, End: {}, Cycles: {}'.format(temps[0],temps[-1],i))
             print(temps)
         self.illumEnable()
