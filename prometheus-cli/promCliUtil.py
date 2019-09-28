@@ -10,7 +10,7 @@ import os
 import csv
 from datetime import datetime
 import numpy as np
-#import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
 #import threading
 import time
 import promapi as papi
@@ -114,12 +114,14 @@ class promSession:
         self.filenames = list()
         self.timestamp = datetime.now().strftime('%y%m%d%H%M')
 
-        #Start filesaving worker
+        #Start filesaving and drawing workers
         os.system('taskset -cp 0 {0:d}'.format(os.getpid()))
         os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
         self.filequeue = mp.Queue()   
         mp.Process(target= startsaving, args = (self.filequeue,self.outputpath,metadatafilename, self.verbosity)).start()
-        
+        self.drawqueue = mp.Queue()
+        mp.Process(target= startdrawing, args = (self.drawqueue, self.verbosity)).start()
+
         #Save first metadata line
         self.metawrite(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys()) + ['Temp'])
         
@@ -134,33 +136,34 @@ class promSession:
                 cmd = log.readline().strip('\n')        
 
     def shutdown(self):
-        self.filequeue.put('EOF')
+        self.filequeue.put(['EOF'])
+        self.drawqueue.put(['EOF'])
     
-    def writecommand(self,commandstring, savefile = None):
+    def writecommand(self,commandstring, cams = None, savefile = None, drawimage = None):
         ret = []
+        if cams is None:
+            cams = self.cams
         if self.debugMode:
             print(commandstring)
-        elif savefile is None:
-            for camnum in self.cams:                
+        else: 
+            for camnum in cams:                
                 response = papi.apiCall(commandstring, camnum)
-                ret.append(response[0])
-            if self.verbosity.value > 1:
-                print('{}: {}'.format(commandstring,[b.hex() for b in ret]))   
-        else:
-            for camnum in self.cams:
-                response = papi.apiCall(commandstring, camnum)
-                self.enqueue(savefile, response[0])
-                ret.append(response[1])
+                if savefile is None:
+                    ret.append(response[0])
+                    if self.verbosity.value > 1:
+                        print('{}: {}'.format(commandstring,[b.hex() for b in ret]))   
+                else:                    
+                    self.enqueue(savefile, response[0])
+                    ret.append(response[1])
+                    if drawimage is not None:
+                        self.drawqueue.put([drawimage, response[0]])
         return ret
 
     def metawrite(self, row):
-        self.filequeue.put('metadata')
-        self.filequeue.put(row)
+        self.filequeue.put(['metadata',self.filequeue.put(row)])
             
     def enqueue(self, savefile, data):
-        self.filequeue.put(savefile)
-        self.filequeue.put(data)
-
+        self.filequeue.put([savefile,data])
         
     def enabledll(self):
         self.writecommand('w ae 4')
@@ -168,7 +171,7 @@ class promSession:
     def disabledll(self):
         self.writecommand('w ae 1')
         
-    def captureImage(self,capSet,framenum=None, filename=None):        
+    def captureImage(self,capSet,framenum=None, filename=None, makedrawing = False):        
         #This is a bit of funky logic to allow captureHDRImage to make calls to capture Image                 
         self.numimages = self.numimages + 1
         if (framenum is None):                
@@ -189,12 +192,24 @@ class promSession:
         #
         for cmd in cmdlist:                
             self.writecommand(cmd)
-
-        self.writecommand(imgCmd, filename)
-        self.filenames.append(filename)
-        #
-        capAtts = vars(capSet)    
-        self.metawrite([filename, datetime.now().strftime('%H%M%S.%f)')[:-3], str(self.cams), self.numimages, framenum, str(self.currvideo), self.frametag] + list(capAtts.values()) + [currTemp])
+        capAtts = vars(capSet)   
+        if makedrawing is not False:
+            if capSet.mode == 0:
+                drawtype = 'grayscale'
+            elif capSet.mode == 1:
+                drawtype = 'DCS'
+        else:
+            drawtype = None
+        for i in range(len(self.cams)):
+            camnum = self.cams[i]
+            if currTemp is None:
+                camtemp = None
+            else:
+                camtemp = currTemp[i]
+            fullfname = '{}_{}.bin'.format(filename,camnum)
+            self.writecommand(imgCmd, camnum, fullfname, drawtype)
+            self.filenames.append(fullfname)               
+            self.metawrite([fullfname, datetime.now().strftime('%H%M%S.%f)')[:-3], camnum, self.numimages, framenum, str(self.currvideo), self.frametag] + list(capAtts.values()) + [camtemp])
             
     def captureHDRVideo(self,capSets,nImag):
         self.numvideos = self.numvideos + 1
@@ -236,7 +251,7 @@ class promSession:
     def captureVideo(self,capSet,nImag):
         self.numvideos = self.numvideos + 1
         self.currvideo = self.numvideos
-        for i in range(0,nImag):
+        for _ in range(nImag):
             self.captureImage(capSet)
         if self.verbosity.value > 0:
             print('Finished Video Capture')
@@ -335,24 +350,48 @@ def startsaving(q, outputpath, metadatafilename, verbosity):
     metafile = open(os.path.join(outputpath, metadatafilename),'a',newline='')
     metawriter = csv.writer(metafile) 
     keepgoing = True
-    while keepgoing:    
-        filename = q.get()
+    while keepgoing:
+        message = q.get()    
+        filename = message[0]
         if verbosity.value > 1:
             print('got filename {}'.format(filename))
         if filename == 'EOF':
             keepgoing = False
             if verbosity.value > 0:
-                print('Caught EOF, shutting down')
+                print('File Saver caught EOF, shutting down')
             metafile.close()
         elif filename == 'metadata':
-            data = q.get()
+            data = message[1]
             metawriter.writerow(data)
         else:            
-            data = q.get()
+            data = message[1]
             if verbosity.value > 1:
                 print('writing data, save queue = {}'.format(q.qsize()))
-            f = open('/home/pi/images/' + filename + '.bin','wb')
+            f = open('/home/pi/images/' + filename,'wb')
             f.write(data)
             f.close
             if verbosity.value > 1:
                 print('wrote data')
+        del message,filename,data
+
+def startdrawing(q, verbosity):
+    os.system('taskset -cp 2 {0:d}'.format(os.getpid()))
+    os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
+    fig = plt.figure()
+    fig.add_subplot(1,1,1)
+    keepgoing = True
+    while keepgoing:
+        message = q.get()
+        imagetype = message[0]
+        if imagetype == 'EOF':
+            keepgoing = False
+            if verbosity.value > 0:
+                print('Image Drawer caught EOF, shutting down')
+        elif imagetype == 'grayscale':
+            bytedata = message[1]
+            data = np.frombuffer(bytedata, dtype=np.uint16)
+            data = np.transpose(data.reshape(320, 240, order='F'),(1,0))
+            plt.imshow(data)
+        else:
+            print("Image Drawer doesn't know about imagetype {}".format(imagetype))
+        del message,imagetype, bytedata
