@@ -137,7 +137,7 @@ class promSession:
 
     def shutdown(self):
         self.filequeue.put(['EOF'])
-        self.drawqueue.put(['EOF'])
+        self.analqueue.put(['EOF'])
     
     def writecommand(self,commandstring, cams = None, savefile = None, drawimage = None):
         ret = []
@@ -156,7 +156,7 @@ class promSession:
                     if drawimage is not None:
                         if self.verbosity.value > 1:
                             print('Sending image to queue')                        
-                        self.drawqueue.put([drawimage, response[0]])
+                        self.analqueue.put([drawimage, response[0]])
         if (savefile is None) and (self.verbosity.value > 1):
             print('{}: {}'.format(commandstring,[b.hex() for b in ret]))   
         return ret
@@ -395,7 +395,8 @@ def startanalysis(q, verbosity):
     os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
     import matplotlib.pyplot as plt
     time.sleep(3)
-    #if verbosity.value > 1:
+    if verbosity.value > 1:
+        print('Started Analysis Worker')
     #    print('Tried to plot a straight line')
     #    plt.savefig('WorkerTest')
     keepgoing = True
@@ -408,7 +409,7 @@ def startanalysis(q, verbosity):
             bytedata = None
             keepgoing = False
             if verbosity.value > 0:
-                print('Analysis Workercaught EOF, shutting down')
+                print('Analysis Worker caught EOF, shutting down')
         elif imagetype == 'grayscale':
             bytedata = message[1]
             data = np.frombuffer(bytedata, dtype=np.uint16)
@@ -417,7 +418,15 @@ def startanalysis(q, verbosity):
             #plt.show(block=False)
             plt.savefig('GrayImage')
             if verbosity.value > 1:
-                print('Analysis Workertried to draw an image')
-        else:
-            print("Analysis Workerdoesn't know about imagetype {}".format(imagetype))
+                print('Analysis Worker tried to draw an image')
+        elif imagetype == 'DCS':
+            if verbosity.value > 1:
+                print('Analysis Worker caught DCS image')
+            bytedata = message[1]            
+            DCS = np.frombuffer(bytedata, dtype=np.uint16).astype('int32') - 2**11
+            DCS = np.absolute(DCS)
+            DCS = DCS.reshape(320,240,-1).transpose(1,0,2)
+            amp = DCS.mean(axis=2)
+            if verbosity.value > 1:
+                print('Mean pixel amplitude is {}'.format(amp.mean().round(2)))
         del message,imagetype, bytedata
