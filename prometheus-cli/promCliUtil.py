@@ -120,7 +120,7 @@ class promSession:
         self.filequeue = mp.Queue()   
         mp.Process(target= startsaving, args = (self.filequeue,self.outputpath,metadatafilename, self.verbosity)).start()
         self.analqueue = mp.Queue()
-        mp.Process(target= startanalysis, args = (self.analqueue, self.verbosity)).start()
+        mp.Process(target= startanalysis, args = (self.analqueue, self.outputpath, self.verbosity)).start()
 
         #Save first metadata line
         self.metawrite(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys()) + ['Temp'])
@@ -156,7 +156,7 @@ class promSession:
                     if drawimage is not None:
                         if self.verbosity.value > 1:
                             print('Sending image to queue')                        
-                        self.analqueue.put([drawimage, response[0]])
+                        self.analqueue.put([drawimage, response[0], savefile])
         if (savefile is None) and (self.verbosity.value > 1):
             print('{}: {}'.format(commandstring,[b.hex() for b in ret]))   
         return ret
@@ -383,14 +383,14 @@ def startsaving(q, outputpath, metadatafilename, verbosity):
             data = message[1]
             if verbosity.value > 1:
                 print('writing data, save queue = {}'.format(q.qsize()))
-            f = open('/home/pi/images/' + filename,'wb')
+            f = open(outputpath + '/' + filename,'wb')
             f.write(data)
             f.close
             if verbosity.value > 1:
                 print('wrote data')
         del message,filename,data
 
-def startanalysis(q, verbosity):
+def startanalysis(q, outputpath, verbosity):
     os.system('taskset -cp 2 {0:d}'.format(os.getpid()))
     os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
     import matplotlib.pyplot as plt
@@ -422,11 +422,20 @@ def startanalysis(q, verbosity):
         elif imagetype == 'DCS':
             if verbosity.value > 1:
                 print('Analysis Worker caught DCS image')
-            bytedata = message[1]            
+            bytedata = message[1]
+            fname = message[2]            
             DCS = np.frombuffer(bytedata, dtype=np.uint16).astype('int32') - 2**11
-            DCS = np.absolute(DCS)
-            DCS = DCS.reshape(320,240,-1).transpose(1,0,2)
+            DCS = DCS.reshape(320,240,-1,order='F').transpose(1,0,2)
             amp = DCS.mean(axis=2)
             if verbosity.value > 1:
                 print('Mean pixel amplitude is {}'.format(amp.mean().round(2)))
+            fig = plt.figure()
+            subs = []
+            imags = []
+            for i in range(4):
+                subs.append(fig.add_subplot(2,2,i+1))
+                imags.append(subs[i].imshow(DCS[:,:,i]))
+                plt.colorbar(imags[i])
+            fig.savefig(outputpath + '/' + fname)
+
         del message,imagetype, bytedata
