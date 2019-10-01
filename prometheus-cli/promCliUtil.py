@@ -10,7 +10,7 @@ import os
 import csv
 from datetime import datetime
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 #import threading
 import time
 import promapi as papi
@@ -119,11 +119,8 @@ class promSession:
         os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
         self.filequeue = mp.Queue()   
         mp.Process(target= startsaving, args = (self.filequeue,self.outputpath,metadatafilename, self.verbosity)).start()
-        fig = plt.figure()
-        fig.add_subplot(1,1,1)
-        fig.show()
-        self.drawqueue = mp.Queue()
-        mp.Process(target= startdrawing, args = (self.drawqueue, self.verbosity)).start()
+        self.analqueue = mp.Queue()
+        mp.Process(target= startanalysis, args = (self.analqueue, self.verbosity)).start()
 
         #Save first metadata line
         self.metawrite(['Filename','Time','Camera','filenum','framenum','vidnum','frametag'] + list(vars(self.currSet).keys()) + ['Temp'])
@@ -393,41 +390,34 @@ def startsaving(q, outputpath, metadatafilename, verbosity):
                 print('wrote data')
         del message,filename,data
 
-def startdrawing(q, verbosity):
+def startanalysis(q, verbosity):
     os.system('taskset -cp 2 {0:d}'.format(os.getpid()))
     os.system('sudo renice -n -10 -p {0:d}'.format(os.getpid()))
-    #import matplotlib.pyplot as plt
-    import matplotlib as mpl
-    #fig = plt.figure()
-    #fig.add_subplot(1,1,1)
-    #fig.show()
-    time.sleep(4)
-    plt.plot(range(5))
-    plt.show(block=False)
-    if verbosity.value > 1:
-        print('matplotlib backend {}'.format(mpl.get_backend()))
-        print('Tried to plot a straight line')
-        plt.savefig('WorkerTest')
+    import matplotlib.pyplot as plt
+    time.sleep(3)
+    #if verbosity.value > 1:
+    #    print('Tried to plot a straight line')
+    #    plt.savefig('WorkerTest')
     keepgoing = True
     while keepgoing:
         message = q.get()
         imagetype = message[0]
         if verbosity.value > 1:            
-            print('Image Drawer got message {}'.format(message[0]))
+            print('Analysis Workergot message {}'.format(message[0]))
         if imagetype == 'EOF':
             bytedata = None
             keepgoing = False
             if verbosity.value > 0:
-                print('Image Drawer caught EOF, shutting down')
+                print('Analysis Workercaught EOF, shutting down')
         elif imagetype == 'grayscale':
             bytedata = message[1]
             data = np.frombuffer(bytedata, dtype=np.uint16)
             data = np.transpose(data.reshape(320, 240, order='F'),(1,0))
             plt.imshow(data)
-            plt.show(block=False)
+            #plt.show(block=False)
             plt.savefig('GrayImage')
             if verbosity.value > 1:
-                print('Image Drawer tried to draw an image')
+                print('Analysis Workertried to draw an image')
         else:
-            print("Image Drawer doesn't know about imagetype {}".format(imagetype))
+            print("Analysis Workerdoesn't know about imagetype {}".format(imagetype))
         del message,imagetype, bytedata
