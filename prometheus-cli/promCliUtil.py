@@ -208,9 +208,9 @@ class promSession:
                 camtemp = None
             else:
                 camtemp = currTemp[i]
-            fullfname = '{}_{}.bin'.format(filename,camnum)
+            fullfname = '{}_{}'.format(filename,camnum)
             self.writecommand(imgCmd, [camnum], fullfname, drawtype)
-            self.filenames.append(fullfname)               
+            self.filenames.append('{}.bin'.format(fullfname))
             self.metawrite([fullfname, datetime.now().strftime('%H%M%S.%f)')[:-3], camnum, self.numimages, framenum, str(self.currvideo), self.frametag] + list(capAtts.values()) + [camtemp])
             
     def captureHDRVideo(self,capSets,nImag):
@@ -383,7 +383,7 @@ def startsaving(q, outputpath, metadatafilename, verbosity):
             data = message[1]
             if verbosity.value > 1:
                 print('writing data, save queue = {}'.format(q.qsize()))
-            f = open(outputpath + '/' + filename,'wb')
+            f = open(outputpath + '/' + filename + '.bin','wb')
             f.write(data)
             f.close
             if verbosity.value > 1:
