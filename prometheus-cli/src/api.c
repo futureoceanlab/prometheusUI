@@ -55,7 +55,7 @@ void handleApiCall(char *cmd, int target, int oflag, char *outfile) {
 			write(filedesc, response, responseLength);
 			end = clock();
 			cpu_time_used = 1000000 * ((double) (end - start)) / CLOCKS_PER_SEC;
-			printf("%.0f", cpu_time_used)
+			printf("%.0f", cpu_time_used);
 			close(filedesc);
 		} else {
 			write(STDOUT_FILENO, response, responseLength);

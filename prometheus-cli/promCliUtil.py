@@ -17,6 +17,7 @@ import promapi as papi
 import multiprocessing as mp
 import struct
 import statistics
+import subprocess
 
 class captureSetting:
     
@@ -412,13 +413,15 @@ def startanalysis(q, outputpath, verbosity):
                 print('Analysis Worker caught EOF, shutting down')
         elif imagetype == 'grayscale':
             bytedata = message[1]
-            data = np.frombuffer(bytedata, dtype=np.uint16)
+            fname = message[2]
+            data = np.frombuffer(bytedata, dtype=np.uint16).astype('int32') - 2**11
             data = np.transpose(data.reshape(320, 240, order='F'),(1,0))
-            plt.imshow(data)
-            #plt.show(block=False)
-            plt.savefig('GrayImage')
-            if verbosity.value > 1:
-                print('Analysis Worker tried to draw an image')
+            fig = plt.figure()
+            sub = fig.add_subplot(1,1,1)
+            imag = sub.imshow(data)
+            plt.colorbar(imag)
+            fig.savefig(outputpath + '/' + fname)
+            subprocess.run('gpicview {}/{}.png'.format(outputpath, fname), shell=True)
         elif imagetype == 'DCS':
             if verbosity.value > 1:
                 print('Analysis Worker caught DCS image')
@@ -426,7 +429,7 @@ def startanalysis(q, outputpath, verbosity):
             fname = message[2]            
             DCS = np.frombuffer(bytedata, dtype=np.uint16).astype('int32') - 2**11
             DCS = DCS.reshape(320,240,-1,order='F').transpose(1,0,2)
-            amp = DCS.mean(axis=2)
+            amp = np.absolute(DCS).mean(axis=2)
             if verbosity.value > 1:
                 print('Mean pixel amplitude is {}'.format(amp.mean().round(2)))
             fig = plt.figure()
@@ -437,5 +440,7 @@ def startanalysis(q, outputpath, verbosity):
                 imags.append(subs[i].imshow(DCS[:,:,i]))
                 plt.colorbar(imags[i])
             fig.savefig(outputpath + '/' + fname)
+            subprocess.run('gpicview {}/{}.png'.format(outputpath, fname), shell=True)
+
 
         del message,imagetype, bytedata
