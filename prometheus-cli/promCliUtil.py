@@ -383,7 +383,7 @@ class promSession:
         self.recordTempStart = datetime.now()
         #Set up exposure settings for heating pulses
         self.writecommand('loadConfig 1')
-        self.writecommand()"setIntegrationTime3D {}".format(exptime))
+        self.writecommand("setIntegrationTime3D {}".format(exptime))
         #Set up output metadata file        
         if filename is None:
             filename = 'HeatTest' + self.recordTempStart.strftime('%Y%m%d_%H%M')
@@ -400,20 +400,24 @@ class promSession:
         pulseoff = pulselength * (1-dutycycle) / dutycycle
         sampleperiod = 1/samplerate        
         nexttask = 0
+        now = time.time()
         while nexttask < heattime:
             startheat = nexttask
             #turn on heater
-            tempsched.enterabs(startheat, 1, self.heatPulse, [pulselength])
+            tempsched.enterabs(now+startheat, 1, self.heatPulse, [pulselength])
             #turn off heater, measure during cooldown period
             nexttask += pulselength + sampleperiod/2
             while nexttask < startheat + pulselength + pulseoff:
-                tempsched.enterabs(nexttask,1,self.recordTemp,[maxtemp])
+                tempsched.enterabs(now+nexttask,1,self.recordTemp,[maxtemp])
                 nexttask += sampleperiod
             nexttask = startheat + pulselength + pulseoff
         while nexttask < heattime + cooltime:
-            tempsched.enterabs(nexttask, 1, self.recordTemp)
+            tempsched.enterabs(now+nexttask, 1, self.recordTemp)
             nexttask += sampleperiod
         tempsched.run()
+        #Close file, analyze data
+        tempfile.close()
+
 
     def recordTemp(self, maxtemp=50):
         deltime = (datetime.now() - self.recordTempStart).total_seconds()
