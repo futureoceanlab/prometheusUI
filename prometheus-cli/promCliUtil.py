@@ -381,6 +381,9 @@ class promSession:
         self.recordTempTimes = []
         self.recordTempVals = []
         self.recordTempStart = datetime.now()
+        #Set up exposure settings for heating pulses
+        self.writecommand('loadConfig 1')
+        self.writecommand()"setIntegrationTime3D {}".format(exptime))
         #Set up output metadata file        
         if filename is None:
             filename = 'HeatTest' + self.recordTempStart.strftime('%Y%m%d_%H%M')
@@ -390,7 +393,7 @@ class promSession:
         for cam in self.cams:
             tempheaders.extend(['cam{} {}'.format(cam, meas) for meas in measurements])
         self.tempwriter = csv.writer(tempfile)
-        self.tempwriter.writerow(['Time'] + tempheaders + 'Pulsetime')
+        self.tempwriter.writerow(['Time'] + tempheaders + ['Pulsetime'])
         ### Schedule all of the heat pulse and temperature recording events
         tempsched = sched.scheduler(time.time, time.sleep)
         #Calculate constants for programming in tasks
@@ -415,7 +418,7 @@ class promSession:
     def recordTemp(self, maxtemp=50):
         deltime = (datetime.now() - self.recordTempStart).total_seconds()
         temps = self.getAllTemps()
-        self.tempwriter([deltime] + temps)
+        self.tempwriter.writerow([deltime] + temps)
         self.recordTempTimes.append(deltime)
         self.recordTempVals.append(temps)
         if temps[0] > maxtemp:
