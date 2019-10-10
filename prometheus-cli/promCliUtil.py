@@ -18,6 +18,7 @@ import multiprocessing as mp
 import struct
 import statistics
 import subprocess
+import sched
 
 class captureSetting:
     
@@ -301,7 +302,22 @@ class promSession:
         #for i in range(0,numtemps):
         #    temps[i] = int.from_bytes(tempbytes[2*i:2*(i+1)],'little')
         #return temps.mean()/10
+
+    def getAllTemps(self):
+        tempCmd = 'getTemperature'
+        tempbytes = self.writecommand(tempCmd)
+        numtemps = 4
+        camtemps = []
+        for cam in tempbytes:
+            temps = struct.unpack('<HHHHHH',cam)
+            camtemps.append(statistics.mean(temps[0:numtemps])/10)
+            camtemps.extend([t/10 for t in temps])
+        if self.verbosity.value > 1:
+            print('Camera temp(s): {}'.format(camtemps))
+        return camtemps
     
+
+
     def preHeat(self, targettemp, camnum = None):
         maxcycles = 20
         cycletime = 1
@@ -359,6 +375,62 @@ class promSession:
         DCS = DCS.reshape(320,240,-1).transpose(1,0,2)
         amp = DCS.mean(axis=2)
         print('Mean pixel amplitude is {}'.format(amp.mean().round(2)))
+
+    def heatingTest(self, filename=None, pulselength=1, exptime=1000, dutycycle=0.5, samplerate=4, heattime=60, cooltime=60, maxtemp=50):
+        self.maxflag = False
+        self.recordTempTimes = []
+        self.recordTempVals = []
+        self.recordTempStart = datetime.now()
+        #Set up output metadata file        
+        if filename is None:
+            filename = 'HeatTest' + self.recordTempStart.strftime('%Y%m%d_%H%M')
+        tempfile = open(os.path.join(self.outputpath, filename),'a',newline='')
+        tempheaders = []
+        measurements = ['mean', 'T0', 'T1', 'T2', 'T3']
+        for cam in self.cams:
+            tempheaders.extend(['cam{} {}'.format(cam, meas) for meas in measurements])
+        self.tempwriter = csv.writer(tempfile)
+        self.tempwriter.writerow(['Time'] + tempheaders + 'Pulsetime')
+        ### Schedule all of the heat pulse and temperature recording events
+        tempsched = sched.scheduler(time.time, time.sleep)
+        #Calculate constants for programming in tasks
+        pulseoff = pulselength * (1-dutycycle) / dutycycle
+        sampleperiod = 1/samplerate        
+        nexttask = 0
+        while nexttask < heattime:
+            startheat = nexttask
+            #turn on heater
+            tempsched.enterabs(startheat, 1, self.heatPulse, [pulselength])
+            #turn off heater, measure during cooldown period
+            nexttask += pulselength + sampleperiod/2
+            while nexttask < startheat + pulselength + pulseoff:
+                tempsched.enterabs(nexttask,1,self.recordTemp,[maxtemp])
+                nexttask += sampleperiod
+            nexttask = startheat + pulselength + pulseoff
+        while nexttask < heattime + cooltime:
+            tempsched.enterabs(nexttask, 1, self.recordTemp)
+            nexttask += sampleperiod
+        tempsched.run()
+
+    def recordTemp(self, maxtemp=50):
+        deltime = (datetime.now() - self.recordTempStart).total_seconds()
+        temps = self.getAllTemps()
+        self.tempwriter([deltime] + temps)
+        self.recordTempTimes.append(deltime)
+        self.recordTempVals.append(temps)
+        if temps[0] > maxtemp:
+            self.maxflag = True
+            if self.verbosity.value > 0:
+                   print("Went over max temperature of {} with {}".format(maxtemp, temps[0]))
+
+    def heatPulse(self, duration):        
+        if not self.maxflag:
+            self.recordTemp()
+            self.illumDisable()
+            self.writecommand('w a4 3')
+            time.sleep(duration)
+            self.writecommand('w a4 0')
+            self.recordTemp()
         
 def startsaving(q, outputpath, metadatafilename, verbosity):
     os.system('taskset -cp 1 {0:d}'.format(os.getpid()))
