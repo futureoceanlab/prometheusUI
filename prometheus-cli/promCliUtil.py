@@ -256,7 +256,14 @@ class promSession:
         self.numvideos = self.numvideos + 1
         self.currvideo = self.numvideos
         for _ in range(nImag):
+            imagestart = time.time()
             self.captureImage(capSet)
+            if self.framerate > 0:
+                pausetime = 1/self.framerate - (time.time() - imagestart)
+            if pausetime > 0:
+                time.sleep(pausetime)
+            elif self.verbosity.value > 0:
+                print('Cannot keep up with framerate, fell behind by {}'.format(pausetime))
         if self.verbosity.value > 0:
             print('Finished Video Capture')
 
